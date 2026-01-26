@@ -15,7 +15,7 @@ This includes forming the team, defining the project topic, creating the product
 
 ## Selected Product Backlog Items
 
-The following picture is a part of product backlog. Full product backlog is accessbile through [this link](https://trello.com/w/sep1_studenttimetablemanagementsystem/home).
+The following is a part of product backlog. Full product backlog is accessbile through [this link](https://trello.com/w/sep1_studenttimetablemanagementsystem/home).
 
 - Define project topic and scope (Student Timetable Management System)
 - Creation of Product Vision and Product Goal & Objectives & Plan
@@ -32,16 +32,12 @@ _Note: No software implementation tasks are included in Sprint 1._
 
 ## Planned Tasks / Breakdown
 
-- Create a Trello Workspace named `SEP1_studenttimetablemanagementsystem`
+- Create a Trello Workspace named `SEP1_StudentTimeTableManagementSystem`
 - Set up Product Goal & Backlog board lists:
   - Vision & Goal
   - User Stories - High Priority, Medium Priority, Low Priority
 - Set up Sprint 1 board lists:
-  - Sprint 1 Backlog
-  - In Progress
-  - Pending
-  - Done
-  - Tasks Postponed
+  - Sprint 1 Backlog, Done, Pending, In Progress, Postponed
 - We write Project Vision & Goal & Objective & Plan
 - Write User Stories following Scrum format
 - Estimate User Stories using Story Points (Fibonacci scale)
@@ -53,7 +49,7 @@ _Note: No software implementation tasks are included in Sprint 1._
 
 For Sprint 1, the team members agreed to:
 
-- Work a few hours on **Sundays and Mondays** during the two-week Sprint 1 period
+- Work a few hours togther on **Sundays and Mondays** also working individually during the two-week Sprint 1 period
 - Meetings are conducted via **Discord**
 - Smaller meetings may occur when at least two members are available
 - Working hours are recorded individually in a **shared Excel file**
