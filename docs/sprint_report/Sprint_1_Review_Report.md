@@ -17,8 +17,8 @@ The full Product Backlog and Sprint setup are available in the Trello workspace:
 - Initial user stories were written and estimated using story points.
 - The Trello workspace was set up, including boards and list structures for backlog and sprint management.
 - The Sprint 1 Planning Report was created and uploaded to the GitHub repository.
-- A UML / Use Case Diagram was initially [drafted](https://www.figma.com/board/dBiGujr9AcOiYDf1tggG07/Team-6-UML-Diagrams?node-id=26-353&t=3TGIr1yUemA3AV2O-0) by the Scrum Master and then collaboratively reviewed,
-  refined, and finalized by the team. The final accepted version for Sprint 1 is available in the [drafted](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Use%20Case%20Diagram.pdf).
+- A UML / Use Case Diagram was initially [Figma Drafted](https://www.figma.com/board/dBiGujr9AcOiYDf1tggG07/Team-6-UML-Diagrams?node-id=0-1&p=f&t=FxqnY05lNd2D2OEA-0) by the Scrum Master and then collaboratively reviewed,
+  refined, and finalized by the team. The final accepted version for Sprint 1 is available in the [Repo](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Use%20Case%20Diagram.pdf).
 - Sprint 1 team meetings were conducted, and an agreed method for tracking individual working hours was established.
 
 ## Demo Summary (What Was Shown in the Review)
