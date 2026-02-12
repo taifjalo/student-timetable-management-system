@@ -37,7 +37,7 @@ CREATE TABLE lessons (
     start_at TIMESTAMP NOT NULL,
     end_at TIMESTAMP NOT NULL,
     course_id INT NOT NULL,
-    class VARCHAR(64) NOT NULL,
+    classroom VARCHAR(64) NOT NULL,
     foreign key (course_id) references courses(course_id) ON DELETE CASCADE
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE assigned_groups (
     lesson_id INT NOT NULL,
     group_code VARCHAR(64) NOT NULL,
     primary key (lesson_id,group_code),
-    foreign key (lesson_id) references lessons(lessons_id) ON DELETE CASCADE,
+    foreign key (lesson_id) references lessons(lesson_id) ON DELETE CASCADE,
     foreign key (group_code) references student_groups (group_code) ON DELETE CASCADE
 );
 
@@ -59,11 +59,32 @@ CREATE TABLE assigned_users (
 
 CREATE TABLE messages (
     message_id INT PRIMARY KEY AUTO_INCREMENT,
-    content TEXT not null,
     sent_at TIMESTAMP NOT NULL,
+    content TEXT,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
     sender_user_id INT NOT NULL,
     recipient_user_id INT NOT NULL,
     foreign key (sender_user_id) references users(user_id),
     foreign key (recipient_user_id) references users(user_id)
 );
+
+CREATE TABLE notifications (
+    notification_id INT PRIMARY KEY AUTO_INCREMENT,
+    sent_at TIMESTAMP NOT NULL,
+    content TEXT
+);
+
+CREATE TABLE notification_receivers (
+    user_id INT NOT NULL,
+    notification_id INT NOT NULL,
+    primary key (user_id, notification_id),
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    foreign key (user_id) references users(user_id) ON DELETE CASCADE,
+    foreign key (notification_id) references notifications(notification_id) ON DELETE CASCADE
+);
+
+
+
+
+
 
