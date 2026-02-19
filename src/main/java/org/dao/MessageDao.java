@@ -1,3 +1,5 @@
+// dao. This folder contains the code for accessing the database.
+
 package org.dao;
 
 import jakarta.persistence.EntityManager;

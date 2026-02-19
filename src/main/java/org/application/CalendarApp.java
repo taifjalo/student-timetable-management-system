@@ -1,4 +1,6 @@
-package org.app;
+// application. This folder contains the code for the main application.
+
+package org.application;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;

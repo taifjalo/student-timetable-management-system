@@ -3,6 +3,8 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <class>org.entities.Message</class>
+        <class>org.entities.User</class>
+
 
         <properties>
             <property name="jakarta.persistence.jdbc.url"

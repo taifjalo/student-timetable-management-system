@@ -1,3 +1,4 @@
+// entity. This folder contains the entity classes. The entity classes are annotated with JPA annotations.
 package org.entities;
 
 import jakarta.persistence.*;
