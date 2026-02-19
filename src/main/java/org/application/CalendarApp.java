@@ -1,4 +1,4 @@
-package org;
+package org.app;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
