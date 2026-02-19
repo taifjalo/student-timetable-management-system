@@ -1,0 +1,22 @@
+.source-tray {
+    -fx-pref-width: 80px;
+}
+
+.searchField {
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-border-width: 2;
+    -fx-border-color: #2aa7ff;
+}
+
+.searchField:focused {
+    -fx-border-color: #0078d4;
+}
+
+.searchBoxLabel {
+    -fx-padding: 0 0 0 7;
+}
+
+
+
+
