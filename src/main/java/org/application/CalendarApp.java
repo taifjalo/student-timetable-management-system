@@ -9,18 +9,27 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.controlsfx.control.textfield.CustomTextField;
 import javafx.scene.Parent;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
+import javafx.collections.ListChangeListener;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.io.IOException;
 
 public class CalendarApp extends Application {
 
@@ -51,18 +60,25 @@ public class CalendarApp extends Application {
 
         root.setCenter(calendarView);
 
-        Calendar birthdays = new Calendar("Birthdays");
-        Calendar holidays = new Calendar("Holidays");
-        Calendar Math = new Calendar("Math");
+        Calendar birthdays = new Calendar("Kuvaus- ja mallintamismenetelmät");
+        Calendar holidays = new Calendar("Ohjelmistotekniikka");
+        Calendar Math = new Calendar("Matematiikka");
 
         birthdays.setStyle(Style.STYLE1);
         holidays.setStyle(Style.STYLE2);
         Math.setStyle(Style.STYLE1);
 
-        CalendarSource myCalendarSource = new CalendarSource("My Calendars");
+        CalendarSource myCalendarSource = new CalendarSource("Courses");
         myCalendarSource.getCalendars().addAll(birthdays, holidays, Math);
 
-        calendarView.getCalendarSources().addAll(myCalendarSource);
+        CalendarSource groupSource = new CalendarSource("Groups");
+        Calendar group1 = new Calendar("Group 1");
+        Calendar group2 = new Calendar("Group 2");
+        group1.setStyle(Style.STYLE3);
+        group2.setStyle(Style.STYLE4);
+        groupSource.getCalendars().addAll(group1, group2);
+
+        calendarView.getCalendarSources().addAll(myCalendarSource, groupSource);
 
         calendarView.setRequestedTime(LocalTime.now());
 
@@ -135,6 +151,7 @@ public class CalendarApp extends Application {
         Platform.runLater(() -> {
             calendarView.applyCss();
             calendarView.layout();
+            addSourceSectionsToSourceTray(calendarView, myCalendarSource, groupSource);
 
             SplitPane sp = calendarView.lookupAll(".split-pane").stream()
                     .filter(n -> n instanceof SplitPane)
@@ -155,7 +172,88 @@ public class CalendarApp extends Application {
         });
     }
 
+    private void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, CalendarSource groupSource) {
+        ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
+                .filter(ScrollPane.class::isInstance)
+                .map(ScrollPane.class::cast)
+                .findFirst()
+                .orElse(null);
+
+        if (sourceScrollPane == null || sourceScrollPane.getContent() == null) {
+            return;
+        }
+
+        Node sourceContent = sourceScrollPane.getContent();
+
+        Node coursesSection = createSourceSectionNode(courseSource);
+        Node groupsSection = createSourceSectionNode(groupSource);
+        if (coursesSection == null || groupsSection == null) {
+            return;
+        }
+
+        VBox wrapper = new VBox(12, sourceContent, coursesSection, groupsSection);
+        wrapper.getStyleClass().add("source-tray-content");
+        sourceScrollPane.setFitToWidth(true);
+        sourceScrollPane.setContent(wrapper);
+    }
+
+    private Node createSourceSectionNode(CalendarSource source) {
+        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        Node sourceSection;
+        try {
+            sourceSection = groupsLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Text sectionTitleText = (Text) groupsLoader.getNamespace().get("sectionTitleText");
+        VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
+
+        if (sectionTitleText == null || groupsListContainer == null) {
+            return null;
+        }
+
+        Runnable refreshRows = () -> {
+            groupsListContainer.getChildren().clear();
+            for (Calendar calendar : source.getCalendars()) {
+                groupsListContainer.getChildren().add(createGroupRow(calendar.getName()));
+            }
+        };
+
+        sectionTitleText.setText(source.getName());
+        refreshRows.run();
+
+        source.nameProperty().addListener((obs, oldName, newName) -> sectionTitleText.setText(newName));
+        source.getCalendars().addListener((ListChangeListener<Calendar>) change -> refreshRows.run());
+
+        return sourceSection;
+    }
+
+    private HBox createGroupRow(String groupName) {
+        Text groupNameText = new Text(groupName);
+        groupNameText.setStrokeWidth(0.0);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        ImageView editIcon = new ImageView(new Image(getClass().getResource("/images/edit_dots_icon.png").toExternalForm()));
+        editIcon.setFitWidth(15.0);
+        editIcon.setFitHeight(15.0);
+        editIcon.setPickOnBounds(true);
+        editIcon.setPreserveRatio(true);
+
+        Button actionButton = new Button();
+        actionButton.setMnemonicParsing(false);
+        actionButton.setGraphic(editIcon);
+
+        HBox row = new HBox(groupNameText, spacer, actionButton);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        return row;
+    }
+
     @FXML
+
     private void handleProfileClick(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));

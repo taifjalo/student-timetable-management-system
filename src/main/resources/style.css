@@ -2,6 +2,23 @@
     -fx-pref-width: 80px;
 }
 
+.source-tray-content {
+    -fx-padding: 8 8 12 8;
+}
+
+.groups-section {
+    -fx-padding: 4 0 0 0;
+}
+
+.groups-list {
+    -fx-pref-height: 120px;
+}
+
+.groups-section-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6a6a6a;
+}
+
 .searchField {
     -fx-border-radius: 999;
     -fx-background-radius: 999;
@@ -22,5 +39,4 @@
     -fx-background-size: cover;
     -fx-background-position: 100% 100%;
 }
-
 
