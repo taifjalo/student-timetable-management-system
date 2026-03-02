@@ -30,6 +30,8 @@ import javafx.collections.ListChangeListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CalendarApp extends Application {
 
@@ -60,6 +62,8 @@ public class CalendarApp extends Application {
 
         root.setCenter(calendarView);
 
+
+
         Calendar birthdays = new Calendar("Kuvaus- ja mallintamismenetelmät");
         Calendar holidays = new Calendar("Ohjelmistotekniikka");
         Calendar Math = new Calendar("Matematiikka");
@@ -71,14 +75,12 @@ public class CalendarApp extends Application {
         CalendarSource myCalendarSource = new CalendarSource("Courses");
         myCalendarSource.getCalendars().addAll(birthdays, holidays, Math);
 
-        CalendarSource groupSource = new CalendarSource("Groups");
-        Calendar group1 = new Calendar("Group 1");
-        Calendar group2 = new Calendar("Group 2");
-        group1.setStyle(Style.STYLE3);
-        group2.setStyle(Style.STYLE4);
-        groupSource.getCalendars().addAll(group1, group2);
+        ArrayList<String> groups = new ArrayList<>();
 
-        calendarView.getCalendarSources().addAll(myCalendarSource, groupSource);
+        groups.add("Group 1");
+        groups.add("Group 2");
+
+        calendarView.getCalendarSources().add(myCalendarSource);
 
         calendarView.setRequestedTime(LocalTime.now());
 
@@ -151,7 +153,7 @@ public class CalendarApp extends Application {
         Platform.runLater(() -> {
             calendarView.applyCss();
             calendarView.layout();
-            addSourceSectionsToSourceTray(calendarView, myCalendarSource, groupSource);
+            addSourceSectionsToSourceTray(calendarView, myCalendarSource, groups);
 
             SplitPane sp = calendarView.lookupAll(".split-pane").stream()
                     .filter(n -> n instanceof SplitPane)
@@ -172,7 +174,7 @@ public class CalendarApp extends Application {
         });
     }
 
-    private void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, CalendarSource groupSource) {
+    private void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<String> groups) {
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
@@ -183,15 +185,13 @@ public class CalendarApp extends Application {
             return;
         }
 
-        Node sourceContent = sourceScrollPane.getContent();
-
         Node coursesSection = createSourceSectionNode(courseSource);
-        Node groupsSection = createSourceSectionNode(groupSource);
+        Node groupsSection = createSourceSectionNode("Groups", groups);
         if (coursesSection == null || groupsSection == null) {
             return;
         }
 
-        VBox wrapper = new VBox(12, sourceContent, coursesSection, groupsSection);
+        VBox wrapper = new VBox(12, coursesSection, groupsSection);
         wrapper.getStyleClass().add("source-tray-content");
         sourceScrollPane.setFitToWidth(true);
         sourceScrollPane.setContent(wrapper);
@@ -226,6 +226,32 @@ public class CalendarApp extends Application {
 
         source.nameProperty().addListener((obs, oldName, newName) -> sectionTitleText.setText(newName));
         source.getCalendars().addListener((ListChangeListener<Calendar>) change -> refreshRows.run());
+
+        return sourceSection;
+    }
+
+    private Node createSourceSectionNode(String sectionTitle, List<String> items) {
+        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        Node sourceSection;
+        try {
+            sourceSection = groupsLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Text sectionTitleText = (Text) groupsLoader.getNamespace().get("sectionTitleText");
+        VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
+
+        if (sectionTitleText == null || groupsListContainer == null) {
+            return null;
+        }
+
+        sectionTitleText.setText(sectionTitle);
+        groupsListContainer.getChildren().clear();
+        for (String item : items) {
+            groupsListContainer.getChildren().add(createGroupRow(item));
+        }
 
         return sourceSection;
     }
