@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.textfield.CustomTextField;
+import javafx.scene.Parent;
+import javafx.scene.Node;
+import javafx.event.ActionEvent;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,28 +34,35 @@ public class CalendarApp extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"));
-        loader.setController(this);
         BorderPane navbar = loader.load();
+        CalendarApp controller = loader.getController();
+
+        // Use fields from the loaded controller
+        this.fieldSearch = controller.fieldSearch;
+        this.calViewDay = controller.calViewDay;
+        this.calViewWeek = controller.calViewWeek;
+        this.calViewMonth = controller.calViewMonth;
+        this.calViewYear = controller.calViewYear;
 
         BorderPane root = new BorderPane();
         root.setTop(navbar);
 
-        CalendarView calendarView = new CalendarView(); // (1)
+        CalendarView calendarView = new CalendarView();
 
         root.setCenter(calendarView);
 
-        Calendar birthdays = new Calendar("Birthdays"); // (2)
+        Calendar birthdays = new Calendar("Birthdays");
         Calendar holidays = new Calendar("Holidays");
         Calendar Math = new Calendar("Math");
 
-        birthdays.setStyle(Style.STYLE1); // (3)
+        birthdays.setStyle(Style.STYLE1);
         holidays.setStyle(Style.STYLE2);
         Math.setStyle(Style.STYLE1);
 
-        CalendarSource myCalendarSource = new CalendarSource("My Calendars"); // (4)
+        CalendarSource myCalendarSource = new CalendarSource("My Calendars");
         myCalendarSource.getCalendars().addAll(birthdays, holidays, Math);
 
-        calendarView.getCalendarSources().addAll(myCalendarSource); // (5)
+        calendarView.getCalendarSources().addAll(myCalendarSource);
 
         calendarView.setRequestedTime(LocalTime.now());
 
@@ -144,6 +154,19 @@ public class CalendarApp extends Application {
             }
         });
     }
+
+    @FXML
+    private void handleProfileClick(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void main(String[] args) {
         launch(args);
