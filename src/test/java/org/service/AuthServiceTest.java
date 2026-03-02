@@ -1,16 +1,131 @@
 package org.service;
 
+import org.dao.UserDao;
+import org.entities.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mindrot.jbcrypt.BCrypt;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@DisplayName("Logic Test: Tests are applied with JUnit 5 & Mockito for func Logic Test purpose")
+
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
+    @Mock
+    UserDao userDao;
+
+    @InjectMocks
+    AuthService authService;
+
+    // Login Tests:
     @Test
-    void register() {
+    @DisplayName("Login Test: Should call login when credentials are correct")
+    void shouldReturnUserWhenCredentialsAreCorrect() {
+
+        String rawPassword = "12345678";
+        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+
+        User user = new User();
+        user.setUsername("usernew");
+        user.setPasswordHash(hashed);
+
+        when(userDao.findByUsername("usernew")).thenReturn(user);
+
+        // Call Login Method:
+        User result = authService.login("usernew", rawPassword);
+
+        assertNotNull(result);
+        assertEquals("usernew", result.getUsername());
     }
 
     @Test
-    void login() {
+    @DisplayName("Login Test: Should throw exception when username does not exist")
+    void shouldThrowExceptionWhenUsernameNotExist() {
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authService.login("usernew", "wrongPassword");
+        });
+
+        assertEquals("Invalid username or password", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Login Test: Should throw exception when password is incorrect")
+    void shouldThrowExceptionWhenPasswordIncorrect() {
+        String rawPassword = "12345678";
+        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+
+        User user = new User();
+        user.setUsername("usernew");
+        user.setPasswordHash(hashed);
+
+        when(userDao.findByUsername("usernew")).thenReturn(user);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authService.login("usernew", "wrongPassword");
+        });
+
+        assertEquals("Invalid username or password", exception.getMessage());
+    }
+
+    // Register Tests:
+    @Test
+    @DisplayName("Register Test: Should call save when credentials are correct")
+    void shouldRegisterUserWhenCredentialsAreCorrect() {
+
+        // First find if user exist or doesn't exist in the database:
+        when(userDao.findByUsername("userTest")).thenReturn(null);
+        // in this condition when calling save() method to save new user don't do anything:
+        doNothing().when(userDao).save(any(User.class));
+
+        // Call Register Method
+        authService.register(
+                "Logic",
+                "Testing",
+                "userTest",
+                "Testing@test.com",
+                "090123456",
+                "87654321"
+        );
+
+        // Verify the user to regist called one time the save() user method.
+        verify(userDao, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Register Test: Should throw exception if username exists")
+    void shouldThrowExceptionWhenUsernameExists() {
+
+        // If user exist
+        User existingUser = new User();
+        existingUser.setUsername("userTest");
+
+
+        // First find if user exist or doesn't exist in the database, if the user exist then Return (existingUser):
+        when(userDao.findByUsername("userTest")).thenReturn(existingUser);
+
+
+        // Throw RuntimeException when Call Register Method
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> authService.register(
+                "Logic",
+                "Testing",
+                "userTest",
+                "Testing@test.com",
+                "090123456",
+                "87654321"
+        ));
+
+
+        assertEquals("Username already exists", exception.getMessage());
+        // Verify the user to regist SHOULD NOT called one time the save() user method.
+        verify(userDao, never()).save(any(User.class));
     }
 }

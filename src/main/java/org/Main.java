@@ -1,16 +1,24 @@
+
 package org;
 
 import org.dao.MessageDao;
+import org.dao.UserDao;
 import org.entities.Message;
 import org.entities.User;
 import org.service.AuthService;
 
 import java.time.LocalDateTime;
 
+
+
 public class Main {
     public static void main(String[] args) {
 
-        AuthService authService = new AuthService();
+        System.out.println("All Tests are applied for End-to-End for func Integration Test purpose: ");
+
+        UserDao userDao = new UserDao();
+        AuthService authService = new AuthService(userDao);
+
         // Login Test:
         try {
             User loggedUser = authService.login("usernew", "12345678");
@@ -30,9 +38,5 @@ public class Main {
                 "123456780"
         );
         System.out.println("User registered successfully");
-
-
-
-
     }
 }

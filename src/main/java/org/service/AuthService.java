@@ -7,7 +7,12 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class AuthService {
 
-    private UserDao userDao = new UserDao();
+    private final UserDao userDao;
+
+    // Dependency Injectio
+    public AuthService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public void register(String firstName,
                          String lastName,
@@ -50,5 +55,9 @@ public class AuthService {
         else {
             throw new RuntimeException("Invalid username or password");
         }
+    }
+
+    public String toString() {
+        return "User registered successfully";
     }
 }
