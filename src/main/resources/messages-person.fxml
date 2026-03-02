@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+
+<?import javafx.scene.image.Image?>
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="135.0" prefWidth="415.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #A5A5A5;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/profile_picture_good_quality.png"/>
+         </image>
+         <HBox.margin>
+            <Insets bottom="35.0" left="38.0" top="35.0" />
+         </HBox.margin>
+      </ImageView>
+      <Label text="Amir Dirin">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <HBox.margin>
+            <Insets bottom="51.0" left="25.0" top="51.0" />
+         </HBox.margin>
+      </Label>
+      <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/message-pin.png"/>
+         </image>
+         <HBox.margin>
+            <Insets bottom="58.0" left="121.0" top="58.0" />
+         </HBox.margin>
+      </ImageView>
+   </children>
+</HBox>
