@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -82,6 +83,7 @@ public class ChatController {
 
                         Parent root = loader.load();
 
+                        setPadding(Insets.EMPTY);
                         setGraphic(root);
 
                     } catch (Exception e) {
