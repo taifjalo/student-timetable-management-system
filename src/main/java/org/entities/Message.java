@@ -11,7 +11,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id")
-    private int id;
+    private Long id;
 
     @Column(name = "sent_at", nullable = false)
     private LocalDateTime sentAt;
@@ -22,23 +22,25 @@ public class Message {
     @Column(name = "is_read", nullable = false)
     private boolean read;
 
-    @Column(name = "sender_user_id", nullable = false)
-    private Long senderUserId;
+    @ManyToOne
+    @JoinColumn(name = "sender_user_id", nullable = false)
+    private User senderUser;
 
-    @Column(name = "recipient_user_id", nullable = false)
-    private Long recipientUserId;
+    @ManyToOne
+    @JoinColumn(name = "recipient_user_id")
+    private User recipientUser;
 
     protected Message() {}
 
-    public Message(LocalDateTime sentAt, String content, long senderUserId, long recipientUserId) {
+    public Message(LocalDateTime sentAt, String content, User senderUser, User recipientUser) {
         this.sentAt = sentAt;
         this.content = content;
-        this.senderUserId = senderUserId;
-        this.recipientUserId = recipientUserId;
+        this.senderUser= senderUser;
+        this.recipientUser = recipientUser;
         this.read = false;
     }
 
-    public int getId() { return id; }
+    public Long getId() { return id; }
     public LocalDateTime getSentAt() { return sentAt; }
     public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
 
@@ -48,9 +50,9 @@ public class Message {
     public boolean isRead() { return read; }
     public void setRead(boolean read) { this.read = read; }
 
-    public Long getSenderUserId() { return senderUserId; }
-    public void setSenderUserId(Long senderUserId) { this.senderUserId = senderUserId; }
+    public User getSenderUser() { return senderUser; }
+    public void setSenderUserId(int senderUserId) { this.senderUser = senderUser; }
 
-    public Long getRecipientUserId() { return recipientUserId; }
-    public void setRecipientUserId(Long recipientUserId) { this.recipientUserId = recipientUserId; }
+    public User getRecipientUser() { return recipientUser; }
+    public void setRecipientUserId(int recipientUserId) { this.recipientUser = recipientUser; }
 }

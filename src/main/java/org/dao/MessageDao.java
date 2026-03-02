@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import org.datasource.TimetableConnection;
 import org.entities.Message;
+import org.entities.User;
 
 import java.util.List;
 
@@ -27,6 +28,14 @@ public class MessageDao {
                     .getResultList();
         } finally {
             em.close();
+        }
+    }
+
+    public List<Message> findUserMessages (Long userId){
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            return em.createQuery("SELECT m FROM Message m WHERE m.senderUser.id = :userId or m.recipientUser.id = :userId ", Message.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
         }
     }
 

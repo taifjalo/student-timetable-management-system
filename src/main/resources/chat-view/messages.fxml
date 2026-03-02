@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="838.0" prefWidth="1024.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatController">
    <children>
-      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="838.0" prefWidth="990.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 1px; -fx-background-color: white; -fx-background-radius: 5px;">
+      <HBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="838.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 1px; -fx-background-color: white; -fx-background-radius: 5px;">
          <children>
             <VBox prefHeight="868.0" prefWidth="414.0">
                <children>
@@ -26,7 +26,7 @@
                         </Label>
                      </children>
                   </Pane>
-                  <ListView prefHeight="717.0" prefWidth="414.0" style="-fx-background-color: transperent;" />
+                  <ListView fx:id="chatUsers" prefHeight="717.0" style="-fx-background-color: transperent;" />
                </children>
             </VBox>
             <VBox prefHeight="991.0" prefWidth="574.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 0 0 0 1;">
@@ -35,7 +35,7 @@
                      <children>
                         <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/profile_picture_good_quality.png" />
+                              <Image url="@../images/profile_picture_good_quality.png" />
                            </image>
                            <HBox.margin>
                               <Insets bottom="13.0" left="27.0" top="18.0" />
@@ -54,9 +54,9 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ListView prefHeight="572.0" prefWidth="575.0" style="-fx-border-width: 0 0  0 0; -fx-border-color: transperent; -fx-background-color: transperent;">
+                  <ListView prefHeight="652.0" prefWidth="573.0" style="-fx-border-width: 0 0  0 0; -fx-border-color: transperent; -fx-background-color: transperent;">
                      <VBox.margin>
-                        <Insets bottom="41.0" top="41.0" />
+                        <Insets />
                      </VBox.margin>
                   </ListView>
                   <Pane maxWidth="544.0" prefHeight="69.0" prefWidth="468.0">
@@ -96,12 +96,12 @@
             </VBox>
          </children>
       </HBox>
-      <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="closeButton" fitHeight="18.0" fitWidth="18.0" onMouseClicked="#closeChat" pickOnBounds="true" preserveRatio="true">
          <HBox.margin>
             <Insets left="16.0" top="9.0" />
          </HBox.margin>
          <image>
-            <Image url="@images/exit.png" />
+            <Image url="@../images/exit.png" />
          </image>
       </ImageView>
    </children>

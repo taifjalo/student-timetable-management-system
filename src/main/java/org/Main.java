@@ -34,15 +34,5 @@ public class Main {
 
 
 
-        // Message Test
-        MessageDao dao = new MessageDao();
-
-        Message m = new Message(LocalDateTime.now(), "hello", 1, 1);
-
-
-        dao.create(m);
-
-        System.out.println("Saved. Total: " + dao.findAll().size());
-
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+
+<HBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="575.0" minHeight="85.0" minWidth="575.0" prefWidth="575.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="BOTTOM_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="390.0">
+         <children>
+            <Label prefWidth="84.0" text="10/01/25 10:53" textFill="#d7d4d4">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Label>
+            <Label maxHeight="1.7976931348623157E308" maxWidth="283.0" style="-fx-background-color: #00956D; -fx-border-radius: 5px; -fx-background-radius: 5px;" text="Hello, world!" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="16.0" left="14.0" right="14.0" top="16.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+         </children>
+         <HBox.margin>
+            <Insets bottom="32.0" right="28.0" />
+         </HBox.margin>
+      </HBox>
+   </children>
+</HBox>
