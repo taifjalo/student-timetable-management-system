@@ -8,7 +8,7 @@
 <?import org.controlsfx.control.*?>
 <?import org.controlsfx.control.textfield.*?>
 
-<BorderPane minWidth="-Infinity" prefHeight="50.0" prefWidth="1000.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #C8C8C8; -fx-border-width: 0 0 1 0;" xmlns:controlsfx="http://controlsfx.org/control" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:controller="org.application.CalendarApp" minWidth="-Infinity" prefHeight="50.0" prefWidth="1000.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #C8C8C8; -fx-border-width: 0 0 1 0;" xmlns:controlsfx="http://controlsfx.org/control" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
       <center>
          <SegmentedButton BorderPane.alignment="CENTER">
                <toggleGroup>
@@ -64,7 +64,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" mouseTransparent="false" style="-fx-background-color: none;">
+            <Button fx:id="btnProfile" onAction="#handleProfileClick" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" mouseTransparent="false" style="-fx-background-color: none;">
                <graphic>
                   <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>

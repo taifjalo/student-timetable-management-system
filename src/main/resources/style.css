@@ -17,6 +17,10 @@
     -fx-padding: 0 0 0 7;
 }
 
-
+.login-stack-pane {
+    -fx-background-image: url("images/login_background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: 100% 100%;
+}
 
 
