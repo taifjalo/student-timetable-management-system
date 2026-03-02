@@ -9,6 +9,14 @@ import org.datasource.TimetableConnection;
 
 public class UserDao {
 
+    /*
+    private EntityManager em;
+
+    // Dependency Injectio
+    public UserDao(EntityManager em) {
+        this.em = em;
+    }
+     */
     public void save(User user) {
         EntityManager em = TimetableConnection.getEntityManager();
         EntityTransaction tx = em.getTransaction();

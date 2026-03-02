@@ -1,14 +1,7 @@
-
-package org;
-
-import org.dao.MessageDao;
 import org.dao.UserDao;
-import org.entities.Message;
 import org.entities.User;
 import org.service.AuthService;
-
-import java.time.LocalDateTime;
-
+import java.util.UUID;
 
 
 public class Main {
@@ -32,10 +25,10 @@ public class Main {
         authService.register(
                 "User",
                 "New",
-                "usernew2",
-                "user0@example.com",
-                "07712345670",
-                "123456780"
+                "Username" +UUID.randomUUID(),
+                "user" + UUID.randomUUID() + "@test.com",
+                "090" + UUID.randomUUID().toString().substring(0,7), // Make always Random phone number to pass DB
+                "123" + UUID.randomUUID().toString().substring(0,7)         // Make always Password number to pass DB
         );
         System.out.println("User registered successfully");
     }
