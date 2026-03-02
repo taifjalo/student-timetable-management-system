@@ -20,7 +20,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/taifjalo/student-timetable-management-system.git'
+                git branch: 'main', url: 'https://github.com/taifjalo/student-timetable-management-system.git'
             }
         }
 
