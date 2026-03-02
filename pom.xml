@@ -127,7 +127,8 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>21.0.9</version>
+            <!-- Hint change the Version from 17.1.15 to 21.0.9 if you use JDK 21 -->
+            <version>17.1.15</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>

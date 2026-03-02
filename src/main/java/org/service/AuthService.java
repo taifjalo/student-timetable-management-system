@@ -57,7 +57,4 @@ public class AuthService {
         }
     }
 
-    public String toString() {
-        return "User registered successfully";
-    }
 }
