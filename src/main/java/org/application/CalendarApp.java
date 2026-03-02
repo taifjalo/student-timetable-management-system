@@ -11,10 +11,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.Cursor;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -191,7 +193,8 @@ public class CalendarApp extends Application {
             return;
         }
 
-        VBox wrapper = new VBox(12, coursesSection, groupsSection);
+        Separator sectionDivider = new Separator();
+        VBox wrapper = new VBox(12, coursesSection, sectionDivider, groupsSection);
         wrapper.getStyleClass().add("source-tray-content");
         sourceScrollPane.setFitToWidth(true);
         sourceScrollPane.setContent(wrapper);
@@ -272,6 +275,7 @@ public class CalendarApp extends Application {
         Button actionButton = new Button();
         actionButton.setMnemonicParsing(false);
         actionButton.setGraphic(editIcon);
+        actionButton.setCursor(Cursor.HAND);
 
         HBox row = new HBox(groupNameText, spacer, actionButton);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
