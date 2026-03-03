@@ -11,7 +11,7 @@ public class ChatService {
 
     public MessageDao messageDao = new MessageDao();
 
-    public List<ChatPreview> getChatPreview(Long id){
+    public List<ChatPreview> getChatPreviews(Long id){
         List<Message> messages = messageDao.findUserMessages(id);
         Map<Long, ChatPreview> chatPreviews = new LinkedHashMap();
         User otherUser;

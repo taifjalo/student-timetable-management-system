@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatController">
+<HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="1024.0" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1024.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatController">
    <children>
-      <HBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="838.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 1px; -fx-background-color: white; -fx-background-radius: 5px;">
+      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="838.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 1px; -fx-background-color: white; -fx-background-radius: 5px;">
          <children>
-            <VBox prefHeight="868.0" prefWidth="414.0">
+            <VBox maxWidth="414.0" prefHeight="868.0" prefWidth="414.0">
                <children>
                   <TextField maxHeight="38.0" maxWidth="388.0" prefHeight="38.0" prefWidth="388.0" promptText="Search teachers" style="-fx-border-radius: 59px; -fx-background-radius: 59px;">
                      <VBox.margin>
@@ -29,7 +29,7 @@
                   <ListView fx:id="chatUsers" prefHeight="717.0" style="-fx-background-color: transperent;" />
                </children>
             </VBox>
-            <VBox prefHeight="991.0" prefWidth="574.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 0 0 0 1;">
+            <VBox fx:id="chatRightSide" maxWidth="574.0" prefHeight="991.0" prefWidth="574.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 0 0 0 1;">
                <children>
                   <HBox maxHeight="96.0" maxWidth="574.0" prefHeight="96.0" prefWidth="574.0" style="-fx-background-color: #00B484;">
                      <children>
@@ -41,7 +41,7 @@
                               <Insets bottom="13.0" left="27.0" top="18.0" />
                            </HBox.margin>
                         </ImageView>
-                        <Label text="Amir Dirin" textFill="WHITE">
+                        <Label fx:id="rightSideName" text="Amir Dirin" textFill="WHITE">
                            <font>
                               <Font size="24.0" />
                            </font>

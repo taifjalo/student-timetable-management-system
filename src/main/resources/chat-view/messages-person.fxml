@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="135.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #A5A5A5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatPreviewController">
+<HBox maxHeight="-Infinity" minHeight="-Infinity" onMouseClicked="#openChat" prefHeight="135.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #A5A5A5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatPreviewController">
    <children>
       <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
          <image>

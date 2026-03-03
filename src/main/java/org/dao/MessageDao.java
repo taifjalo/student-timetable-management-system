@@ -12,82 +12,22 @@ import java.util.List;
 
 public class MessageDao {
 
-    public Message find(long id) {
-        EntityManager em = TimetableConnection.createEntityManager();
-        try {
-            return em.find(Message.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
-    public List<Message> findAll() {
-        EntityManager em = TimetableConnection.createEntityManager();
-        try {
-            return em.createQuery("SELECT m FROM Message m ORDER BY m.sentAt DESC", Message.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
 
     public List<Message> findUserMessages (Long userId){
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("SELECT m FROM Message m WHERE m.senderUser.id = :userId or m.recipientUser.id = :userId ", Message.class)
+            return em.createQuery("SELECT m FROM Message m WHERE m.senderUser.id = :userId or m.recipientUser.id = :userId ORDER BY m.sentAt DESC ", Message.class)
                     .setParameter("userId", userId)
                     .getResultList();
         }
     }
 
-    public void create(Message message) {
-        EntityManager em = TimetableConnection.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.persist(message);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw e;
-        } finally {
-            em.close();
+    public List<Message> findMessagesBetweenUsers(Long userId1, Long userId2){
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            return em.createQuery("select m FROM Message m WHERE (m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1) ORDER BY m.sentAt ASC", Message.class)
+                    .setParameter("userId1", userId1)
+                    .setParameter("userId2", userId2)
+                    .getResultList();
         }
     }
 
-    public Message update(Message message) {
-        EntityManager em = TimetableConnection.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Message managed = em.merge(message);
-            tx.commit();
-            return managed;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-
-    public boolean delete(long id) {
-        EntityManager em = TimetableConnection.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Message found = em.find(Message.class, id);
-            if (found == null) {
-                tx.rollback();
-                return false;
-            }
-            em.remove(found);
-            tx.commit();
-            return true;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
 }
