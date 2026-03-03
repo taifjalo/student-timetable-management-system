@@ -49,12 +49,12 @@ public class ChatController {
 
 
     private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
-    private ChatService chatService = new ChatService();
+    private MessageDao messageDao = new MessageDao();
+    private ChatService chatService = new ChatService(messageDao);
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
     long userId = 5L;
     long otherId;
-    private MessageDao messageDao = new MessageDao();
     private Thread updateChatThread;
     private Thread updatePreviewsThread;
 

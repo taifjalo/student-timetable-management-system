@@ -9,7 +9,14 @@ import java.util.*;
 
 public class ChatService {
 
-    public MessageDao messageDao = new MessageDao();
+    //public MessageDao messageDao = new MessageDao();
+
+    private final MessageDao messageDao;
+
+    // Constructor: @InjectMocks + @Mock@ Dependency for testing.
+    public ChatService(MessageDao messageDao) {
+        this.messageDao = messageDao;
+    }
 
     public List<ChatPreview> getChatPreviews(Long id){
         List<Message> messages = messageDao.findUserMessages(id);

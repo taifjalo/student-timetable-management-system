@@ -51,10 +51,12 @@ public class Message implements Comparable<Message>{
     public void setRead(boolean read) { this.read = read; }
 
     public User getSenderUser() { return senderUser; }
-    public void setSenderUserId(int senderUserId) { this.senderUser = senderUser; }
+    //public void setSenderUserId(int senderUserId) { this.senderUser = senderUser; }
+    public void setSenderUser(User senderUser) { this.senderUser = senderUser; }
 
     public User getRecipientUser() { return recipientUser; }
-    public void setRecipientUserId(int recipientUserId) { this.recipientUser = recipientUser; }
+    //public void setRecipientUserId(int recipientUserId) { this.recipientUser = recipientUser; }
+    public void setRecipientUser(User recipientUser) { this.recipientUser = recipientUser; }
 
     @Override
     public int compareTo(Message other){
