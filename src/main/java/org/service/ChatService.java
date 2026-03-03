@@ -25,10 +25,10 @@ public class ChatService {
                  otherUser = message.getSenderUser();
                  isRead = message.isRead();
              }
-            if (!chatPreviews.containsKey(otherUser.getId())) {
-                chatPreviews.put(otherUser.getId(), new ChatPreview(otherUser.getId(), otherUser.getFirstName(), otherUser.getSureName(), isRead));
+             if (!chatPreviews.containsKey(otherUser.getId())) {
+                 chatPreviews.put(otherUser.getId(), new ChatPreview(otherUser.getId(), otherUser.getFirstName(), otherUser.getSureName(), isRead));
             }
-            else{
+             else{
                 ChatPreview preview = chatPreviews.get(otherUser.getId());
                 if (!message.isRead() && message.getRecipientUser().getId().equals(id)) {
                     preview.setIsRead(false);

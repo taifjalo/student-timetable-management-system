@@ -13,20 +13,18 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
-import org.dao.MessageDao;
-import org.entities.Message;
 import org.service.ChatService;
 
-import java.util.ArrayList;
+
 import java.util.List;
+
 
 
 public class ChatController {
 
-    private ObservableList<ChatPreview> messages = FXCollections.observableArrayList();
-    private SortedList<ChatPreview> sortedMessages = new SortedList<>(messages);
+    private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
     private ChatService chatService = new ChatService();
-
+    long user = 5L;
 
     private void startAutoUpdate() {
         new Thread(() -> {
@@ -34,10 +32,10 @@ public class ChatController {
                 try {
                     Thread.sleep(3000);
 
-                    List newMessages = chatService.getChatPreview(5L);
+                    List newChatPreviews = chatService.getChatPreview(user);
 
                     Platform.runLater(() -> {
-                        messages.setAll(newMessages);
+                        chatPreviews.setAll(newChatPreviews);
                     });
 
                 } catch (InterruptedException e) {
@@ -63,8 +61,8 @@ public class ChatController {
 
     @FXML
     public void initialize() {
-        messages.setAll(chatService.getChatPreview(5L));
-        chatUsers.setItems(messages);
+        chatPreviews.setAll(chatService.getChatPreview(5L));
+        chatUsers.setItems(chatPreviews);
         startAutoUpdate();
         chatUsers.setCellFactory(listView -> new ListCell<>() {
 
@@ -77,11 +75,11 @@ public class ChatController {
                 } else {
                     try {
 
-                        FXMLLoader loader = new FXMLLoader(
-                                getClass().getResource("/chat-view/messages-person.fxml")
-                        );
-
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages-person.fxml"));
                         Parent root = loader.load();
+                        ChatPreviewController cpController = loader.getController();
+                        cpController.setTeacherName(preview.getName(), preview.getSurname());
+                        cpController.setIsRead(preview.getIsRead());
 
                         setPadding(Insets.EMPTY);
                         setGraphic(root);

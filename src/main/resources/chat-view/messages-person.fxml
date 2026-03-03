@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="135.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #A5A5A5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="135.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #A5A5A5;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatPreviewController">
    <children>
       <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -16,20 +16,20 @@
             <Insets bottom="35.0" left="38.0" top="35.0" />
          </HBox.margin>
       </ImageView>
-      <Label text="Amir Dirin">
+      <Label fx:id="teacherName" prefHeight="32.0" prefWidth="175.0" text="Amir Dirin">
          <font>
             <Font size="24.0" />
          </font>
          <HBox.margin>
-            <Insets bottom="51.0" left="25.0" top="51.0" />
+            <Insets bottom="51.0" left="10.0" top="51.0" />
          </HBox.margin>
       </Label>
-      <ImageView fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="isReadDot" fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/message-pin.png" />
          </image>
          <HBox.margin>
-            <Insets bottom="58.0" left="121.0" top="58.0" />
+            <Insets bottom="58.0" left="80.0" top="58.0" />
          </HBox.margin>
       </ImageView>
    </children>
