@@ -14,9 +14,6 @@ public class ChatPreviewController {
 
     private ChatController chatController;
     private ChatPreview chatPreview;
-    private Long userId;
-    private MessageDao messageDao;
-    private ObservableList<Message> messages = FXCollections.observableArrayList();
 
     @FXML
     private Label teacherName;
@@ -40,15 +37,15 @@ public class ChatPreviewController {
         this.chatPreview=chatPreview;
     }
 
-    public void setUserId(Long id){
-        this.userId = id;
-    }
-
     @FXML
     public void openChat(){
         chatController.rightSideVisibility(true);
         chatController.setRightSideName(chatPreview.getName(), chatPreview.getSurname());
+        chatController.setOtherId(chatPreview.getId());
+        chatController.loadMessages();
     }
+
+
 
 
 }

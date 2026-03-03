@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
-public class Message {
+public class Message implements Comparable<Message>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Message {
     @JoinColumn(name = "recipient_user_id")
     private User recipientUser;
 
-    protected Message() {}
+    public Message() {}
 
     public Message(LocalDateTime sentAt, String content, User senderUser, User recipientUser) {
         this.sentAt = sentAt;
@@ -55,4 +55,9 @@ public class Message {
 
     public User getRecipientUser() { return recipientUser; }
     public void setRecipientUserId(int recipientUserId) { this.recipientUser = recipientUser; }
+
+    @Override
+    public int compareTo(Message other){
+        return this.sentAt.compareTo(other.sentAt);
+    }
 }

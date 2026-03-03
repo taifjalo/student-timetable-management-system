@@ -8,6 +8,7 @@ import org.datasource.TimetableConnection;
 import org.entities.Message;
 import org.entities.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MessageDao {
@@ -27,6 +28,27 @@ public class MessageDao {
                     .setParameter("userId1", userId1)
                     .setParameter("userId2", userId2)
                     .getResultList();
+        }
+    }
+
+    public void saveMessage(Long senderId, Long recipientId, String text) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            em.getTransaction().begin();
+
+            LocalDateTime sentAt = LocalDateTime.now();
+            String content = text;
+            User sender = em.getReference(User.class, senderId);
+            User recipient = em.getReference(User.class, recipientId);
+
+            Message message = new Message (
+                    sentAt,
+                    content,
+                    sender,
+                    recipient
+            );
+
+            em.persist(message);
+            em.getTransaction().commit();
         }
     }
 

@@ -4,6 +4,7 @@ import dto.ChatPreview;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -11,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
@@ -19,21 +21,44 @@ import org.entities.Message;
 import org.service.ChatService;
 
 
+import java.util.Comparator;
 import java.util.List;
 
 
 
 public class ChatController {
 
+    @FXML
+    private VBox chatRightSide;
+
+    @FXML
+    private Label rightSideName;
+
+    @FXML
+    private ImageView closeButton;
+
+    @FXML
+    private ListView<ChatPreview> chatUsers;
+
+    @FXML
+    private ListView<Message> chatMessages;
+
+    @FXML
+    private TextField messageTypeField;
+
+
     private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
     private ChatService chatService = new ChatService();
     private ObservableList<Message> messages = FXCollections.observableArrayList();
+    SortedList<Message> sortedMessages = new SortedList<>(messages);
     long userId = 5L;
-    private MessageDao messageDao;
+    long otherId;
+    private MessageDao messageDao = new MessageDao();
     private Thread updateChatThread;
+    private Thread updatePreviewsThread;
 
     private void startPreviewsAutoUpdate() {
-        new Thread(() -> {
+        updatePreviewsThread = new Thread(() -> {
             while (true) {
                 try {
                     Thread.sleep(3000);
@@ -45,17 +70,18 @@ public class ChatController {
                     });
 
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
-        }).start();
+        });
+        updatePreviewsThread.start();
     }
 
-    private void startChatAutoUpdate(Long id){
+    private void startMessagesAutoUpdate(Long id){
         updateChatThread = new Thread(()-> {
             while (true) {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
 
                     List newMessages = messageDao.findMessagesBetweenUsers(userId, id);
 
@@ -63,35 +89,40 @@ public class ChatController {
                         messages.setAll(newMessages);
                     });
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
         });
+        updateChatThread.start();
     }
 
-
-    @FXML
-    private VBox chatRightSide;
-
-    @FXML
-    private Label rightSideName;
-
-    @FXML
-    private ImageView closeButton;
-
-    @FXML ListView<ChatPreview> chatUsers;
-
-
-    @FXML
-    private void closeChat(){
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        stage.close();
+    public void rightSideVisibility(Boolean is){
+        chatRightSide.setVisible(is);
+        chatRightSide.setManaged(is);
     }
+
+    public void setRightSideName(String name, String surname){
+        rightSideName.setText(name + " " + surname);
+    }
+
+    public void setOtherId (Long id){
+        this.otherId = id;
+    }
+
+    public void loadMessages(){
+        messages.setAll(messageDao.findMessagesBetweenUsers(userId, otherId));
+        if (updateChatThread != null) {
+            updateChatThread.interrupt();
+        }
+        startMessagesAutoUpdate(otherId);
+    }
+
 
     @FXML
     public void initialize() {
         chatPreviews.setAll(chatService.getChatPreviews(5L));
         chatUsers.setItems(chatPreviews);
+        chatMessages.setItems(sortedMessages);
         startPreviewsAutoUpdate();
         rightSideVisibility(false);
         chatUsers.setCellFactory(listView -> new ListCell<>() {
@@ -110,7 +141,6 @@ public class ChatController {
                         ChatPreviewController cpController = loader.getController();
                         cpController.setChatController(ChatController.this);
                         cpController.setChatPreview(preview);
-                        cpController.setUserId(userId);
                         cpController.setTeacherName(preview.getName(), preview.getSurname());
                         cpController.setIsRead(preview.getIsRead());
 
@@ -123,16 +153,52 @@ public class ChatController {
                 }
             }
         });
+        chatMessages.setCellFactory(listView ->  new ListCell<>() {
+            @Override
+            protected void updateItem(Message message, boolean empty){
+                super.updateItem(message, empty);
+
+                if (empty || message == null){
+                    setGraphic(null);
+                } else {
+                    try {
+
+                        FXMLLoader loader;
+                        if (message.getSenderUser().getId().equals(userId)) {
+                            loader = new FXMLLoader(getClass().getResource("/chat-view/sent-message.fxml"));
+                        }
+                        else {
+                            loader = new FXMLLoader(getClass().getResource("/chat-view/received-message.fxml"));
+                        }
+                        Parent root = loader.load();
+                        MessageController mController = loader.getController();
+                        mController.setText(message.getContent());
+                        mController.setTime(message.getSentAt());
+                        setGraphic(root);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+    }
+
+    @FXML
+    private void closeChat(){
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        updateChatThread.interrupt();
+        updatePreviewsThread.interrupt();
+        stage.close();
+    }
+
+    @FXML
+    private void sendMessage(){
+        messageDao.saveMessage(userId, otherId, messageTypeField.getText());
     }
 
 
 
-    public void rightSideVisibility(Boolean is){
-        chatRightSide.setVisible(is);
-        chatRightSide.setManaged(is);
-    }
 
-    public void setRightSideName(String name, String surname){
-        rightSideName.setText(name + " " + surname);
-    }
+
 }

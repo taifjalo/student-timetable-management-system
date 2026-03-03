@@ -54,7 +54,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ListView prefHeight="652.0" prefWidth="573.0" style="-fx-border-width: 0 0  0 0; -fx-border-color: transperent; -fx-background-color: transperent;">
+                  <ListView fx:id="chatMessages" prefHeight="652.0" style="-fx-border-width: 0 0  0 0; -fx-border-color: transperent; -fx-background-color: white;">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -63,7 +63,7 @@
                      <children>
                         <HBox prefHeight="70.0" prefWidth="544.0" style="-fx-background-color: D9D9D9; -fx-border-radius: 11px; -fx-background-radius: 11px;">
                            <children>
-                              <TextField prefHeight="70.0" prefWidth="422.0" promptText="Type here..." style="-fx-background-color: transparent;">
+                              <TextField fx:id="messageTypeField" prefHeight="70.0" prefWidth="422.0" promptText="Type here..." style="-fx-background-color: transparent;">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -71,7 +71,7 @@
                                     <Insets left="19.0" />
                                  </padding>
                               </TextField>
-                              <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="119.0" style="-fx-background-radius: 7; -fx-background-color: #00956D;" text="Send" textFill="WHITE">
+                              <Button mnemonicParsing="false" onAction="#sendMessage" prefHeight="46.0" prefWidth="119.0" style="-fx-background-radius: 7; -fx-background-color: #00956D;" text="Send" textFill="WHITE">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
