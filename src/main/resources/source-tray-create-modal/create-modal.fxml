@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.controlsfx.control.textfield.*?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #F8F8F3;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.application.CreateGroupModalController">
+    <children>
+        <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0">
+            <children>
+            <HBox alignment="CENTER">
+               <children>
+                      <Text fx:id="modalTitleLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Create group">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+                <VBox spacing="10.0">
+                    <children>
+                        <Label text="Name:" />
+                        <TextField fx:id="groupNameField" promptText="TVT24-O" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                    </children>
+                </VBox>
+                <VBox layoutX="10.0" layoutY="26.0" spacing="10.0">
+                    <children>
+                        <HBox alignment="CENTER">
+                            <children>
+                                <Label text="Add students:" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button maxHeight="25.0" maxWidth="25.0" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/add_icon.png" />
+                                            </image>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </ImageView>
+                                    </graphic>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <VBox alignment="TOP_CENTER" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
+                     <children>
+                                <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="Search students" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../style.css">
+                                    <left>
+                                        <Label styleClass="searchBoxLabel">
+                                            <graphic>
+                                                <ImageView fitHeight="15.0" fitWidth="22.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@/images/search_icon.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Label>
+                                    </left>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                                </CustomTextField>
+                        <ListView fx:id="studentListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="200.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-insets: 0; -fx-background-insets: 0;" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                    </children>
+                </VBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <Button fx:id="deleteButton" layoutX="444.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="Delete" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Add" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+
+            </children>
+         <padding>
+            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
+         </padding>
+        </VBox>
+    </children>
+</VBox>

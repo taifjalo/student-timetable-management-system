@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
@@ -19,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.Cursor;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -63,8 +65,6 @@ public class CalendarApp extends Application {
         CalendarView calendarView = new CalendarView();
 
         root.setCenter(calendarView);
-
-
 
         Calendar birthdays = new Calendar("Kuvaus- ja mallintamismenetelmät");
         Calendar holidays = new Calendar("Ohjelmistotekniikka");
@@ -194,6 +194,7 @@ public class CalendarApp extends Application {
         }
 
         Separator sectionDivider = new Separator();
+        VBox.setMargin(sectionDivider, new javafx.geometry.Insets(20, 0, 0, 0));
         VBox wrapper = new VBox(12, coursesSection, sectionDivider, groupsSection);
         wrapper.getStyleClass().add("source-tray-content");
         sourceScrollPane.setFitToWidth(true);
@@ -202,6 +203,7 @@ public class CalendarApp extends Application {
 
     private Node createSourceSectionNode(CalendarSource source) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        groupsLoader.setController(this);
         Node sourceSection;
         try {
             sourceSection = groupsLoader.load();
@@ -210,17 +212,23 @@ public class CalendarApp extends Application {
             return null;
         }
 
-        Text sectionTitleText = (Text) groupsLoader.getNamespace().get("sectionTitleText");
+        Label sectionTitleText = (Label) groupsLoader.getNamespace().get("sectionTitleText");
         VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
+        Button addButton = (Button) groupsLoader.getNamespace().get("addButton");
 
         if (sectionTitleText == null || groupsListContainer == null) {
             return null;
         }
 
+        // Tag the add button with the section name so the handler knows what to create
+        if (addButton != null) {
+            addButton.setUserData(source.getName());
+        }
+
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
             for (Calendar calendar : source.getCalendars()) {
-                groupsListContainer.getChildren().add(createGroupRow(calendar.getName()));
+                groupsListContainer.getChildren().add(createCalendarRow(calendar, source.getName()));
             }
         };
 
@@ -235,6 +243,7 @@ public class CalendarApp extends Application {
 
     private Node createSourceSectionNode(String sectionTitle, List<String> items) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        groupsLoader.setController(this);
         Node sourceSection;
         try {
             sourceSection = groupsLoader.load();
@@ -243,23 +252,79 @@ public class CalendarApp extends Application {
             return null;
         }
 
-        Text sectionTitleText = (Text) groupsLoader.getNamespace().get("sectionTitleText");
+        Label sectionTitleText = (Label) groupsLoader.getNamespace().get("sectionTitleText");
         VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
+        Button addButton = (Button) groupsLoader.getNamespace().get("addButton");
 
         if (sectionTitleText == null || groupsListContainer == null) {
             return null;
         }
 
+        // Tag the add button with the section name so the handler knows what to create
+        if (addButton != null) {
+            addButton.setUserData(sectionTitle);
+        }
+
         sectionTitleText.setText(sectionTitle);
         groupsListContainer.getChildren().clear();
         for (String item : items) {
-            groupsListContainer.getChildren().add(createGroupRow(item));
+            groupsListContainer.getChildren().add(createGroupRow(item, sectionTitle));
         }
 
         return sourceSection;
     }
 
-    private HBox createGroupRow(String groupName) {
+    private static String styleToHex(String style) {
+        if (style == null) return "#888888";
+        switch (style.toLowerCase()) {
+            case "style1": return "#6495ED";
+            case "style2": return "#FF8C00";
+            case "style3": return "#8B0000";
+            case "style4": return "#6B8E23";
+            case "style5": return "#800080";
+            case "style6": return "#008080";
+            case "style7": return "#C71585";
+            default:       return "#888888";
+        }
+    }
+
+    private HBox createCalendarRow(Calendar calendar, String sectionName) {
+        // Colored circle matching the calendar's style
+        Region colorDot = new Region();
+        colorDot.setMinSize(12, 12);
+        colorDot.setMaxSize(12, 12);
+        colorDot.setStyle("-fx-background-color: " + styleToHex(calendar.getStyle()) + ";");
+        HBox.setMargin(colorDot, new javafx.geometry.Insets(0, 6, 0, 0));
+
+        Text nameText = new Text(calendar.getName());
+        nameText.setStrokeWidth(0.0);
+
+        // Keep box color in sync if the style ever changes
+        calendar.styleProperty().addListener((obs, oldStyle, newStyle) ->
+                colorDot.setStyle("-fx-background-color: " + styleToHex(newStyle) + ";"));
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        ImageView editIcon = new ImageView(new Image(getClass().getResource("/images/edit_dots_icon.png").toExternalForm()));
+        editIcon.setFitWidth(15.0);
+        editIcon.setFitHeight(15.0);
+        editIcon.setPickOnBounds(true);
+        editIcon.setPreserveRatio(true);
+
+        Button actionButton = new Button();
+        actionButton.setMnemonicParsing(false);
+        actionButton.setGraphic(editIcon);
+        actionButton.setCursor(Cursor.HAND);
+        actionButton.setStyle("-fx-background-color: transparent;");
+        actionButton.setOnAction(e -> openGroupModal(calendar, toSingular(sectionName), e));
+
+        HBox row = new HBox(colorDot, nameText, spacer, actionButton);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        return row;
+    }
+
+    private HBox createGroupRow(String groupName, String sectionName) {
         Text groupNameText = new Text(groupName);
         groupNameText.setStrokeWidth(0.0);
 
@@ -276,6 +341,9 @@ public class CalendarApp extends Application {
         actionButton.setMnemonicParsing(false);
         actionButton.setGraphic(editIcon);
         actionButton.setCursor(Cursor.HAND);
+        actionButton.setStyle("-fx-background-color: transparent;");
+        // Open modal pre-filled with this group's name (edit mode = "props")
+        actionButton.setOnAction(e -> openGroupModal(groupName, toSingular(sectionName), e));
 
         HBox row = new HBox(groupNameText, spacer, actionButton);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -283,8 +351,92 @@ public class CalendarApp extends Application {
     }
 
     @FXML
+    private void handleOpenCreateGroupModal(ActionEvent event) {
+        Button source = (Button) event.getSource();
+        String sectionName = source.getUserData() != null ? source.getUserData().toString() : "Group";
+        String singular = toSingular(sectionName);
+        if ("Course".equalsIgnoreCase(singular)) {
+            openGroupModal((Calendar) null, singular, event);
+        } else {
+            openGroupModal((String) null, singular, event);
+        }
+    }
 
+    private String toSingular(String word) {
+        if (word == null || word.isEmpty()) return word;
+        if (word.endsWith("s") || word.endsWith("S")) {
+            return word.substring(0, word.length() - 1);
+        }
+        return word;
+    }
+
+    /** Called from createCalendarRow (courses) — has the actual Calendar object */
+    private void openGroupModal(Calendar calendar, String sectionName, ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"));
+            Parent root = loader.load();
+            CreateCourseModalController modalController = loader.getController();
+            modalController.setCalendar(calendar); // null = create mode, non-null = edit mode
+            modalController.applyProps();
+            showModal(root, calendar != null ? calendar.getName() : null, sectionName, event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to open course modal", e);
+        }
+    }
+
+    /** Called from createGroupRow (groups) — only has a name string */
+    private void openGroupModal(String groupName, String sectionName, ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-create-modal/create-modal.fxml"));
+            Parent root = loader.load();
+            CreateGroupModalController modalController = loader.getController();
+            if (groupName != null) modalController.setProps(groupName, List.of());
+            modalController.setSectionName(sectionName);
+            modalController.applyProps();
+            showModal(root, groupName, sectionName, event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to open group modal", e);
+        }
+    }
+
+    private void showModal(Parent root, String groupName, String sectionName, ActionEvent event) {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle(groupName != null ? "Edit " + sectionName : "Create " + sectionName);
+        dialogStage.setScene(new Scene(root));
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+        dialogStage.setResizable(false);
+        dialogStage.showAndWait();
+    }
+
+    @FXML
     private void handleProfileClick(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleGoToRegister(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/register.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleGoToLogin(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
