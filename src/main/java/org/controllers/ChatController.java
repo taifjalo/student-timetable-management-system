@@ -21,6 +21,7 @@ import org.entities.Message;
 import org.service.ChatService;
 
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class ChatController {
     private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
     private ChatService chatService = new ChatService();
     private ObservableList<Message> messages = FXCollections.observableArrayList();
-    SortedList<Message> sortedMessages = new SortedList<>(messages);
+    SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
     long userId = 5L;
     long otherId;
     private MessageDao messageDao = new MessageDao();
@@ -61,7 +62,7 @@ public class ChatController {
         updatePreviewsThread = new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(500);
 
                     List newChatPreviews = chatService.getChatPreviews(userId);
 
@@ -77,16 +78,18 @@ public class ChatController {
         updatePreviewsThread.start();
     }
 
-    private void startMessagesAutoUpdate(Long id){
+    private void startMessagesAutoUpdate(){
         updateChatThread = new Thread(()-> {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
 
-                    List newMessages = messageDao.findMessagesBetweenUsers(userId, id);
+                    Long lastId = messages.get(messages.size() - 1).getId();
+
+                    List newMessages = messageDao.findNewMessagesBetweenUsers(userId, otherId, lastId);
 
                     Platform.runLater(() -> {
-                        messages.setAll(newMessages);
+                        messages.addAll(newMessages);
                     });
                 } catch (InterruptedException e) {
                     break;
@@ -114,7 +117,7 @@ public class ChatController {
         if (updateChatThread != null) {
             updateChatThread.interrupt();
         }
-        startMessagesAutoUpdate(otherId);
+        startMessagesAutoUpdate();
     }
 
 

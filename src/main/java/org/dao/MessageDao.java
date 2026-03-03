@@ -10,6 +10,7 @@ import org.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.LongFunction;
 
 public class MessageDao {
 
@@ -24,9 +25,19 @@ public class MessageDao {
 
     public List<Message> findMessagesBetweenUsers(Long userId1, Long userId2){
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("select m FROM Message m WHERE (m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1) ORDER BY m.sentAt ASC", Message.class)
+            return em.createQuery("select m FROM Message m WHERE (m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1) ORDER BY m.id ASC", Message.class)
                     .setParameter("userId1", userId1)
                     .setParameter("userId2", userId2)
+                    .getResultList();
+        }
+    }
+
+    public List<Message> findNewMessagesBetweenUsers(Long userId1, Long userId2, Long lastMessageId) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            return em.createQuery("select m FROM Message m WHERE ((m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1)) AND m.id > :lastMessageId ORDER BY m.id ASC", Message.class)
+                    .setParameter("userId1", userId1)
+                    .setParameter("userId2", userId2)
+                    .setParameter("lastMessageId", lastMessageId)
                     .getResultList();
         }
     }
