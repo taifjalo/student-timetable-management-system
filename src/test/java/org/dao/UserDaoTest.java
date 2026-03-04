@@ -17,35 +17,38 @@ import static org.mockito.Mockito.*;
 
 class UserDaoTest {
 
-    @DisplayName("Integration Test: Tests are applied with JUnit 5 for func Save User and Commit")
-    @Test
-    void shouldSaveAndFindUserIntegration() {
+    private final UserDao userDao = new UserDao(); // For real test integration with DB.
 
-        UserDao dao = new UserDao(); // For real test integration with DB.
+    @DisplayName("Helper Method: First Create the user")
+    private User createAndSaveUser() {
 
         // Arrange New User
         User user = new User();
         user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
-        //user.setUsername("mockUser");
         user.setPasswordHash("hashed");
         user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
-        //user.setEmail("mock@test.com");
         user.setFirstName("Mock");
         user.setSureName("User");
         user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
-        //user.setPhoneNumber("0901234565");
 
 
         // Save the User:
-        dao.save(user);
+        userDao.save(user);
 
-        // Then search in the DB to find the user:
-        User found = dao.findByUsername(user.getUsername()); // the user from out DB
+        return user;
+    }
+
+    @DisplayName("Integration Test: Tests are applied with JUnit 5 for func Save User and Commit")
+    @Test
+    void testSaveAndFindUserIntegration() {
+        // Call create user to Arrange it
+        User user = createAndSaveUser();
+
+        // Then search in the DB to find and return the user:
+        User found = userDao.findByUsername(user.getUsername()); // the user from out DB
+
         assertNotNull(found);
-
-        assertEquals("integrationUser3", found.getUsername());
-
-
+        assertEquals(user.getUsername(), found.getUsername());
     }
 }
 

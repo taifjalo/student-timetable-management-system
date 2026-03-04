@@ -14,7 +14,7 @@ public class AuthService {
         this.userDao = userDao;
     }
 
-    public void register(String firstName,
+    public User register(String firstName,
                          String lastName,
                          String username,
                          String email,
@@ -40,6 +40,7 @@ public class AuthService {
 
         // save them
         userDao.save(user);
+        return user;
     }
 
 
