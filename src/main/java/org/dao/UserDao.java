@@ -2,10 +2,13 @@
 
 package org.dao;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import org.entities.User;
 import org.datasource.TimetableConnection;
+
+import java.util.List;
 
 public class UserDao {
 
@@ -46,6 +49,15 @@ public class UserDao {
                     .orElse(null);
         } finally {
             em.close();
+        }
+    }
+
+    public List<User> findUserByNameSurname(String name1, String name2) {
+        try(EntityManager em = TimetableConnection.getEntityManager()){
+            return em.createQuery("SELECT u FROM User u WHERE (u.firstName =:name1 and u.sureName = :name2) OR (u.firstName =:name2 and u.sureName = :name1)", User.class)
+                    .setParameter("name1", name1)
+                    .setParameter("name2", name2)
+                    .getResultList();
         }
     }
 }

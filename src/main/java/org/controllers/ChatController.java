@@ -9,19 +9,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import org.dao.MessageDao;
+import org.dao.UserDao;
 import org.entities.Message;
+import org.entities.User;
 import org.service.ChatService;
 
 
-
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -47,9 +51,14 @@ public class ChatController {
     @FXML
     private TextField messageTypeField;
 
+    @FXML
+    private TextField chatSearchField;
+
+
 
     private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
     private MessageDao messageDao = new MessageDao();
+    private UserDao userDao = new UserDao();
     private ChatService chatService = new ChatService(messageDao);
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
@@ -75,7 +84,7 @@ public class ChatController {
                 }
             }
         });
-        updatePreviewsThread.start();
+        //updatePreviewsThread.start();
     }
 
     private void startMessagesAutoUpdate(){
@@ -96,7 +105,7 @@ public class ChatController {
                 }
             }
         });
-        updateChatThread.start();
+        //updateChatThread.start();
     }
 
     public void rightSideVisibility(Boolean is){
@@ -200,6 +209,35 @@ public class ChatController {
     @FXML
     private void sendMessage(){
         messageDao.saveMessage(userId, otherId, messageTypeField.getText());
+    }
+
+    @FXML
+    private void searchChatUsers(){
+        String text = chatSearchField.getText();
+        System.out.println(text);
+        String[] words = text.split("\\s+");
+        List<User> users = userDao.findUserByNameSurname(words[0],words[1]);
+        if (!users.isEmpty()) {
+            try {
+                FXMLLoader containerLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-searching-container.fxml"));
+                Parent root = containerLoader.load();
+                ChatSearchingContainerController chatSearchingContainerController = containerLoader.getController();
+                List<HBox> userItems = new ArrayList<>();
+                for (User user: users){
+                    FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-user-search-results.fxml"));
+                    HBox child = userLoader.load();
+                    userItems.add(child);
+                }
+                chatSearchingContainerController.addItems(userItems);
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 

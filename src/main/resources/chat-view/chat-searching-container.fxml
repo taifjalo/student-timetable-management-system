@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+
+<VBox fx:id="chatSearchingContainer" maxHeight="1.7976931348623157E308" maxWidth="312.0" minHeight="101.0" minWidth="-Infinity" prefWidth="312.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatSearchingContainerController" />

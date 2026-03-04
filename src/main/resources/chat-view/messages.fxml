@@ -12,7 +12,7 @@
          <children>
             <VBox maxWidth="414.0" prefHeight="868.0" prefWidth="414.0" style="-fx-background-radius: 0 0 0 7; -fx-border-radius: 0 0 0 7;">
                <children>
-                  <TextField maxHeight="38.0" maxWidth="388.0" prefHeight="38.0" prefWidth="388.0" promptText="Search teachers" style="-fx-border-radius: 59px; -fx-background-radius: 59px;">
+                  <TextField fx:id="chatSearchField" maxHeight="38.0" maxWidth="388.0" onAction="#searchChatUsers" prefHeight="38.0" prefWidth="388.0" promptText="Search teachers" style="-fx-border-radius: 59px; -fx-background-radius: 59px;">
                      <VBox.margin>
                         <Insets left="12.0" top="17.0" />
                      </VBox.margin>
