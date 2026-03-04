@@ -21,7 +21,7 @@ import org.entities.Message;
 import org.service.ChatService;
 
 
-import java.time.LocalDateTime;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -123,7 +123,7 @@ public class ChatController {
 
     @FXML
     public void initialize() {
-        chatPreviews.setAll(chatService.getChatPreviews(5L));
+        chatPreviews.setAll(chatService.getChatPreviews(userId));
         chatUsers.setItems(chatPreviews);
         chatMessages.setItems(sortedMessages);
         startPreviewsAutoUpdate();
@@ -190,7 +190,9 @@ public class ChatController {
     @FXML
     private void closeChat(){
         Stage stage = (Stage) closeButton.getScene().getWindow();
-        updateChatThread.interrupt();
+        if (updateChatThread!=null) {
+            updateChatThread.interrupt();
+        }
         updatePreviewsThread.interrupt();
         stage.close();
     }
