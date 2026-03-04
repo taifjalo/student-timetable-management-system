@@ -51,7 +51,7 @@ public class ChatService {
         Boolean inList = false;
         for (ChatPreview chatPreview: chatPreviews){
             for (ChatPreview chatPreview1: oldChatPreviews){
-                if (chatPreview1.getId().equals(chatPreview.getId())){
+                if (chatPreview1.getUserId().equals(chatPreview.getUserId())){
                     inList = true;
                     chatPreview.setIsRead(chatPreview1.getIsRead());
                     break;
