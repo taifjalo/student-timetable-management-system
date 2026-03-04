@@ -1,27 +1,57 @@
 package org.dao;
 
+import org.entities.Message;
+import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Integration Test: This class needs only Tests are applied with Integration to DB, without JUnit 5 & Mock logic Tests")
 
 class MessageDaoTest {
+    private final MessageDao messageDao = new MessageDao();
+    private final UserDao userDao = new UserDao(); // For real test integration with DB.
 
-    @Test
-    void findUserMessages() {
+    @DisplayName("Helper Method: First Create the user")
+    private User createAndSaveUser() {
+
+        // Arrange New User
+        User user = new User();
+        user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
+        user.setPasswordHash("hashed");
+        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
+        user.setFirstName("Mock");
+        user.setSureName("User");
+        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
+
+
+        // Save the User:
+        userDao.save(user);
+
+        return user;
     }
 
     @Test
-    void findMessagesBetweenUsers() {
-    }
+    @DisplayName("Integration Test: Should Save And Retrieve Message Integration")
+    void shouldSaveAndRetrieveMessageIntegration() {
+        // Create users
+        User sender = createAndSaveUser();
+        User recipient = createAndSaveUser();
 
-    @Test
-    void findNewMessagesBetweenUsers() {
-    }
+        messageDao.saveMessage(sender.getId(), recipient.getId(), "Hello Integration");
 
-    @Test
-    void saveMessage() {
+        List<Message> messages =
+                messageDao.findMessagesBetweenUsers(
+                        sender.getId(),
+                        recipient.getId()
+                );
+
+        assertEquals(1, messages.size());
+        assertEquals("Hello Integration", messages.get(0).getContent());
+
     }
 }
