@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
+            <version>5.15.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -65,7 +65,15 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
+            <version>5.15.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Subclass mock maker for Java 25+ -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-subclass</artifactId>
+            <version>5.15.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -232,7 +240,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.CalendarApp</mainClass>
+                            <mainClass>org.application.CalendarApp</mainClass>
                         </configuration>
                     </execution>
                 </executions>
