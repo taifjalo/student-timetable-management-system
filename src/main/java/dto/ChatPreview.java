@@ -33,7 +33,7 @@ public class ChatPreview {
         this.isRead = isRead;
     }
 
-    public Long getId (){
+    public Long getUserId (){
         return id;
     }
 }

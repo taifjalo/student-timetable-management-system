@@ -15,6 +15,7 @@ import java.util.function.LongFunction;
 public class MessageDao {
 
 
+
     public List<Message> findUserMessages (Long userId){
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             return em.createQuery("SELECT m FROM Message m WHERE m.senderUser.id = :userId or m.recipientUser.id = :userId ORDER BY m.sentAt DESC ", Message.class)

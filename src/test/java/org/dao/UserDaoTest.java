@@ -40,7 +40,7 @@ class UserDaoTest {
         dao.save(user);
 
         // Then search in the DB to find the user:
-        User found = dao.findByUsername("integrationUser3"); // the user from out DB
+        User found = dao.findByUsername(user.getUsername()); // the user from out DB
         assertNotNull(found);
 
         assertEquals("integrationUser3", found.getUsername());

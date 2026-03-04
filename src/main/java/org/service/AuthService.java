@@ -9,7 +9,7 @@ public class AuthService {
 
     private final UserDao userDao;
 
-    // Dependency Injectio
+    // Constructor: @InjectMocks + @Mock@ Dependency for testing.
     public AuthService(UserDao userDao) {
         this.userDao = userDao;
     }
