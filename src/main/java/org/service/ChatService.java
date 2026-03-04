@@ -37,4 +37,24 @@ public class ChatService {
         }
     return new ArrayList<>(chatPreviews.values());
     }
+
+    public List<ChatPreview> getNewChatPreviews(List<ChatPreview> oldChatPreviews, Long id){
+        List <ChatPreview>  chatPreviews = getChatPreviews(id);
+        List <ChatPreview> newChatPreviews = new ArrayList<>();
+        Boolean inList = false;
+        for (ChatPreview chatPreview: chatPreviews){
+            for (ChatPreview chatPreview1: oldChatPreviews){
+                if (chatPreview1.getId().equals(chatPreview.getId())){
+                    inList = true;
+                    chatPreview.setIsRead(chatPreview1.getIsRead());
+                    break;
+                };
+            }
+            if (!inList) {
+                newChatPreviews.add(chatPreview);
+            }
+            inList = false;
+        }
+        return newChatPreviews;
+    }
 }

@@ -62,12 +62,12 @@ public class ChatController {
         updatePreviewsThread = new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
 
-                    List newChatPreviews = chatService.getChatPreviews(userId);
+                    List newChatPreviews = chatService.getNewChatPreviews(chatPreviews, userId);
 
                     Platform.runLater(() -> {
-                        chatPreviews.setAll(newChatPreviews);
+                        chatPreviews.addAll(newChatPreviews);
                     });
 
                 } catch (InterruptedException e) {
@@ -82,7 +82,7 @@ public class ChatController {
         updateChatThread = new Thread(()-> {
             while (true) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
 
                     Long lastId = messages.get(messages.size() - 1).getId();
 

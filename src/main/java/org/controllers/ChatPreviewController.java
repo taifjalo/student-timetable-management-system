@@ -26,7 +26,7 @@ public class ChatPreviewController {
     }
 
     public void setIsRead(Boolean isRead){
-        isReadDot.setVisible(isRead);
+        isReadDot.setVisible(!isRead);
     }
 
     public void setChatController(ChatController chatController) {
@@ -42,6 +42,7 @@ public class ChatPreviewController {
         chatController.rightSideVisibility(true);
         chatController.setRightSideName(chatPreview.getName(), chatPreview.getSurname());
         chatController.setOtherId(chatPreview.getId());
+        chatPreview.setIsRead(true);
         chatController.loadMessages();
     }
 
