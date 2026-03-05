@@ -64,7 +64,6 @@ public class NotificationsPopupController {
 //                    "-fx-background-color: " + (unread ? "#00956D" : "transparent") + ";" +
 //                    "-fx-background-radius: 50%;");
 
-            // ...existing code...
 
             Label titleLabel = new Label(title);
             titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13;");
