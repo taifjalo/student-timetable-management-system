@@ -1,4 +1,4 @@
-package org.application;
+package org.controllers;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
@@ -39,12 +39,10 @@ public class CreateCourseModalController {
         "#800080", "#008080", "#C71585"
     };
 
-    /** Create mode — no calendar pre-selected */
     public void setProps(String courseName) {
         this.isEditMode = false;
     }
 
-    /** Edit mode — pass the actual Calendar so we can update its style */
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
         this.isEditMode = calendar != null;
@@ -91,7 +89,6 @@ public class CreateCourseModalController {
 
     private void selectStyle(Style style, String color, String name) {
         selectedStyle = style;
-        // Update the MenuButton's own graphic to show the picked color
         Region dot = new Region();
         dot.setMinSize(12, 12);
         dot.setMaxSize(12, 12);

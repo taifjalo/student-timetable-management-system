@@ -52,7 +52,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
+            <Button fx:id="btnAlerts" onAction="#handleAlertsClick" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
