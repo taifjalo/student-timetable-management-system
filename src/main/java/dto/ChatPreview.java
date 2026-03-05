@@ -2,19 +2,21 @@ package dto;
 
 
 import jakarta.persistence.Id;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 public class ChatPreview {
 
     private Long id;
     private String name;
     private String surname;
-    private Boolean isRead;
+    private final BooleanProperty isRead = new SimpleBooleanProperty();
 
     public ChatPreview (Long id, String name, String surname, Boolean isRead){
         this.id = id;
         this.name = name;
         this.surname = surname;
-        this.isRead = isRead;
+        setIsRead(isRead);
     }
 
     public String getName(){
@@ -25,13 +27,11 @@ public class ChatPreview {
         return surname;
     }
 
-    public Boolean getIsRead(){
-        return isRead;
-    }
 
-    public void setIsRead(Boolean isRead){
-        this.isRead = isRead;
-    }
+
+    public boolean getIsRead() { return isRead.get(); }
+    public void setIsRead(boolean value) { isRead.set(value); }
+    public BooleanProperty isReadProperty() { return isRead; }
 
     public Long getUserId (){
         return id;

@@ -53,7 +53,7 @@ public class ChatService {
             for (ChatPreview chatPreview1: oldChatPreviews){
                 if (chatPreview1.getUserId().equals(chatPreview.getUserId())){
                     inList = true;
-                    chatPreview.setIsRead(chatPreview1.getIsRead());
+                    chatPreview1.setIsRead(chatPreview.getIsRead());
                     break;
                 };
             }

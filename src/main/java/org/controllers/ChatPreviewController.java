@@ -37,6 +37,13 @@ public class ChatPreviewController {
         this.chatPreview=chatPreview;
     }
 
+    public void bindPreview(ChatPreview preview) {
+        isReadDot.visibleProperty().unbind();
+
+        isReadDot.visibleProperty().bind(
+                preview.isReadProperty().not()
+        );
+    }
 
 
     @FXML

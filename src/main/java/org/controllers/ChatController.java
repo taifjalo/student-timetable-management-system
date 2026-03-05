@@ -2,6 +2,7 @@ package org.controllers;
 
 import dto.ChatPreview;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -58,7 +59,10 @@ public class ChatController {
 
 
 
-    private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
+    private ObservableList<ChatPreview> chatPreviews =
+            FXCollections.observableArrayList(
+                    preview -> new Observable[] { preview.isReadProperty() }
+            );
     private SortedList<ChatPreview> chatPreviewsSorted = new SortedList<>(chatPreviews, Comparator.comparing(ChatPreview::getIsRead));
     private MessageDao messageDao = new MessageDao();
     private UserDao userDao = new UserDao();
@@ -72,14 +76,20 @@ public class ChatController {
 
     public void startPreviewsAutoUpdate() {
         updatePreviewsThread = new Thread(() -> {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Thread.sleep(500);
 
-                    List newChatPreviews = chatService.getNewChatPreviews(chatPreviews, userId);
+                    List<ChatPreview> newChatPreviews = chatService.getNewChatPreviews(chatPreviews, userId);
 
                     Platform.runLater(() -> {
+                        for (ChatPreview chatPreview : newChatPreviews) {
+                            if (chatPreview.getUserId().equals(otherId)) {
+                                chatPreview.setIsRead(true);
+                            }
+                        }
                         chatPreviews.addAll(newChatPreviews);
+                        chatMessages.scrollTo(chatMessages.getItems().size() - 1);
                     });
 
                 } catch (InterruptedException e) {
@@ -92,7 +102,7 @@ public class ChatController {
 
     private void startMessagesAutoUpdate(){
         updateChatThread = new Thread(()-> {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     List newMessages;
                     Thread.sleep(500);
@@ -117,6 +127,7 @@ public class ChatController {
         });
         updateChatThread.start();
     }
+
     public void chooseUserFromLeftSide(ChatPreview chatPreview){
         chatUsers.getSelectionModel().select(chatPreview);
         openChat(chatPreview);
@@ -189,7 +200,7 @@ public class ChatController {
                         cpController.setChatController(ChatController.this);
                         cpController.setChatPreview(preview);
                         cpController.setTeacherName(preview.getName(), preview.getSurname());
-                        cpController.setIsRead(preview.getIsRead());
+                        cpController.bindPreview(preview);
 
                         setPadding(Insets.EMPTY);
                         setGraphic(root);
