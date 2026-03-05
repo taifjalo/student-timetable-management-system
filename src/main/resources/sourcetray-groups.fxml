@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+        <children>
+            <HBox alignment="CENTER_LEFT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0">
+                <children>
+                    <Label fx:id="sectionTitleText" style="-fx-font-weight: bold; -fx-font-size: 13px;" text="Group">
+               <font>
+                  <Font size="12.0" />
+               </font></Label>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleOpenCreateGroupModal">
+                        <graphic>
+                            <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@images/add_icon.png" />
+                                </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                            </ImageView>
+                        </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+                    </Button>
+                </children>
+            </HBox>
+            <VBox fx:id="groupsListContainer" spacing="10.0">
+                <children>
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/edit_dots_icon.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                            </Button>
+                        </children>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0">
+                        <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/edit_dots_icon.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                            </Button>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+        </children>
+    </VBox>
