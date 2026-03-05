@@ -17,7 +17,6 @@ public class CreateGroupModalController {
     @FXML private Button deleteButton;
     @FXML private Button confirmButton;
 
-    // "Props" — set these before showAndWait()
     private String initialName = "";
     private List<String> initialStudents = List.of();
     private boolean isEditMode = false;
@@ -27,7 +26,6 @@ public class CreateGroupModalController {
         this.sectionName = sectionName != null ? sectionName : "Item";
     }
 
-    /** Call this before showAndWait() to pre-populate the modal (edit mode) */
     public void setProps(String groupName, List<String> students) {
         this.initialName = groupName != null ? groupName : "";
         this.initialStudents = students != null ? students : List.of();
@@ -37,7 +35,6 @@ public class CreateGroupModalController {
     @FXML
     public void initialize() {}
 
-    /** Called by CalendarApp after setProps() to apply props to the UI */
     public void applyProps() {
         if (isEditMode) {
             modalTitleLabel.setText("Edit " + sectionName);

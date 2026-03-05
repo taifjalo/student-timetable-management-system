@@ -378,7 +378,6 @@ public class CalendarApp extends Application {
         return word;
     }
 
-    /** Called from createCalendarRow (courses) — has the actual Calendar object */
     private void openGroupModal(Calendar calendar, String sectionName, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"));
@@ -393,7 +392,6 @@ public class CalendarApp extends Application {
         }
     }
 
-    /** Called from createGroupRow (groups) — only has a name string */
     private void openGroupModal(String groupName, String sectionName, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-create-modal/create-modal.fxml"));
