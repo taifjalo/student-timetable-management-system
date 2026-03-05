@@ -28,12 +28,13 @@ public class User {
     private String email;
 
 
-
     @Column(name="phone_number")
     private String phoneNumber;
 
     @Column(name="password", nullable=false)
     private String passwordHash;
+
+
 
     /*
     @Column(nullable=false)

@@ -16,8 +16,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
+import javafx.stage.StageStyle;
 import org.dao.MessageDao;
 import org.dao.UserDao;
 import org.entities.Message;
@@ -62,16 +64,16 @@ public class ChatController {
     private ChatService chatService = new ChatService(messageDao);
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
-    long userId = 6L;
+    long userId = 86L;
     long otherId;
     private Thread updateChatThread;
     private Thread updatePreviewsThread;
 
-    private void startPreviewsAutoUpdate() {
+    public void startPreviewsAutoUpdate() {
         updatePreviewsThread = new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
 
                     List newChatPreviews = chatService.getNewChatPreviews(chatPreviews, userId);
 
@@ -84,19 +86,22 @@ public class ChatController {
                 }
             }
         });
-        //updatePreviewsThread.start();
+        updatePreviewsThread.start();
     }
 
     private void startMessagesAutoUpdate(){
         updateChatThread = new Thread(()-> {
             while (true) {
                 try {
-                    Thread.sleep(100);
-
-                    Long lastId = messages.get(messages.size() - 1).getId();
-
-                    List newMessages = messageDao.findNewMessagesBetweenUsers(userId, otherId, lastId);
-
+                    List newMessages;
+                    Thread.sleep(10);
+                    if (!messages.isEmpty()) {
+                        Long lastId = messages.get(messages.size() - 1).getId();
+                        newMessages = messageDao.findNewMessagesBetweenUsers(userId, otherId, lastId);
+                    }
+                    else {
+                        newMessages = messageDao.findMessagesBetweenUsers(userId, otherId);
+                    }
                     Platform.runLater(() -> {
                         messages.addAll(newMessages);
                     });
@@ -105,8 +110,9 @@ public class ChatController {
                 }
             }
         });
-        //updateChatThread.start();
+        updateChatThread.start();
     }
+
 
     public void rightSideVisibility(Boolean is){
         chatRightSide.setVisible(is);
@@ -128,6 +134,18 @@ public class ChatController {
         }
         startMessagesAutoUpdate();
     }
+
+    public void addChatPreview(ChatPreview chatPreview){
+        chatPreviews.add(chatPreview);
+    }
+
+    public void stopAllThreads(){
+        if (updateChatThread!=null) {
+            updateChatThread.interrupt();
+        }
+        updatePreviewsThread.interrupt();
+    }
+
 
 
     @FXML
@@ -208,13 +226,14 @@ public class ChatController {
 
     @FXML
     private void sendMessage(){
+        System.out.println("Sender: " + userId);
+        System.out.println("Recipient: " + otherId);
         messageDao.saveMessage(userId, otherId, messageTypeField.getText());
     }
 
     @FXML
     private void searchChatUsers(){
         String text = chatSearchField.getText();
-        System.out.println(text);
         String[] words = text.split("\\s+");
         List<User> users = userDao.findUserByNameSurname(words[0],words[1]);
         if (!users.isEmpty()) {
@@ -222,16 +241,24 @@ public class ChatController {
                 FXMLLoader containerLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-searching-container.fxml"));
                 Parent root = containerLoader.load();
                 ChatSearchingContainerController chatSearchingContainerController = containerLoader.getController();
+                chatSearchingContainerController.setChatController(this);
                 List<HBox> userItems = new ArrayList<>();
                 for (User user: users){
                     FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-user-search-results.fxml"));
                     HBox child = userLoader.load();
+                    ChatUserSearchResultController cUSRController =userLoader.getController();
+                    cUSRController.setUser(user);
+                    cUSRController.setChatController(this);
+                    cUSRController.setChatSearchingContainerController(chatSearchingContainerController);
                     userItems.add(child);
                 }
                 chatSearchingContainerController.addItems(userItems);
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root));
-                stage.show();
+                Stage modalStage = new Stage();
+                modalStage.setScene(new Scene(root));
+                modalStage.initStyle(StageStyle.UNDECORATED);
+                modalStage.initModality(Modality.APPLICATION_MODAL);
+                modalStage.initOwner(closeButton.getScene().getWindow());
+                modalStage.showAndWait();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -239,6 +266,8 @@ public class ChatController {
 
 
     }
+
+
 
 
 
