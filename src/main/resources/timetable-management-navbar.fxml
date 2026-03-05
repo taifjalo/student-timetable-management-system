@@ -8,7 +8,7 @@
 <?import org.controlsfx.control.*?>
 <?import org.controlsfx.control.textfield.*?>
 
-<BorderPane fx:controller="org.application.CalendarApp" minWidth="-Infinity" prefHeight="50.0" prefWidth="1000.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #C8C8C8; -fx-border-width: 0 0 1 0;" xmlns:controlsfx="http://controlsfx.org/control" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:controller="org.controllers.NavbarController" minWidth="-Infinity" prefHeight="50.0" prefWidth="1000.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #C8C8C8; -fx-border-width: 0 0 1 0;" xmlns:controlsfx="http://controlsfx.org/control" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
       <center>
          <SegmentedButton BorderPane.alignment="CENTER">
                <toggleGroup>
