@@ -59,12 +59,13 @@ public class ChatController {
 
 
     private ObservableList<ChatPreview> chatPreviews = FXCollections.observableArrayList();
+    private SortedList<ChatPreview> chatPreviewsSorted = new SortedList<>(chatPreviews, Comparator.comparing(ChatPreview::getIsRead));
     private MessageDao messageDao = new MessageDao();
     private UserDao userDao = new UserDao();
     private ChatService chatService = new ChatService(messageDao);
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
-    long userId = 86L;
+    long userId;
     long otherId;
     private Thread updateChatThread;
     private Thread updatePreviewsThread;
@@ -73,7 +74,7 @@ public class ChatController {
         updatePreviewsThread = new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(500);
 
                     List newChatPreviews = chatService.getNewChatPreviews(chatPreviews, userId);
 
@@ -94,7 +95,7 @@ public class ChatController {
             while (true) {
                 try {
                     List newMessages;
-                    Thread.sleep(10);
+                    Thread.sleep(500);
                     if (!messages.isEmpty()) {
                         Long lastId = messages.get(messages.size() - 1).getId();
                         newMessages = messageDao.findNewMessagesBetweenUsers(userId, otherId, lastId);
@@ -104,7 +105,11 @@ public class ChatController {
                     }
                     Platform.runLater(() -> {
                         messages.addAll(newMessages);
+                        for (Message message: messages){
+                            message.setRead(true);
+                        }
                     });
+                    messageDao.markMessagesAsRead(userId, otherId);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -112,11 +117,23 @@ public class ChatController {
         });
         updateChatThread.start();
     }
-
+    public void chooseUserFromLeftSide(ChatPreview chatPreview){
+        chatUsers.getSelectionModel().select(chatPreview);
+        openChat(chatPreview);
+    }
 
     public void rightSideVisibility(Boolean is){
         chatRightSide.setVisible(is);
         chatRightSide.setManaged(is);
+    }
+
+    public void openChat(ChatPreview preview) {
+        preview.setIsRead(true);
+        chatUsers.refresh();
+        rightSideVisibility(true);
+        setRightSideName(preview.getName(), preview.getSurname());
+        setOtherId(preview.getUserId());
+        loadMessages();
     }
 
     public void setRightSideName(String name, String surname){
@@ -127,10 +144,18 @@ public class ChatController {
         this.otherId = id;
     }
 
+    public void setUserId (Long id){
+        this.userId = id;
+    }
+
     public void loadMessages(){
-        messages.setAll(messageDao.findMessagesBetweenUsers(userId, otherId));
         if (updateChatThread != null) {
             updateChatThread.interrupt();
+        }
+        messages.setAll(messageDao.findMessagesBetweenUsers(userId, otherId));
+        messageDao.markMessagesAsRead(userId, otherId);
+        for (Message message: messages){
+            message.setRead(true);
         }
         startMessagesAutoUpdate();
     }
@@ -139,19 +164,11 @@ public class ChatController {
         chatPreviews.add(chatPreview);
     }
 
-    public void stopAllThreads(){
-        if (updateChatThread!=null) {
-            updateChatThread.interrupt();
-        }
-        updatePreviewsThread.interrupt();
-    }
-
-
 
     @FXML
     public void initialize() {
         chatPreviews.setAll(chatService.getChatPreviews(userId));
-        chatUsers.setItems(chatPreviews);
+        chatUsers.setItems(chatPreviewsSorted);
         chatMessages.setItems(sortedMessages);
         startPreviewsAutoUpdate();
         rightSideVisibility(false);

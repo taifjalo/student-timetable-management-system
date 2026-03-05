@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="312.0" minHeight="-Infinity" minWidth="312.0" onMouseClicked="#chooseTeacher" prefHeight="101.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatUserSearchResultController">
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="312.0" minHeight="-Infinity" minWidth="312.0" onMouseClicked="#chooseUser" prefHeight="101.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.ChatUserSearchResultController">
    <children>
       <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
          <image>

@@ -64,4 +64,15 @@ public class MessageDao {
         }
     }
 
+    public void markMessagesAsRead(Long currentUserId, Long otherUserId) {
+        try (EntityManager em = TimetableConnection.getEntityManager()) {
+            em.getTransaction().begin();
+            em.createQuery(" UPDATE Message m SET m.read = true WHERE m.recipientUser.id = :currentUserId AND m.senderUser.id = :otherUserId AND m.read = false ")
+                    .setParameter("currentUserId", currentUserId)
+                    .setParameter("otherUserId", otherUserId)
+                    .executeUpdate();
+            em.getTransaction().commit();
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.controllers.ChatController;
 
 
 public class ChatWindow extends Application {
@@ -15,18 +16,18 @@ public class ChatWindow extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"));
         Parent root = loader.load();
+        ChatController ChatController = loader.getController();
+        ChatController.setUserId(Long.valueOf(getParameters().getRaw().get(0)));
         Scene scene = new Scene(root);
         scene.setFill(null);
 
         stage.setTitle("My app");
         stage.setScene(scene);
-        stage.initStyle(StageStyle.UNDECORATED);
-        stage.initStyle(StageStyle.TRANSPARENT);
         stage.show();
     }
 
 
     public static void main (String[] args) {
-            launch();
+            launch(args);
     }
 }

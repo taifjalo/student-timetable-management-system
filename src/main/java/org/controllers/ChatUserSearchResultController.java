@@ -28,10 +28,10 @@ public class ChatUserSearchResultController {
     }
 
     @FXML
-    public void chooseTeacher(){
+    public void chooseUser(){
         cSCController.closeModal();
         ChatPreview chatPreview = new ChatPreview(user.getId(), user.getFirstName(), user.getSureName(), true);
-
         chatController.addChatPreview(chatPreview);
+        chatController.chooseUserFromLeftSide(chatPreview);
     }
 }

@@ -37,13 +37,11 @@ public class ChatPreviewController {
         this.chatPreview=chatPreview;
     }
 
+
+
     @FXML
     public void openChat(){
-        chatController.rightSideVisibility(true);
-        chatController.setRightSideName(chatPreview.getName(), chatPreview.getSurname());
-        chatController.setOtherId(chatPreview.getUserId());
-        chatPreview.setIsRead(true);
-        chatController.loadMessages();
+        chatController.openChat(chatPreview);
     }
 
 
