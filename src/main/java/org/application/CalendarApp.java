@@ -44,7 +44,6 @@ public class CalendarApp extends Application {
     @FXML private ToggleButton calViewMonth;
     @FXML private ToggleButton calViewYear;
     @FXML private CustomTextField fieldSearch;
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -58,7 +57,6 @@ public class CalendarApp extends Application {
         this.calViewWeek = controller.calViewWeek;
         this.calViewMonth = controller.calViewMonth;
         this.calViewYear = controller.calViewYear;
-
         BorderPane root = new BorderPane();
         root.setTop(navbar);
 
@@ -92,6 +90,14 @@ public class CalendarApp extends Application {
         // Disable default calendarfx navbar
         calendarView.setShowToolBar(false);
         calendarView.showWeekPage();
+
+        // Replace the default event pop-over content with our custom version
+        // that adds an "Extra Details" accordion section (location, description, instructor).
+        calendarView.setEntryDetailsPopOverContentCallback(param ->
+                new CustomEntryPopOverContentPane(
+                        param.getPopOver(),
+                        param.getDateControl(),
+                        param.getEntry()));
 
         // Bind search field to CalendarView search
         fieldSearch.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -409,6 +415,25 @@ public class CalendarApp extends Application {
         dialogStage.initOwner(((Node) event.getSource()).getScene().getWindow());
         dialogStage.setResizable(false);
         dialogStage.showAndWait();
+    }
+
+    @FXML
+    private void handleAlertsClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/notifications-popup/notifications-popup.fxml"));
+            javafx.scene.Node content = loader.load();
+
+            org.controlsfx.control.PopOver popOver = new org.controlsfx.control.PopOver(content);
+            popOver.setArrowLocation(org.controlsfx.control.PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setDetachable(false);
+            popOver.setAnimated(false);
+            popOver.setHeaderAlwaysVisible(false);
+            popOver.setArrowSize(10);
+            popOver.show((javafx.scene.Node) event.getSource());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

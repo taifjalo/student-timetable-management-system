@@ -62,7 +62,7 @@ public class ChatController {
     private ChatService chatService = new ChatService(messageDao);
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
-    long userId = 5L;
+    long userId = 6L;
     long otherId;
     private Thread updateChatThread;
     private Thread updatePreviewsThread;
