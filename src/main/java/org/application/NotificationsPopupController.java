@@ -46,10 +46,10 @@ public class NotificationsPopupController {
         }
     }
 
-    @FXML
-    private void handleMarkAllRead(MouseEvent event) {
-        rows.forEach(NotificationRow::markRead);
-    }
+//    @FXML
+//    private void handleMarkAllRead(MouseEvent event) {
+//        rows.forEach(NotificationRow::markRead);
+//    }
 
     private static class NotificationRow {
 
@@ -60,9 +60,11 @@ public class NotificationsPopupController {
             unreadDot = new Region();
             unreadDot.setMinSize(8, 8);
             unreadDot.setMaxSize(8, 8);
-            unreadDot.setStyle(
-                    "-fx-background-color: " + (unread ? "#00956D" : "transparent") + ";" +
-                    "-fx-background-radius: 50%;");
+//            unreadDot.setStyle(
+//                    "-fx-background-color: " + (unread ? "#00956D" : "transparent") + ";" +
+//                    "-fx-background-radius: 50%;");
+
+            // ...existing code...
 
             Label titleLabel = new Label(title);
             titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13;");
@@ -79,36 +81,37 @@ public class NotificationsPopupController {
             textCol.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(textCol, javafx.scene.layout.Priority.ALWAYS);
 
-            HBox row = new HBox(10, unreadDot, textCol);
+//            HBox row = new HBox(10, unreadDot, textCol);
+            HBox row = new HBox(10, textCol);
             row.setAlignment(javafx.geometry.Pos.TOP_LEFT);
             row.setPadding(new Insets(10, 16, 10, 16));
             row.setMaxWidth(Double.MAX_VALUE);
-            row.setStyle(unread
-                    ? "-fx-background-color: #F0FAF6;"
-                    : "-fx-background-color: white;");
+//            row.setStyle(unread
+//                    ? "-fx-background-color: #F0FAF6;"
+//                    : "-fx-background-color: white;");
 
             javafx.scene.control.Separator sep = new javafx.scene.control.Separator();
 
             root = new VBox(row, sep);
 
-            row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #E8F5F0; -fx-cursor: hand;"));
-            row.setOnMouseExited(e -> row.setStyle(
-                    isUnread() ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;"));
+//            row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #E8F5F0; -fx-cursor: hand;"));
+//            row.setOnMouseExited(e -> row.setStyle(
+//                    isUnread() ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;"));
         }
 
         VBox getRoot() { return root; }
 
-        private boolean isUnread() {
-            return !unreadDot.getStyle().contains("transparent");
-        }
-
-        void markRead() {
-            unreadDot.setStyle("-fx-background-color: transparent; -fx-background-radius: 50%;");
-
-            if (!root.getChildren().isEmpty() && root.getChildren().get(0) instanceof HBox row) {
-                row.setStyle("-fx-background-color: white;");
-            }
-        }
+//        private boolean isUnread() {
+//            return !unreadDot.getStyle().contains("transparent");
+//        }
+//
+//        void markRead() {
+//            unreadDot.setStyle("-fx-background-color: transparent; -fx-background-radius: 50%;");
+//
+//            if (!root.getChildren().isEmpty() && root.getChildren().get(0) instanceof HBox row) {
+//                row.setStyle("-fx-background-color: white;");
+//            }
+//        }
     }
 }
 
