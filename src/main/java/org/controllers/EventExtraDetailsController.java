@@ -1,7 +1,6 @@
-package org.application;
+package org.controllers;
 
 import com.calendarfx.model.Entry;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

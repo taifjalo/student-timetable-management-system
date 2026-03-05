@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import org.controllers.EventExtraDetailsController;
 import org.controlsfx.control.PopOver;
 
 import java.util.List;

@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.controllers.CreateCourseModalController;
+import org.controllers.CreateGroupModalController;
 import org.controlsfx.control.textfield.CustomTextField;
 import javafx.scene.Parent;
 import javafx.scene.Node;
