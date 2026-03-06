@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -56,7 +57,7 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField prefHeight="40.0" promptText="Käyttäjänimi">
+                              <TextField fx:id="usernameField" prefHeight="40.0" promptText="Käyttäjänimi">
                                  <padding>
                                     <Insets left="10.0" right="10.0" />
                                  </padding>
@@ -73,17 +74,17 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField prefHeight="40.0" promptText="Salasana">
+                              <PasswordField fx:id="passwordField" prefHeight="40.0" promptText="Salasana">
                                  <padding>
                                     <Insets left="10.0" right="10.0" />
                                  </padding>
                                  <VBox.margin>
                                     <Insets bottom="10.0" />
                                  </VBox.margin>
-                              </TextField>
+                              </PasswordField>
                            </children>
                         </VBox>
-                        <Button mnemonicParsing="false" style="-fx-background-color: #00B484;" text="Kirjaudu" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#handleLogin" style="-fx-background-color: #00B484;" text="Kirjaudu" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
@@ -103,6 +104,9 @@
                               <Insets top="10.0" />
                            </VBox.margin>
                         </TextFlow>
+                        <Label fx:id="messageLabel" textFill="#ff4400">
+                           <VBox.margin><Insets top="8.0" /></VBox.margin>
+                        </Label>
                      </children>
                      <padding>
                         <Insets left="60.0" right="60.0" />
