@@ -61,6 +61,27 @@ public class UserDao {
         }
     }
 
+    public List<User> findAll() {
+        try (EntityManager em = TimetableConnection.getEntityManager()) {
+            return em.createQuery(
+                    "SELECT u FROM User u ORDER BY u.firstName ASC, u.sureName ASC",
+                    User.class
+            ).getResultList();
+        }
+    }
+
+    public List<User> searchByName(String query) {
+        try (EntityManager em = TimetableConnection.getEntityManager()) {
+            String pattern = "%" + query.toLowerCase() + "%";
+            return em.createQuery(
+                    "SELECT u FROM User u WHERE LOWER(u.firstName) LIKE :q " +
+                    "OR LOWER(u.sureName) LIKE :q " +
+                    "OR LOWER(CONCAT(u.firstName, ' ', u.sureName)) LIKE :q " +
+                    "ORDER BY u.firstName ASC, u.sureName ASC",
+                    User.class
+            ).setParameter("q", pattern).getResultList();
+        }
+    }
 
 }
 

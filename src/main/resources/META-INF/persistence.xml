@@ -7,6 +7,8 @@
         <class>org.entities.User</class>
         <class>org.entities.Lesson</class>
         <class>org.entities.Course</class>
+        <class>org.entities.StudentGroup</class>
+        <class>org.entities.StudentProfile</class>
 
 
         <properties>

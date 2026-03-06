@@ -25,13 +25,18 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.entities.StudentGroup;
 
 public class SourceTrayController {
 
     private CalendarSource calendarSource;
+    private ObservableList<StudentGroup> groupsList;
 
-    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<String> groups) {
+    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<StudentGroup> groups) {
         this.calendarSource = courseSource;
+        this.groupsList = FXCollections.observableArrayList(groups);
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
@@ -41,7 +46,7 @@ public class SourceTrayController {
         if (sourceScrollPane == null || sourceScrollPane.getContent() == null) return;
 
         Node coursesSection = createSourceSectionNode(courseSource);
-        Node groupsSection = createSourceSectionNode("Groups", groups);
+        Node groupsSection = createGroupsSectionNode("Groups", groupsList);
         if (coursesSection == null || groupsSection == null) return;
 
         Separator sectionDivider = new Separator();
@@ -87,7 +92,7 @@ public class SourceTrayController {
         return sourceSection;
     }
 
-    private Node createSourceSectionNode(String sectionTitle, List<String> items) {
+    private Node createGroupsSectionNode(String sectionTitle, ObservableList<StudentGroup> items) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
         Node sourceSection;
@@ -107,10 +112,30 @@ public class SourceTrayController {
         if (addButton != null) addButton.setUserData(sectionTitle);
 
         sectionTitleText.setText(sectionTitle);
+
+        // Render initial rows
         groupsListContainer.getChildren().clear();
-        for (String item : items) {
-            groupsListContainer.getChildren().add(createGroupRow(item, sectionTitle));
+        for (StudentGroup group : items) {
+            groupsListContainer.getChildren().add(createGroupRow(group, sectionTitle));
         }
+
+        // Listen for new groups added/removed so the tray updates live
+        items.addListener((javafx.collections.ListChangeListener<StudentGroup>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (StudentGroup added : change.getAddedSubList()) {
+                        groupsListContainer.getChildren().add(createGroupRow(added, sectionTitle));
+                    }
+                }
+                if (change.wasRemoved()) {
+                    // Rebuild on removal — simplest safe approach
+                    groupsListContainer.getChildren().clear();
+                    for (StudentGroup group : items) {
+                        groupsListContainer.getChildren().add(createGroupRow(group, sectionTitle));
+                    }
+                }
+            }
+        });
 
         return sourceSection;
     }
@@ -122,7 +147,7 @@ public class SourceTrayController {
         if ("Course".equalsIgnoreCase(singular)) {
             openGroupModal((Calendar) null, singular, event);
         } else {
-            openGroupModal((String) null, singular, event);
+            openGroupModal((StudentGroup) null, singular, event);
         }
     }
 
@@ -141,15 +166,18 @@ public class SourceTrayController {
         }
     }
 
-    private void openGroupModal(String groupName, String sectionName, ActionEvent event) {
+    private void openGroupModal(StudentGroup group, String sectionName, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-create-modal/create-modal.fxml"));
             Parent root = loader.load();
             CreateGroupModalController modalController = loader.getController();
-            if (groupName != null) modalController.setProps(groupName, List.of());
+            if (group != null) {
+                modalController.setGroup(group);
+            }
             modalController.setSectionName(sectionName);
+            modalController.setGroupsList(groupsList);
             modalController.applyProps();
-            showModal(root, groupName, sectionName, event);
+            showModal(root, group != null ? group.getFieldOfStudies() : null, sectionName, event);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to open group modal", e);
@@ -201,8 +229,8 @@ public class SourceTrayController {
         return row;
     }
 
-    private HBox createGroupRow(String groupName, String sectionName) {
-        Text groupNameText = new Text(groupName);
+    private HBox createGroupRow(StudentGroup group, String sectionName) {
+        Text groupNameText = new Text(group.getFieldOfStudies());
         groupNameText.setStrokeWidth(0.0);
 
         Region spacer = new Region();
@@ -219,7 +247,7 @@ public class SourceTrayController {
         actionButton.setGraphic(editIcon);
         actionButton.setCursor(Cursor.HAND);
         actionButton.setStyle("-fx-background-color: transparent;");
-        actionButton.setOnAction(e -> openGroupModal(groupName, toSingular(sectionName), e));
+        actionButton.setOnAction(e -> openGroupModal(group, toSingular(sectionName), e));
 
         HBox row = new HBox(groupNameText, spacer, actionButton);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
