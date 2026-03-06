@@ -13,6 +13,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.controllers.NavbarController;
 import org.controllers.SourceTrayController;
+import org.dao.CourseDao;
+import org.entities.Course;
+import org.service.CourseService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,16 +40,19 @@ public class CalendarApp extends Application {
         // Wire navbar toggle buttons and search to the calendar view
         navbarController.setCalendarView(calendarView);
 
-        Calendar birthdays = new Calendar("Kuvaus- ja mallintamismenetelmät");
-        Calendar holidays = new Calendar("Ohjelmistotekniikka");
-        Calendar math = new Calendar("Matematiikka");
-
-        birthdays.setStyle(Style.STYLE1);
-        holidays.setStyle(Style.STYLE2);
-        math.setStyle(Style.STYLE1);
-
+        // Fetch courses from DB and convert each to a CalendarFX Calendar
+        CourseService courseService = new CourseService(new CourseDao());
         CalendarSource myCalendarSource = new CalendarSource("Courses");
-        myCalendarSource.getCalendars().addAll(birthdays, holidays, math);
+
+        try {
+            List<Course> dbCourses = courseService.getAllCourses();
+            for (Course course : dbCourses) {
+                Calendar cal = courseService.toCalendar(course);
+                myCalendarSource.getCalendars().add(cal);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         List<String> groups = new ArrayList<>();
         groups.add("Group 1");
