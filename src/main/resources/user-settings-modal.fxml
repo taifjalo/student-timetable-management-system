@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="20.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.UserSettingsController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0">
+         <children>
+            <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/profile_picture_good_quality.png" />
+               </image>
+            </ImageView>
+            <VBox>
+               <children>
+                  <Text fx:id="displayNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="John">
+                     <font>
+                        <Font size="34.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="roleText" strokeType="OUTSIDE" strokeWidth="0.0" text="Opettaja" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                       <children>
+                           <Label text="Käyttäjänimi:" />
+                           <TextField fx:id="usernameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                       </children>
+                   </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Etunimi:" />
+                        <TextField fx:id="firstNameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Sukunimi:" />
+                        <TextField fx:id="lastNameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Sähköposti:" />
+                        <TextField fx:id="emailField" promptText="john@example.com" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="110.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <VBox maxWidth="260.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Puhelinnumero:" />
+                        <TextField fx:id="phoneField" promptText="+358..." style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #A5A5A5; -fx-border-width: 2; -fx-border-radius: 7;">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vaihda salasana">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Text>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <VBox layoutX="10.0" layoutY="10.0" maxWidth="229.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Nykyinen salasana:" />
+                        <PasswordField fx:id="currentPasswordField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="27.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Uusi salasana:" />
+                        <PasswordField fx:id="newPasswordField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Uudestaan:" />
+                        <PasswordField fx:id="newPasswordAgainField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Button mnemonicParsing="false" onAction="#handleChangePassword" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Vaihda salasana" textFill="WHITE">
+               <font><Font size="16.0" /></font>
+               <cursor><Cursor fx:constant="HAND" /></cursor>
+               <VBox.margin><Insets top="15.0" /></VBox.margin>
+            </Button>
+            <Label fx:id="passwordMessageLabel" textFill="#D03800" wrapText="true">
+               <VBox.margin><Insets top="6.0" /></VBox.margin>
+            </Label>
+         </children>
+         <VBox.margin><Insets /></VBox.margin>
+         <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+      </VBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="Log out" textFill="WHITE">
+               <font><Font size="16.0" /></font>
+               <cursor><Cursor fx:constant="HAND" /></cursor>
+            </Button>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleSave" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Save" textFill="WHITE">
+               <font><Font size="16.0" /></font>
+               <cursor><Cursor fx:constant="HAND" /></cursor>
+            </Button>
+         </children>
+         <VBox.margin><Insets top="10.0" /></VBox.margin>
+      </HBox>
+      <Label fx:id="messageLabel" textFill="#D03800" wrapText="true" />
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</VBox>
