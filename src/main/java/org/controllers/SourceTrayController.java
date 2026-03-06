@@ -28,7 +28,10 @@ import java.util.List;
 
 public class SourceTrayController {
 
+    private CalendarSource calendarSource;
+
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<String> groups) {
+        this.calendarSource = courseSource;
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
@@ -129,6 +132,7 @@ public class SourceTrayController {
             Parent root = loader.load();
             CreateCourseModalController modalController = loader.getController();
             modalController.setCalendar(calendar);
+            modalController.setCalendarSource(calendarSource);
             modalController.applyProps();
             showModal(root, calendar != null ? calendar.getName() : null, sectionName, event);
         } catch (Exception e) {
@@ -171,6 +175,7 @@ public class SourceTrayController {
 
         Text nameText = new Text(calendar.getName());
         nameText.setStrokeWidth(0.0);
+        calendar.nameProperty().addListener((obs, oldName, newName) -> nameText.setText(newName));
 
         calendar.styleProperty().addListener((obs, oldStyle, newStyle) ->
                 colorDot.setStyle("-fx-background-color: " + styleToHex(newStyle) + ";"));

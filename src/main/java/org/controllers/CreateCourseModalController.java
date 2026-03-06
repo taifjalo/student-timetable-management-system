@@ -2,6 +2,7 @@ package org.controllers;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
+import com.calendarfx.model.CalendarSource;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
@@ -11,6 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.dao.CourseDao;
+import org.entities.Course;
+import org.service.CourseService;
 
 public class CreateCourseModalController {
 
@@ -21,8 +25,16 @@ public class CreateCourseModalController {
     @FXML private Button confirmButton;
 
     private Calendar calendar;
+    private CalendarSource calendarSource;
     private boolean isEditMode = false;
     private Style selectedStyle = Style.STYLE1;
+    private Long dbCourseId = null;
+
+    private final CourseService courseService = new CourseService(new CourseDao());
+
+    public void setCalendarSource(CalendarSource calendarSource) {
+        this.calendarSource = calendarSource;
+    }
 
     private static final Style[] STYLES = {
         Style.STYLE1, Style.STYLE2, Style.STYLE3, Style.STYLE4,
@@ -47,7 +59,10 @@ public class CreateCourseModalController {
         this.calendar = calendar;
         this.isEditMode = calendar != null;
         if (calendar != null) {
-            // Pre-select the calendar's current style
+            // Store db course id if attached via user data
+            if (calendar.getUserObject() instanceof Course course) {
+                this.dbCourseId = course.getId();
+            }
             for (Style s : STYLES) {
                 if (s.name().equalsIgnoreCase(calendar.getStyle())) {
                     selectedStyle = s;
@@ -128,22 +143,91 @@ public class CreateCourseModalController {
     @FXML
     private void handleConfirm() {
         String name = groupNameField.getText();
-        if (calendar != null) {
-            calendar.setName(name);
-            calendar.setStyle(selectedStyle);
+        if (name == null || name.isBlank()) {
+            System.out.println("Validation failed: name is empty");
+            return;
         }
-        System.out.println((isEditMode ? "Saving" : "Creating") + " course: " + name + " color: " + selectedStyle);
-        closeModal();
+
+        String colorCode = styleToHex(selectedStyle);
+        System.out.println("Attempting to " + (isEditMode ? "update" : "create") + " course:");
+        System.out.println("  name       = " + name);
+        System.out.println("  colorCode  = " + colorCode);
+        System.out.println("  isEditMode = " + isEditMode);
+        System.out.println("  dbCourseId = " + dbCourseId);
+
+        try {
+            if (isEditMode && dbCourseId != null) {
+                // Save to DB
+                courseService.updateCourse(dbCourseId, name, colorCode);
+                // Re-fetch from DB so the UI reflects exactly what is stored
+                Course refreshed = courseService.getCourseById(dbCourseId);
+                System.out.println("Course updated and re-fetched from DB. id=" + refreshed.getId()
+                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                if (calendar != null) {
+                    calendar.setName(refreshed.getName());
+                    calendar.setStyle(CourseService.colorCodeToStyle(refreshed.getColorCode()));
+                    calendar.setUserObject(refreshed);
+                }
+            } else {
+                Course saved = courseService.createCourse(name, colorCode);
+                // Re-fetch from DB to get the final persisted state
+                Course refreshed = courseService.getCourseById(saved.getId());
+                System.out.println("Course created and re-fetched from DB. id=" + refreshed.getId()
+                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                Calendar newCal = courseService.toCalendar(refreshed);
+                if (calendarSource != null) {
+                    calendarSource.getCalendars().add(newCal);
+                    System.out.println("Calendar added to source tray");
+                } else {
+                    System.out.println("calendarSource not set, tray won't update");
+                }
+            }
+
+            closeModal();
+        } catch (Exception e) {
+            System.out.println("DB operation failed: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleDelete() {
-        System.out.println("Deleting course: " + groupNameField.getText());
-        closeModal();
+        System.out.println("Attempting to delete course. dbCourseId=" + dbCourseId);
+        try {
+            if (dbCourseId != null) {
+                courseService.deleteCourse(dbCourseId);
+                System.out.println("Course deleted successfully. id=" + dbCourseId);
+                // Remove the calendar row from the source tray
+                if (calendarSource != null && calendar != null) {
+                    calendarSource.getCalendars().remove(calendar);
+                    System.out.println("Calendar removed from source tray");
+                }
+            } else {
+                System.out.println("No dbCourseId set, skipping DB delete");
+            }
+            closeModal();
+        } catch (Exception e) {
+            System.out.println("Delete failed: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void closeModal() {
         Stage stage = (Stage) confirmButton.getScene().getWindow();
         stage.close();
+    }
+
+    private String styleToHex(Style style) {
+        if (style == null) return "#888888";
+        return switch (style) {
+            case STYLE1 -> "#6495ED";
+            case STYLE2 -> "#FF8C00";
+            case STYLE3 -> "#8B0000";
+            case STYLE4 -> "#6B8E23";
+            case STYLE5 -> "#800080";
+            case STYLE6 -> "#008080";
+            case STYLE7 -> "#C71585";
+            default     -> "#888888";
+        };
     }
 }
