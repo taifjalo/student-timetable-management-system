@@ -7,7 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.CustomTextField;
 
@@ -57,10 +60,20 @@ public class NavbarController {
     @FXML
     private void handleProfileClick(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"));
+            Parent root = loader.load();
+            UserSettingsController controller = loader.getController();
+
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Käyttäjäasetukset");
+            modalStage.setScene(new Scene(root));
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            modalStage.setResizable(false);
+
+            controller.setStage(modalStage);
+
+            modalStage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
         }

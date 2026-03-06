@@ -16,9 +16,7 @@ public class CalendarApp extends Application {
 
         primaryStage.setTitle("Easytable");
         primaryStage.setScene(scene);
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(500);
-        primaryStage.centerOnScreen();
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 

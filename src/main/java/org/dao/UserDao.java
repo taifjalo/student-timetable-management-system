@@ -83,5 +83,14 @@ public class UserDao {
         }
     }
 
+    public User update(User user) {
+        try (EntityManager em = TimetableConnection.getEntityManager()) {
+            em.getTransaction().begin();
+            User merged = em.merge(user);
+            em.getTransaction().commit();
+            return merged;
+        }
+    }
+
 }
 

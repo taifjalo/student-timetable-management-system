@@ -45,9 +45,7 @@ public class LoginController {
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
             stage.setScene(scene);
-            stage.setWidth(1300);
-            stage.setHeight(1000);
-            stage.centerOnScreen();
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
