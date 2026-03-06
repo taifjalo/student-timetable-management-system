@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -14,36 +13,46 @@ import javafx.stage.Stage;
 import org.dao.UserDao;
 import org.entities.User;
 import org.service.AuthService;
+import org.service.SessionManager;
 
 public class LoginController {
 
-    @FXML
-    private TextField usernameField;
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label messageLabel;
 
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Label messageLabel;
-
-    // Backend Logic & DB user connection.
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
 
     @FXML
-    private void handleLogin() {
-
+    private void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            messageLabel.setText("Syötä käyttäjänimi ja salasana.");
+            return;
+        }
+
         try {
             User user = authService.login(username, password);
-            messageLabel.setText("Login successful: " + user.getUsername());
+            SessionManager.getInstance().login(user);
+            System.out.println("Logged in as: " + user.getUsername());
 
-            // TODO: switch scene to dashboard
+            // Switch to the main calendar app scene
+            Parent root = FXMLLoader.load(getClass().getResource("/main-app.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setWidth(1300);
+            stage.setHeight(1000);
+            stage.centerOnScreen();
+            stage.show();
 
         } catch (Exception e) {
-            messageLabel.setText("Login failed: " + e.getMessage());
+            System.out.println(e.getMessage());
+            messageLabel.setText("Kirjautuminen epäonnistui: " + e.getMessage());
         }
     }
 
