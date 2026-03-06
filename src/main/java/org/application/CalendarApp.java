@@ -14,8 +14,11 @@ import javafx.stage.Stage;
 import org.controllers.NavbarController;
 import org.controllers.SourceTrayController;
 import org.dao.CourseDao;
+import org.dao.GroupDao;
 import org.entities.Course;
+import org.entities.StudentGroup;
 import org.service.CourseService;
+import org.service.GroupService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -54,9 +57,18 @@ public class CalendarApp extends Application {
             e.printStackTrace();
         }
 
-        List<String> groups = new ArrayList<>();
-        groups.add("Group 1");
-        groups.add("Group 2");
+        // Fetch groups from DB
+        GroupService groupService = new GroupService(new GroupDao());
+        List<StudentGroup> groups;
+        try {
+            groups = groupService.getAllGroups();
+            System.out.println("Loaded " + groups.size() + " groups from DB");
+        } catch (Exception e) {
+            System.out.println("Failed to load groups: " + e.getMessage());
+            e.printStackTrace();
+            groups = new ArrayList<>();
+        }
+        final List<StudentGroup> finalGroups = groups;
 
         calendarView.getCalendarSources().add(myCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
@@ -107,7 +119,7 @@ public class CalendarApp extends Application {
         Platform.runLater(() -> {
             calendarView.applyCss();
             calendarView.layout();
-            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, groups);
+            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, finalGroups);
 
             SplitPane sp = calendarView.lookupAll(".split-pane").stream()
                     .filter(n -> n instanceof SplitPane)
