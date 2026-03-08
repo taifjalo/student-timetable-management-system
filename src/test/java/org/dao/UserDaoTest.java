@@ -30,7 +30,7 @@ class UserDaoTest {
         user.setFirstName("Mock");
         user.setSureName("User");
         user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
-
+        user.setRole("student");
 
         // Save the User:
         userDao.save(user);

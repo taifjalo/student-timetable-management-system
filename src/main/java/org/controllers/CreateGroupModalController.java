@@ -11,10 +11,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.dao.GroupDao;
+import org.dao.NotificationDao;
 import org.dao.UserDao;
 import org.entities.StudentGroup;
 import org.entities.User;
 import org.service.GroupService;
+import org.service.NotificationService;
 import org.service.UserService;
 
 import java.util.List;
@@ -36,7 +38,7 @@ public class CreateGroupModalController {
     private ObservableList<StudentGroup> groupsList = null;
 
     private final UserService userService = new UserService(new UserDao());
-    private final GroupService groupService = new GroupService(new GroupDao());
+    private final GroupService groupService = new GroupService(new GroupDao(), new NotificationService(new NotificationDao()));
 
     public void setGroupsList(ObservableList<StudentGroup> groupsList) {
         this.groupsList = groupsList;

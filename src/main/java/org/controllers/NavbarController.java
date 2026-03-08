@@ -7,22 +7,43 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.CustomTextField;
+import org.dao.NotificationDao;
+import org.service.NotificationService;
+import org.service.SessionManager;
 
 public class NavbarController {
 
     private org.controlsfx.control.PopOver notificationsPopOver;
+    private final NotificationService notificationService = new NotificationService(new NotificationDao());
 
     @FXML private ToggleButton calViewDay;
     @FXML private ToggleButton calViewWeek;
     @FXML private ToggleButton calViewMonth;
     @FXML private ToggleButton calViewYear;
     @FXML private CustomTextField fieldSearch;
+    @FXML private Label badgeLabel;
+
+    @FXML
+    public void initialize() {
+        refreshBadge();
+    }
+
+    private void refreshBadge() {
+        if (SessionManager.getInstance().getCurrentUser() == null) return;
+        long count = notificationService.getUnreadCount(
+                SessionManager.getInstance().getCurrentUser().getId());
+        if (count > 0) {
+            badgeLabel.setText(count > 99 ? "99+" : String.valueOf(count));
+            badgeLabel.setVisible(true);
+        } else {
+            badgeLabel.setVisible(false);
+        }
+    }
 
     public void setCalendarView(CalendarView calendarView) {
         fieldSearch.textProperty().addListener((obs, oldVal, newVal) ->
@@ -51,6 +72,9 @@ public class NavbarController {
             notificationsPopOver.setAnimated(false);
             notificationsPopOver.setHeaderAlwaysVisible(false);
             notificationsPopOver.setArrowSize(10);
+            notificationsPopOver.showingProperty().addListener((obs, wasShowing, isShowing) -> {
+                if (!isShowing) refreshBadge();
+            });
             notificationsPopOver.show((Node) event.getSource());
         } catch (Exception e) {
             e.printStackTrace();
