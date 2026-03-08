@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LessonDao {
 
-    public void saveLesson(Lesson lesson) {
+    public Lesson saveLesson(Lesson lesson) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
 
@@ -35,17 +35,9 @@ public class LessonDao {
 
             em.persist(lesson);
             em.getTransaction().commit();
+            return lesson;
         }
     }
-
-    public void updateLesson(Lesson lesson) {
-        try (EntityManager em = TimetableConnection.createEntityManager()) {
-            em.getTransaction().begin();
-            em.merge(lesson);
-            em.getTransaction().commit();
-        }
-    }
-
 
     public void saveCourse(Course course) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
