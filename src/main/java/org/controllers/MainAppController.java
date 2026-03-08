@@ -30,77 +30,31 @@ public class MainAppController {
 
     @FXML private BorderPane mainRoot;
 
+    // Kept as fields so refresh() can reach them without re-initialising the whole scene
+    private CalendarView calendarView;
+    private CalendarSource myCalendarSource;
+    private SourceTrayController sourceTrayController;
+    private NavbarController navbarController;
+
     @FXML
     public void initialize() {
         try {
-            // Load navbar
             FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"));
             BorderPane navbar = navbarLoader.load();
-            NavbarController navbarController = navbarLoader.getController();
+            navbarController = navbarLoader.getController();
             mainRoot.setTop(navbar);
 
-            // Build calendar view
-            CalendarView calendarView = new CalendarView();
+            calendarView = new CalendarView();
             mainRoot.setCenter(calendarView);
 
             navbarController.setCalendarView(calendarView);
+            // Give the navbar a handle so the refresh button can call back here
+            navbarController.setMainAppController(this);
 
-            // Fetch courses from DB
-            CourseService courseService = new CourseService(new CourseDao());
-            LessonService lessonService = new LessonService(new LessonDao());
-            CalendarSource myCalendarSource = new CalendarSource("Courses");
-            try {
-                List<Course> dbCourses = courseService.getAllCourses();
-                System.out.println("Loaded " + dbCourses.size() + " courses from DB");
-                for (Course course : dbCourses) {
-                    Calendar cal = courseService.toCalendar(course);
-
-                    // Load persisted lessons for this course and add as entries
-                    try {
-                        List<Lesson> lessons = lessonService.getLessonsByCourse(course.getId());
-                        System.out.println("  └─ Loaded " + lessons.size() + " lessons for course: " + course.getName());
-                        for (Lesson lesson : lessons) {
-                            Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
-                                    new Entry<>(course.getName());
-                            entry.setInterval(new Interval(
-                                    lesson.getStartAt().toLocalDate(),
-                                    lesson.getStartAt().toLocalTime(),
-                                    lesson.getEndAt().toLocalDate(),
-                                    lesson.getEndAt().toLocalTime()
-                            ));
-                            // Mark as saved so closing the popover won't delete it
-                            entry.setUserObject(new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
-                            cal.addEntry(entry);
-                        }
-                    } catch (Exception ex) {
-                        System.out.println("  └─ Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
-                    }
-
-                    myCalendarSource.getCalendars().add(cal);
-                }
-            } catch (Exception e) {
-                System.out.println("Failed to load courses: " + e.getMessage());
-                e.printStackTrace();
-            }
-
-            // Fetch groups from DB
-            GroupService groupService = new GroupService(new GroupDao());
-            List<StudentGroup> groups;
-            try {
-                groups = groupService.getAllGroups();
-                System.out.println("Loaded " + groups.size() + " groups from DB");
-            } catch (Exception e) {
-                System.out.println("Failed to load groups: " + e.getMessage());
-                e.printStackTrace();
-                groups = new ArrayList<>();
-            }
-            final List<StudentGroup> finalGroups = groups;
-
-            // Remove CalendarFX's built-in default source
+            myCalendarSource = new CalendarSource("Courses");
             calendarView.getCalendarSources().clear();
             calendarView.getCalendarSources().add(myCalendarSource);
             calendarView.setRequestedTime(LocalTime.now());
-            // Keep CalendarFX default tray hidden until custom tray content is ready.
             calendarView.setShowSourceTray(false);
             calendarView.setShowToolBar(false);
             calendarView.showWeekPage();
@@ -111,13 +65,11 @@ public class MainAppController {
                             param.getDateControl(),
                             param.getEntry()));
 
-            // Disable drag-to-move and drag-to-resize on all entries
             calendarView.setEntryEditPolicy(param -> switch (param.getEditOperation()) {
                 case MOVE, CHANGE_START, CHANGE_END -> false;
                 default -> true;
             });
 
-            // Time update thread
             Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
                 @Override
                 public void run() {
@@ -138,10 +90,147 @@ public class MainAppController {
             updateTimeThread.setDaemon(true);
             updateTimeThread.start();
 
-            // Build source tray after CalendarFX has laid out
-            SourceTrayController sourceTrayController = new SourceTrayController();
+            sourceTrayController = new SourceTrayController();
+
+            // Load initial data
+            loadDataFromDatabase(true);
+
+        } catch (Exception e) {
+            System.out.println("Failed to initialize: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void refresh() {
+        new Thread(() -> {
+            try {
+
+                CourseService courseService = new CourseService(new CourseDao());
+                LessonService lessonService = new LessonService(new LessonDao());
+                GroupService  groupService  = new GroupService(new GroupDao());
+
+                List<Course> dbCourses;
+                try {
+                    dbCourses = courseService.getAllCourses();
+                } catch (Exception e) {
+                    System.err.println("Refresh: failed to load courses: " + e.getMessage());
+                    dbCourses = new ArrayList<>();
+                }
+
+                java.util.Map<Course, java.util.List<Lesson>> courseToLessons = new java.util.LinkedHashMap<>();
+                for (Course course : dbCourses) {
+                    try {
+                        courseToLessons.put(course, lessonService.getLessonsByCourse(course.getId()));
+                    } catch (Exception ex) {
+                        System.err.println("Refresh: failed lessons for " + course.getName() + ": " + ex.getMessage());
+                        courseToLessons.put(course, new ArrayList<>());
+                    }
+                }
+
+                List<StudentGroup> groups;
+                try {
+                    groups = groupService.getAllGroups();
+                } catch (Exception e) {
+                    System.err.println("Refresh: failed to load groups: " + e.getMessage());
+                    groups = new ArrayList<>();
+                }
+
+                final List<StudentGroup> finalGroups = groups;
+                final java.util.Map<Course, java.util.List<Lesson>> finalMap = courseToLessons;
+
+                Platform.runLater(() -> {
+                    try {
+                        // Rebuild calendars on the FX thread
+                        myCalendarSource.getCalendars().clear();
+                        for (java.util.Map.Entry<Course, java.util.List<Lesson>> e : finalMap.entrySet()) {
+                            Course course  = e.getKey();
+                            Calendar cal   = courseService.toCalendar(course);
+                            for (Lesson lesson : e.getValue()) {
+                                Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
+                                        new Entry<>(course.getName());
+                                entry.setInterval(new Interval(
+                                        lesson.getStartAt().toLocalDate(),
+                                        lesson.getStartAt().toLocalTime(),
+                                        lesson.getEndAt().toLocalDate(),
+                                        lesson.getEndAt().toLocalTime()
+                                ));
+                                entry.setUserObject(
+                                        new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
+                                cal.addEntry(entry);
+                            }
+                            myCalendarSource.getCalendars().add(cal);
+                        }
+
+                        // Reload source tray groups
+                        sourceTrayController.addSourceSectionsToSourceTray(
+                                calendarView, myCalendarSource, finalGroups);
+
+                        // Refresh notification badge
+                        navbarController.refreshBadge();
+                    } finally {
+                        // Always stop the spin, even if something threw
+                        navbarController.stopSpin();
+                    }
+                });
+            } catch (Exception e) {
+                System.err.println("Refresh failed: " + e.getMessage());
+                e.printStackTrace();
+                Platform.runLater(() -> navbarController.stopSpin());
+            }
+        }, "refresh-thread").start();
+    }
+
+
+    private void loadDataFromDatabase(boolean firstLoad) {
+        CourseService courseService = new CourseService(new CourseDao());
+        LessonService lessonService = new LessonService(new LessonDao());
+        GroupService  groupService  = new GroupService(new GroupDao());
+
+        myCalendarSource.getCalendars().clear();
+
+        try {
+            List<Course> dbCourses = courseService.getAllCourses();
+            System.out.println("Loaded " + dbCourses.size() + " courses from DB");
+            for (Course course : dbCourses) {
+                Calendar cal = courseService.toCalendar(course);
+                try {
+                    List<Lesson> lessons = lessonService.getLessonsByCourse(course.getId());
+                    System.out.println("  └─ Loaded " + lessons.size() + " lessons for course: " + course.getName());
+                    for (Lesson lesson : lessons) {
+                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
+                                new Entry<>(course.getName());
+                        entry.setInterval(new Interval(
+                                lesson.getStartAt().toLocalDate(),
+                                lesson.getStartAt().toLocalTime(),
+                                lesson.getEndAt().toLocalDate(),
+                                lesson.getEndAt().toLocalTime()
+                        ));
+                        entry.setUserObject(new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
+                        cal.addEntry(entry);
+                    }
+                } catch (Exception ex) {
+                    System.out.println("  └─ Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
+                }
+                myCalendarSource.getCalendars().add(cal);
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to load courses: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        List<StudentGroup> groups;
+        try {
+            groups = groupService.getAllGroups();
+            System.out.println("Loaded " + groups.size() + " groups from DB");
+        } catch (Exception e) {
+            System.out.println("Failed to load groups: " + e.getMessage());
+            e.printStackTrace();
+            groups = new ArrayList<>();
+        }
+        final List<StudentGroup> finalGroups = groups;
+
+        if (firstLoad) {
             Platform.runLater(() -> {
-                // Enable tray only when we are ready to replace default content.
                 calendarView.setShowSourceTray(true);
                 calendarView.applyCss();
                 calendarView.layout();
@@ -157,15 +246,17 @@ public class MainAppController {
                 if (sp != null && sp.getWidth() > 0) {
                     double sidebarWidth = 300;
                     sp.setDividerPositions(sidebarWidth / sp.getWidth());
-                    if (sp.getItems().get(0) instanceof javafx.scene.layout.Region) {
-                        ((javafx.scene.layout.Region) sp.getItems().get(0)).setMinWidth(200);
+                    if (sp.getItems().get(0) instanceof javafx.scene.layout.Region r) {
+                        r.setMinWidth(300);
                     }
                 }
             });
+        } else {
+            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, finalGroups);
+        }
 
-        } catch (Exception e) {
-            System.out.println("Failed to initialize: " + e.getMessage());
-            e.printStackTrace();
+        if (!firstLoad) {
+            navbarController.refreshBadge();
         }
     }
 }
