@@ -1,7 +1,6 @@
 package org.service;
 
 import org.dao.UserDao;
-import org.entities.Course;
 import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("Logic Test: Tests are applied with JUnit 5 & Mockito for func Logic Test purpose")
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceTest {
+class UserServiceTest {
 
     @Mock
     UserDao userDao;
