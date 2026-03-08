@@ -2,6 +2,7 @@ package org.dao;
 
 import org.entities.Course;
 import org.entities.Lesson;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Integration Test: LessonDao tests with DB integration")
 class LessonDaoTest {
 
-    private final LessonDao lessonDao = new LessonDao();
+    private LessonDao lessonDao;
+
+    @BeforeEach
+    void setUp() {
+        lessonDao = new LessonDao();
+    }
 
     @DisplayName("Helper Method: Create and save a Course")
     private Course createAndSaveCourse() {

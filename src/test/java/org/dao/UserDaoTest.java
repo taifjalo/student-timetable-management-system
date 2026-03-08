@@ -1,26 +1,26 @@
 package org.dao;
 
-import jakarta.persistence.EntityManager;
-import org.datasource.TimetableConnection;
 import org.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserDaoTest {
 
-    private final UserDao userDao = new UserDao(); // For real test integration with DB.
+    // For real test integration with DB.
+    private UserDao userDao;
+
+    @BeforeEach
+    void setUp() {
+        userDao = new UserDao();
+    }
 
     @DisplayName("Helper Method: First Create the user in DB")
-    private User createAndSaveUser() {
+    private User createUser() {
 
         // Arrange New User
         User user = new User();
@@ -42,7 +42,7 @@ class UserDaoTest {
     @Test
     void testSaveAndFindUserIntegration() {
         // Call create user to Arrange it
-        User user = createAndSaveUser();
+        User user = createUser();
 
         // Then search in the DB to find and return the user:
         User found = userDao.findByUsername(user.getUsername()); // the user from out DB

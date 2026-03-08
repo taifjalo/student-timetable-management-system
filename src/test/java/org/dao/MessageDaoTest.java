@@ -2,6 +2,7 @@ package org.dao;
 
 import org.entities.Message;
 import org.entities.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Integration Test: This class needs only Tests are applied with Integration to DB, without JUnit 5 & Mock logic Tests")
 
 class MessageDaoTest {
-    private final MessageDao messageDao = new MessageDao();
-    private final UserDao userDao = new UserDao(); // For real test integration with DB.
 
+    private MessageDao messageDao;
+    private UserDao userDao;
+
+    @BeforeEach
+    void setUp() {
+        messageDao = new MessageDao();
+        userDao = new UserDao();
+
+    }
     @DisplayName("Helper Method: First Create the user")
     private User createAndSaveUser() {
 
@@ -31,7 +39,6 @@ class MessageDaoTest {
 
         // Save the User:
         userDao.save(user);
-
         return user;
     }
 

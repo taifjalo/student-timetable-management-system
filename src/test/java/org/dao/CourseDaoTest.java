@@ -4,15 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.datasource.TimetableConnection;
 import org.entities.Course;
 import org.junit.jupiter.api.*;
 
-import jakarta.persistence.EntityManager;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("DAO Test: CourseDao")
 class CourseDaoTest {
@@ -24,7 +20,7 @@ class CourseDaoTest {
         courseDao = new CourseDao();
     }
 
-    @DisplayName("Helper Method: First Create the Course in the DB")
+    @DisplayName("Helper Method: First Create the Course using entity in the DB")
     private Course createCourse(String courseName, String courseColorCode) {
         Course course = new Course();
         course.setName(courseName);
