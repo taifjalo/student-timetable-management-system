@@ -22,10 +22,13 @@ import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import javafx.stage.StageStyle;
 import org.dao.MessageDao;
+import org.dao.NotificationDao;
 import org.dao.UserDao;
 import org.entities.Message;
 import org.entities.User;
 import org.service.ChatService;
+import org.service.NotificationService;
+import org.service.SessionManager;
 
 
 import java.util.ArrayList;
@@ -67,6 +70,7 @@ public class ChatController {
     private MessageDao messageDao = new MessageDao();
     private UserDao userDao = new UserDao();
     private ChatService chatService = new ChatService(messageDao);
+    private final NotificationService notificationService = new NotificationService(new NotificationDao());
     private ObservableList<Message> messages = FXCollections.observableArrayList();
     SortedList<Message> sortedMessages = new SortedList<>(messages, Comparator.naturalOrder());
     long userId;
@@ -257,6 +261,11 @@ public class ChatController {
         System.out.println("Sender: " + userId);
         System.out.println("Recipient: " + otherId);
         messageDao.saveMessage(userId, otherId, messageTypeField.getText());
+        notificationService.notifyNewMessage(
+                userId,
+                SessionManager.getInstance().getCurrentUser().getFirstName(),
+                otherId
+        );
     }
 
     @FXML

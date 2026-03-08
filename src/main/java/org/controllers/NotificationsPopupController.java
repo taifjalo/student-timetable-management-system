@@ -1,115 +1,141 @@
 package org.controllers;
 
+import dto.NotificationDto;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.dao.NotificationDao;
+import org.service.NotificationService;
+import org.service.SessionManager;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationsPopupController {
 
     @FXML private VBox notificationList;
+    @FXML private Label markAllLabel;
 
-    private record Notification(String title, String body, String time, boolean unread) {}
-
+    private final NotificationService notificationService = new NotificationService(new NotificationDao());
     private final List<NotificationRow> rows = new ArrayList<>();
+    private Long userId;
 
     @FXML
     public void initialize() {
-        List<Notification> testData = List.of(
-                new Notification("Uusi tehtävä lisätty",
-                        "Ohjelmistotekniikka: Viikko 9 harjoitustehtävä on julkaistu.",
-                        "2 min sitten", true),
-                new Notification("Tunnin peruutus",
-                        "Matematiikka: Perjantain 7.3. tunti on peruttu.",
-                        "1 h sitten", true),
-                new Notification("Muistutus: Palautus huomenna",
-                        "Kuvaus- ja mallintamismenetelmät: Palautus sulkeutuu 6.3. klo 23:59.",
-                        "3 h sitten", true),
-                new Notification("Ryhmätyö päivitetty",
-                        "Opiskelija Maija Virtanen liittyi ryhmääsi TVT24-O.",
-                        "Eilen", false),
-                new Notification("Aikataulu muuttunut",
-                        "Ohjelmistotekniikka-kurssin luentoaika siirretty pe → to klo 10–12.",
-                        "2 pv sitten", false)
-        );
+        userId = SessionManager.getInstance().getCurrentUser().getId();
+        List<NotificationDto> notifications = notificationService.getNotificationDtosForUser(userId);
 
-        for (Notification n : testData) {
-            NotificationRow row = new NotificationRow(n.title(), n.body(), n.time(), n.unread());
+        if (notifications.isEmpty()) {
+            Label empty = new Label("No notifications");
+            empty.setStyle("-fx-text-fill: #999; -fx-font-size: 13; -fx-padding: 20;");
+            notificationList.getChildren().add(empty);
+            if (markAllLabel != null) markAllLabel.setVisible(false);
+            return;
+        }
+
+        for (NotificationDto dto : notifications) {
+            NotificationRow row = new NotificationRow(
+                    dto.getContent(),
+                    formatTime(dto.getSentAt()),
+                    !dto.isRead(),
+                    () -> notificationService.markAsRead(userId, dto.getNotificationId())
+            );
             rows.add(row);
             notificationList.getChildren().add(row.getRoot());
         }
     }
 
-//    @FXML
-//    private void handleMarkAllRead(MouseEvent event) {
-//        rows.forEach(NotificationRow::markRead);
-//    }
+    @FXML
+    private void handleMarkAllRead(MouseEvent event) {
+        notificationService.markAllAsRead(userId);
+        rows.forEach(NotificationRow::markRead);
+    }
+
+    private String formatTime(LocalDateTime sentAt) {
+        long minutes = ChronoUnit.MINUTES.between(sentAt, LocalDateTime.now());
+        if (minutes < 1)  return "Just now";
+        if (minutes < 60) return minutes + " min ago";
+        long hours = ChronoUnit.HOURS.between(sentAt, LocalDateTime.now());
+        if (hours < 24)   return hours + " h ago";
+        long days = ChronoUnit.DAYS.between(sentAt, LocalDateTime.now());
+        return days + " d ago";
+    }
 
     private static class NotificationRow {
 
         private final VBox root;
-        private final Region unreadDot;
+        private final Region dot;
+        private final HBox row;
+        private final Label markReadBtn;
+        private boolean unread;
 
-        NotificationRow(String title, String body, String time, boolean unread) {
-            unreadDot = new Region();
-            unreadDot.setMinSize(8, 8);
-            unreadDot.setMaxSize(8, 8);
-//            unreadDot.setStyle(
-//                    "-fx-background-color: " + (unread ? "#00956D" : "transparent") + ";" +
-//                    "-fx-background-radius: 50%;");
+        NotificationRow(String content, String time, boolean unread, Runnable onMarkRead) {
+            this.unread = unread;
 
+            dot = new Region();
+            dot.setMinSize(8, 8);
+            dot.setMaxSize(8, 8);
 
-            Label titleLabel = new Label(title);
-            titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13;");
-            titleLabel.setWrapText(true);
-
-            Label bodyLabel = new Label(body);
-            bodyLabel.setStyle("-fx-text-fill: #555; -fx-font-size: 12;");
-            bodyLabel.setWrapText(true);
+            Label contentLabel = new Label(content);
+            contentLabel.setStyle("-fx-font-size: 13;");
+            contentLabel.setWrapText(true);
 
             Label timeLabel = new Label(time);
             timeLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 11;");
 
-            VBox textCol = new VBox(3, titleLabel, bodyLabel, timeLabel);
+            markReadBtn = new Label("Mark read");
+            markReadBtn.setStyle("-fx-text-fill: #00956D; -fx-font-size: 11; -fx-cursor: hand;");
+            markReadBtn.setVisible(unread);
+            markReadBtn.setOnMouseClicked(e -> {
+                e.consume();
+                if (this.unread) {
+                    onMarkRead.run();
+                    markRead();
+                }
+            });
+            HBox markReadRow = new HBox(markReadBtn);
+            markReadRow.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
+            VBox textCol = new VBox(3, contentLabel, timeLabel, markReadRow);
             textCol.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(textCol, javafx.scene.layout.Priority.ALWAYS);
 
-//            HBox row = new HBox(10, unreadDot, textCol);
-            HBox row = new HBox(10, textCol);
-            row.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+            row = new HBox(10, dot, textCol);
+            row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             row.setPadding(new Insets(10, 16, 10, 16));
             row.setMaxWidth(Double.MAX_VALUE);
-//            row.setStyle(unread
-//                    ? "-fx-background-color: #F0FAF6;"
-//                    : "-fx-background-color: white;");
+
+            applyStyle();
+
+            row.setOnMouseEntered(e -> row.setStyle(
+                    (this.unread ? "-fx-background-color: #D8F0E8;" : "-fx-background-color: #F5F5F5;")));
+            row.setOnMouseExited(e -> applyStyle());
 
             javafx.scene.control.Separator sep = new javafx.scene.control.Separator();
-
             root = new VBox(row, sep);
+        }
 
-//            row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #E8F5F0; -fx-cursor: hand;"));
-//            row.setOnMouseExited(e -> row.setStyle(
-//                    isUnread() ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;"));
+        private void applyStyle() {
+            row.setStyle((unread ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;") +
+                    " -fx-cursor: hand;");
+            dot.setStyle(unread
+                    ? "-fx-background-color: #00956D; -fx-background-radius: 50%;"
+                    : "-fx-background-color: transparent;");
+        }
+
+        void markRead() {
+            unread = false;
+            markReadBtn.setVisible(false);
+            markReadBtn.setManaged(false);
+            applyStyle();
         }
 
         VBox getRoot() { return root; }
-
-//        private boolean isUnread() {
-//            return !unreadDot.getStyle().contains("transparent");
-//        }
-//
-//        void markRead() {
-//            unreadDot.setStyle("-fx-background-color: transparent; -fx-background-radius: 50%;");
-//
-//            if (!root.getChildren().isEmpty() && root.getChildren().get(0) instanceof HBox row) {
-//                row.setStyle("-fx-background-color: white;");
-//            }
-//        }
     }
 }
-

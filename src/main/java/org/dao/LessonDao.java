@@ -38,6 +38,15 @@ public class LessonDao {
         }
     }
 
+    public void updateLesson(Lesson lesson) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            em.getTransaction().begin();
+            em.merge(lesson);
+            em.getTransaction().commit();
+        }
+    }
+
+
     public void saveCourse(Course course) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();

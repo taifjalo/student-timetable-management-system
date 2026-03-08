@@ -12,9 +12,17 @@ import java.util.List;
 public class LessonService {
 
     private final LessonDao lessonDao;
+    private final NotificationService notificationService;
 
+    // Existing constructor — unchanged, backward-compatible
     public LessonService(LessonDao lessonDao) {
+        this(lessonDao, null);
+    }
+
+    // New constructor — used when notifications are needed
+    public LessonService(LessonDao lessonDao, NotificationService notificationService) {
         this.lessonDao = lessonDao;
+        this.notificationService = notificationService;
     }
 
     public Lesson saveLesson(LocalDateTime startAt,
@@ -86,12 +94,71 @@ public class LessonService {
         return lesson;
     }
 
+    public Lesson updateLesson(Long lessonId, LocalDateTime startAt, LocalDateTime endAt, String classroom) {
+        Lesson lesson = getLessonById(lessonId); // Already checks for null
+
+        if (startAt == null || endAt == null || classroom == null || classroom.isBlank()) {
+            throw new IllegalArgumentException("All lesson fields are required");
+        }
+
+        if (endAt.isBefore(startAt) || endAt.isEqual(startAt)) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
+        lesson.setStartAt(startAt);
+        lesson.setEndAt(endAt);
+        lesson.setClassroom(classroom);
+
+        lessonDao.updateLesson(lesson);
+        return lesson;
+    }
+
     public void deleteLesson(Long lessonId) {
         Lesson lesson = lessonDao.findById(lessonId);
         if (lesson == null) {
             throw new IllegalArgumentException("Lesson not found with id: " + lessonId);
         }
         lessonDao.deleteLesson(lessonId);
+    }
+
+    // New overload — calls existing addLesson then notifies recipients
+    public Lesson addLesson(LocalDateTime startAt, LocalDateTime endAt, Long courseId, String classroom,
+                            List<Long> recipientIds) {
+        Lesson lesson = addLesson(startAt, endAt, courseId, classroom);
+        if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
+            notificationService.notifyLessonAdded(
+                lesson.getCourse().getName(),
+                lesson.getClassroom(),
+                recipientIds
+            );
+        }
+        return lesson;
+    }
+
+    // New overload — calls existing updateLesson then notifies recipients
+    public Lesson updateLesson(Long lessonId, LocalDateTime startAt, LocalDateTime endAt, String classroom,
+                               List<Long> recipientIds) {
+        Lesson lesson = updateLesson(lessonId, startAt, endAt, classroom);
+        if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
+            notificationService.notifyLessonUpdated(
+                lesson.getCourse().getName(),
+                lesson.getClassroom(),
+                recipientIds
+            );
+        }
+        return lesson;
+    }
+
+    // New overload — notifies recipients with lesson ID before deletion
+    public void deleteLesson(Long lessonId, List<Long> recipientIds) {
+        Lesson lesson = lessonDao.findById(lessonId);
+        if (lesson == null) {
+            throw new IllegalArgumentException("Lesson not found with id: " + lessonId);
+        }
+        lessonDao.deleteLesson(lessonId);
+        if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
+            notificationService.notifyLessonDeleted(lessonId, recipientIds);
+        }
     }
 
     public List<Course> getAllCourses() {

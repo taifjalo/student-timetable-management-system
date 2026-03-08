@@ -9,6 +9,8 @@
         <class>org.entities.Course</class>
         <class>org.entities.StudentGroup</class>
         <class>org.entities.StudentProfile</class>
+        <class>org.entities.Notification</class>
+        <class>org.entities.NotificationReceiver</class>
 
 
         <properties>

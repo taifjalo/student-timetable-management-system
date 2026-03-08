@@ -168,6 +168,43 @@ class LessonServiceTest {
     }
 
     @Test
+    @DisplayName("Update Lesson: Should successfully update a lesson when all fields are valid")
+    void shouldUpdateLessonSuccessfully() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        Lesson lesson = createLesson(1L, LocalDateTime.of(2026, 3, 10, 9, 0),
+                LocalDateTime.of(2026, 3, 10, 10, 30), course, "A101");
+
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+
+        LocalDateTime newStart = LocalDateTime.of(2026, 3, 10, 10, 0);
+        LocalDateTime newEnd = LocalDateTime.of(2026, 3, 10, 11, 30);
+
+        Lesson result = lessonService.updateLesson(1L, newStart, newEnd, "B202");
+
+        assertNotNull(result);
+        assertEquals("B202", result.getClassroom());
+        assertEquals(newStart, result.getStartAt());
+        assertEquals(newEnd, result.getEndAt());
+        verify(lessonDao).updateLesson(lesson);
+    }
+
+    @Test
+    @DisplayName("Update Lesson: Should throw exception when end time is before start time")
+    void shouldThrowExceptionWhenUpdatingWithEndTimeBeforeStartTime() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        Lesson lesson = createLesson(1L, LocalDateTime.of(2026, 3, 10, 9, 0),
+                LocalDateTime.of(2026, 3, 10, 10, 30), course, "A101");
+
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+
+        LocalDateTime newStart = LocalDateTime.of(2026, 3, 10, 10, 0);
+        LocalDateTime newEnd = LocalDateTime.of(2026, 3, 10, 9, 0);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> lessonService.updateLesson(1L, newStart, newEnd, "B202"));
+    }
+
+    @Test
     @DisplayName("Delete Lesson: Should delete lesson when it exists")
     void shouldDeleteLessonWhenExists() {
         Course course = createCourse(1L, "Math", "#FF0000");
