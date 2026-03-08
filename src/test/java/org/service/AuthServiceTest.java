@@ -1,6 +1,7 @@
 package org.service;
 
 import org.dao.UserDao;
+import org.entities.Course;
 import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,16 +35,16 @@ class AuthServiceTest {
         String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
 
         User user = new User();
-        user.setUsername("usernew");
+        user.setUsername("user");
         user.setPasswordHash(hashed);
 
-        when(userDao.findByUsername("usernew")).thenReturn(user);
+        when(userDao.findByUsername("user")).thenReturn(user);
 
         // Call Login Method:
-        User result = authService.login("usernew", rawPassword);
+        User result = authService.login("user", rawPassword);
 
         assertNotNull(result);
-        assertEquals("usernew", result.getUsername());
+        assertEquals("user", result.getUsername());
     }
 
     @Test
@@ -51,7 +52,7 @@ class AuthServiceTest {
     void shouldThrowExceptionWhenUsernameNotExist() {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            authService.login("usernew", "wrongPassword");
+            authService.login("user", "wrongPassword");
         });
 
         assertEquals("Invalid username or password", exception.getMessage());
@@ -64,13 +65,13 @@ class AuthServiceTest {
         String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
 
         User user = new User();
-        user.setUsername("usernew");
+        user.setUsername("user");
         user.setPasswordHash(hashed);
 
-        when(userDao.findByUsername("usernew")).thenReturn(user);
+        when(userDao.findByUsername("user")).thenReturn(user);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            authService.login("usernew", "wrongPassword");
+            authService.login("user", "wrongPassword");
         });
 
         assertEquals("Invalid username or password", exception.getMessage());
@@ -82,7 +83,7 @@ class AuthServiceTest {
     void shouldRegisterUserWhenCredentialsAreCorrect() {
 
         // First find if user exist or doesn't exist in the database:
-        when(userDao.findByUsername("userTest")).thenReturn(null);
+        when(userDao.findByUsername("user")).thenReturn(null);
         // in this condition when calling save() method to save new user don't do anything:
         doNothing().when(userDao).save(any(User.class));
 
@@ -90,7 +91,7 @@ class AuthServiceTest {
         authService.register(
                 "Logic",
                 "Testing",
-                "userTest",
+                "user",
                 "Testing@test.com",
                 "090123456",
                 "87654321"
@@ -106,18 +107,18 @@ class AuthServiceTest {
 
         // If user exist
         User existingUser = new User();
-        existingUser.setUsername("userTest");
+        existingUser.setUsername("user");
 
 
         // First find if user exist or doesn't exist in the database, if the user exist then Return (existingUser):
-        when(userDao.findByUsername("userTest")).thenReturn(existingUser);
+        when(userDao.findByUsername("user")).thenReturn(existingUser);
 
 
         // Throw RuntimeException when Call Register Method
         RuntimeException exception = assertThrows(RuntimeException.class, () -> authService.register(
                 "Logic",
                 "Testing",
-                "userTest",
+                "user",
                 "Testing@test.com",
                 "090123456",
                 "87654321"

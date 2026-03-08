@@ -39,12 +39,13 @@ public class CourseService {
         return courseDao.save(course);
     }
 
-    public void deleteCourse(Long id) {
+    public Course deleteCourse(Long id) {
         Course course = courseDao.findById(id);
         if (course == null) {
             throw new IllegalArgumentException("Course not found with id: " + id);
         }
         courseDao.delete(id);
+        return course;
     }
 
     public List<Course> getAllCourses() {
