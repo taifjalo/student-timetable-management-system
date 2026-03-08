@@ -58,6 +58,25 @@ public class LessonService {
         return lesson;
     }
 
+    public Lesson updateLesson(Long lessonId, LocalDateTime startAt, LocalDateTime endAt, String classroom) {
+        Lesson lesson = getLessonById(lessonId); // Already checks for null
+
+        if (startAt == null || endAt == null || classroom == null || classroom.isBlank()) {
+            throw new IllegalArgumentException("All lesson fields are required");
+        }
+
+        if (endAt.isBefore(startAt) || endAt.isEqual(startAt)) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
+        lesson.setStartAt(startAt);
+        lesson.setEndAt(endAt);
+        lesson.setClassroom(classroom);
+
+        lessonDao.updateLesson(lesson);
+        return lesson;
+    }
+
     public void deleteLesson(Long lessonId) {
         Lesson lesson = lessonDao.findById(lessonId);
         if (lesson == null) {
@@ -72,6 +91,20 @@ public class LessonService {
         Lesson lesson = addLesson(startAt, endAt, courseId, classroom);
         if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
             notificationService.notifyLessonAdded(
+                lesson.getCourse().getName(),
+                lesson.getClassroom(),
+                recipientIds
+            );
+        }
+        return lesson;
+    }
+
+    // New overload — calls existing updateLesson then notifies recipients
+    public Lesson updateLesson(Long lessonId, LocalDateTime startAt, LocalDateTime endAt, String classroom,
+                               List<Long> recipientIds) {
+        Lesson lesson = updateLesson(lessonId, startAt, endAt, classroom);
+        if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
+            notificationService.notifyLessonUpdated(
                 lesson.getCourse().getName(),
                 lesson.getClassroom(),
                 recipientIds
