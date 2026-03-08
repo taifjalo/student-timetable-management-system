@@ -3,6 +3,8 @@ package org.service;
 import org.dao.LessonDao;
 import org.entities.Course;
 import org.entities.Lesson;
+import org.entities.StudentGroup;
+import org.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,9 +13,42 @@ public class LessonService {
 
     private final LessonDao lessonDao;
 
-    // Constructor: @InjectMocks + @Mock@ Dependency for testing.
     public LessonService(LessonDao lessonDao) {
         this.lessonDao = lessonDao;
+    }
+
+    public Lesson saveLesson(LocalDateTime startAt,
+                             LocalDateTime endAt,
+                             Course course,
+                             String classroom,
+                             List<StudentGroup> groups,
+                             List<User> users) {
+        if (course == null) throw new IllegalArgumentException("A lesson must belong to a course.");
+        if (classroom == null) classroom = "";
+        Lesson lesson = new Lesson(startAt, endAt, course, classroom);
+        lesson.setAssignedGroups(groups);
+        lesson.setAssignedUsers(users);
+        lessonDao.saveLesson(lesson);
+        return lesson;
+    }
+
+    public Lesson updateLesson(Long lessonId,
+                               LocalDateTime startAt,
+                               LocalDateTime endAt,
+                               Course course,
+                               String classroom,
+                               List<StudentGroup> groups,
+                               List<User> users) {
+        Lesson lesson = lessonDao.findById(lessonId);
+        if (lesson == null) throw new IllegalArgumentException("Lesson not found: " + lessonId);
+        if (classroom == null) classroom = "";
+        lesson.setStartAt(startAt);
+        lesson.setEndAt(endAt);
+        lesson.setCourse(course);
+        lesson.setClassroom(classroom);
+        lesson.setAssignedGroups(groups);
+        lesson.setAssignedUsers(users);
+        return lessonDao.updateLesson(lesson);
     }
 
     public Lesson addLesson(LocalDateTime startAt, LocalDateTime endAt, Long courseId, String classroom) {

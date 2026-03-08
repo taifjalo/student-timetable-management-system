@@ -8,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import org.controlsfx.control.textfield.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #F8F8F3;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.CreateGroupModalController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #F8F8F3;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.CreateGroupModalController">
     <children>
         <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0">
             <children>
@@ -29,7 +29,6 @@
                 </VBox>
                 <VBox layoutX="10.0" layoutY="26.0" spacing="10.0">
                     <children>
-                        <!-- Students already in this group -->
                         <Label text="Students in group:" />
                         <VBox style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
                             <children>
@@ -40,7 +39,6 @@
                             </padding>
                         </VBox>
 
-                        <!-- Search and add new students -->
                         <HBox alignment="CENTER">
                             <children>
                                 <Label text="Add students:" />
@@ -49,17 +47,6 @@
                         <VBox alignment="TOP_CENTER" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
                      <children>
                                 <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="Search students" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../style.css">
-                                    <left>
-                                        <Label styleClass="searchBoxLabel">
-                                            <graphic>
-                                                <ImageView fitHeight="15.0" fitWidth="22.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@/images/search_icon.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Label>
-                                    </left>
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
