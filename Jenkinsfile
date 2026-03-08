@@ -11,7 +11,7 @@ pipeline {
           PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
           DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
           DOCKERHUB_REPO = 'taifjalo1/student-timetable-management-system'
-          DOCKER_IMAGE_TAG = 'v0'
+          DOCKER_IMAGE_TAG = 'latest'
       }
 
 
@@ -59,7 +59,7 @@ pipeline {
          stage('Push Docker Image to Docker Hub') {
                   steps {
                       script {
-                          docker.withRegistry('https://index.docker.io/v0/', DOCKERHUB_CREDENTIALS_ID) {
+                          docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
                               docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
                           }
                       }

@@ -1,12 +1,30 @@
-FROM  maven:3.9.12-eclipse-temurin-21 AS build
+FROM eclipse-temurin:21-jdk
 LABEL authors="taifjalo1"
+
+ENV DISPLAY=host.docker.internal:0.0
+
+RUN apt-get update && \
+    apt-get install -y maven wget unzip libgtk-3-0 libgbm1 libx11-6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN wget https://download2.gluonhq.com/openjfx/21/openjfx-21_linux-x64_bin-sdk.zip -O /tmp/openjfx.zip && \
+    unzip /tmp/openjfx.zip -d /opt && \
+    rm /tmp/openjfx.zip
 
 WORKDIR /app
 
 COPY pom.xml .
 
-COPY . /app
+# Download dependencies as a separate layer
+RUN mvn dependency:go-offline -q
 
-RUN mvn package
+COPY src ./src
 
-CMD ["java", "-jar", "target/student-timetable-1.0-jar-with-dependencies.jar"]
+# Build in a separate layer
+RUN mvn clean package -DskipTests -q
+
+RUN ls -l target
+
+COPY target/student-timetable-1.0-SNAPSHOT.jar app.jar
+
+CMD ["java", "--module-path", "/opt/javafx-sdk-21/lib", "--add-modules", "javafx.controls,javafx.fxml", "-jar", "app.jar"]
