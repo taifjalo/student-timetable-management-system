@@ -93,7 +93,8 @@ class UserServiceTest {
                 "user",
                 "Testing@test.com",
                 "090123456",
-                "87654321"
+                "87654321",
+                "Student"
         );
 
         // Verify the user to regist called one time the save() user method.
@@ -120,7 +121,8 @@ class UserServiceTest {
                 "user",
                 "Testing@test.com",
                 "090123456",
-                "87654321"
+                "87654321",
+                "Student"
         ));
 
 
