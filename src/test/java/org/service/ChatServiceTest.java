@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Logic Test: Tests are applied with JUnit 5 & Mockito for func Logic Test purpose")
-
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
 

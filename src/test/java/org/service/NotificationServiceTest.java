@@ -30,7 +30,7 @@ class NotificationServiceTest {
     @InjectMocks
     NotificationService notificationService;
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+    // Helpers
 
     private NotificationReceiver buildReceiver(Long notifId, String content, LocalDateTime sentAt, boolean read) {
         User user = new User();
@@ -49,7 +49,7 @@ class NotificationServiceTest {
         return nr;
     }
 
-    // ── notifyLessonAdded ──────────────────────────────────────────────────────
+    // notifyLessonAdded
 
     @Test
     @DisplayName("Lesson Added: Should save notification with course name and classroom")
@@ -80,7 +80,7 @@ class NotificationServiceTest {
         verifyNoInteractions(notificationDao);
     }
 
-    // ── notifyLessonUpdated ────────────────────────────────────────────────────
+    // notifyLessonUpdated
 
     @Test
     @DisplayName("Lesson Updated: Should save notification with 'Course ... class changes to ...' format")
@@ -95,7 +95,7 @@ class NotificationServiceTest {
         );
     }
 
-    // ── notifyLessonDeleted ────────────────────────────────────────────────────
+    // notifyLessonDeleted
 
     @Test
     @DisplayName("Lesson Deleted: Should save notification with 'Class {id} was cancelled' format")
@@ -118,7 +118,7 @@ class NotificationServiceTest {
         verifyNoInteractions(notificationDao);
     }
 
-    // ── notifyStudentAddedToGroup ──────────────────────────────────────────────
+    // notifyStudentAddedToGroup
 
     @Test
     @DisplayName("Group Added: Should save notification with correct group code in content")
@@ -139,7 +139,7 @@ class NotificationServiceTest {
         verifyNoInteractions(notificationDao);
     }
 
-    // ── notifyStudentRemovedFromGroup ──────────────────────────────────────────
+    // notifyStudentRemovedFromGroup
 
     @Test
     @DisplayName("Group Removed: Should save notification with correct group code in content")
@@ -160,7 +160,7 @@ class NotificationServiceTest {
         verifyNoInteractions(notificationDao);
     }
 
-    // ── notifyNewMessage ───────────────────────────────────────────────────────
+    // notifyNewMessage
 
     @Test
     @DisplayName("New Message: Should save notification with sender first name and exclamation mark")
@@ -189,7 +189,7 @@ class NotificationServiceTest {
         verifyNoInteractions(notificationDao);
     }
 
-    // ── getNotificationDtosForUser ─────────────────────────────────────────────
+    // getNotificationDtosForUser
 
     @Test
     @DisplayName("Get DTOs: Should return mapped DTOs with correct content, sentAt, and isRead")
@@ -219,7 +219,7 @@ class NotificationServiceTest {
         assertTrue(dtos.isEmpty());
     }
 
-    // ── markAsRead / markAllAsRead / getUnreadCount ────────────────────────────
+    // markAsRead / markAllAsRead / getUnreadCount
 
     @Test
     @DisplayName("Mark As Read: Should delegate to DAO with correct userId and notificationId")
