@@ -1,6 +1,9 @@
 package org.controllers;
 
 import com.calendarfx.view.CalendarView;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +12,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.dao.NotificationDao;
 import org.service.NotificationService;
@@ -20,6 +25,7 @@ public class NavbarController {
 
     private org.controlsfx.control.PopOver notificationsPopOver;
     private final NotificationService notificationService = new NotificationService(new NotificationDao());
+    private MainAppController mainAppController;
 
     @FXML private ToggleButton calViewDay;
     @FXML private ToggleButton calViewWeek;
@@ -27,13 +33,41 @@ public class NavbarController {
     @FXML private ToggleButton calViewYear;
     @FXML private CustomTextField fieldSearch;
     @FXML private Label badgeLabel;
+    @FXML private ImageView refreshIcon;
+
+    private Timeline spinTimeline;
 
     @FXML
     public void initialize() {
         refreshBadge();
     }
 
-    private void refreshBadge() {
+    public void setMainAppController(MainAppController mainAppController) {
+        this.mainAppController = mainAppController;
+    }
+
+    private void startSpin() {
+        if (refreshIcon == null) return;
+        refreshIcon.setRotate(0);
+        spinTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO,       new KeyValue(refreshIcon.rotateProperty(), 0)),
+                new KeyFrame(Duration.seconds(1), new KeyValue(refreshIcon.rotateProperty(), 360))
+        );
+        spinTimeline.setCycleCount(Timeline.INDEFINITE);
+        spinTimeline.play();
+    }
+
+    public void stopSpin() {
+        if (spinTimeline != null) {
+            spinTimeline.stop();
+            spinTimeline = null;
+        }
+        if (refreshIcon != null) {
+            refreshIcon.setRotate(0);
+        }
+    }
+
+    public void refreshBadge() {
         if (SessionManager.getInstance().getCurrentUser() == null) return;
         long count = notificationService.getUnreadCount(
                 SessionManager.getInstance().getCurrentUser().getId());
@@ -53,6 +87,14 @@ public class NavbarController {
         calViewWeek.setOnAction(e -> { calendarView.showWeekPage(); calViewWeek.setSelected(true); });
         calViewMonth.setOnAction(e -> { calendarView.showMonthPage(); calViewMonth.setSelected(true); });
         calViewYear.setOnAction(e -> { calendarView.showYearPage(); calViewYear.setSelected(true); });
+    }
+
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+        if (mainAppController != null) {
+            startSpin();
+            mainAppController.refresh();
+        }
     }
 
     @FXML
