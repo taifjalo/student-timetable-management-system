@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -131,7 +131,9 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>17.1.15</version>
+            <!-- for java 21 SDK: use 21.0.9 -->
+            <!-- for java 17 SDK: use 17.1.15 -->
+            <version>21.0.9</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>
@@ -143,7 +145,6 @@
 
     <build>
         <finalName>student-timetable-1.0</finalName>
-        <outputDirectory>${project.basedir}/target/classes</outputDirectory>
         <testOutputDirectory>${project.basedir}/target/test-classes</testOutputDirectory>
         <plugins>
 
@@ -163,7 +164,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>org.application.CalendarApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -178,7 +179,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>org.application.CalendarApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
