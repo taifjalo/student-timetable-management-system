@@ -52,18 +52,23 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnAlerts" onAction="#handleAlertsClick" layoutX="10.0" layoutY="10.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@/images/message_icon.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
+            <StackPane prefWidth="30.0" prefHeight="30.0" maxWidth="30.0" maxHeight="30.0">
+               <Button fx:id="btnAlerts" onAction="#handleAlertsClick" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
+                  <graphic>
+                     <ImageView fitHeight="20.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@/images/message_icon.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor>
+               </Button>
+               <Label fx:id="badgeLabel" visible="false"
+                      style="-fx-background-color: #00956D; -fx-text-fill: white; -fx-font-size: 9; -fx-font-weight: bold; -fx-background-radius: 50%; -fx-min-width: 16; -fx-min-height: 16; -fx-max-width: 16; -fx-max-height: 16; -fx-alignment: center; -fx-padding: 0;"
+                      StackPane.alignment="TOP_RIGHT" translateX="5" translateY="-5"/>
+            </StackPane>
             <Button fx:id="btnProfile" onAction="#handleProfileClick" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" mouseTransparent="false" style="-fx-background-color: none;">
                <graphic>
                   <ImageView fitHeight="33.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

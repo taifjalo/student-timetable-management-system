@@ -84,12 +84,3 @@ CREATE TABLE notification_receivers (
                 foreign key (user_id) references users(user_id) ON DELETE CASCADE,
                 foreign key (notification_id) references notifications(notification_id) ON DELETE CASCADE
 );
-
-
-
-
-
-
-
-
-
