@@ -20,7 +20,8 @@ public class Main {
                 "Username" + UUID.randomUUID(),
                 "user" + UUID.randomUUID() + "@test.com",
                 "090" + UUID.randomUUID().toString().substring(0,7),
-                "123" +UUID.randomUUID().toString().substring(0,7)
+                "123" +UUID.randomUUID().toString().substring(0,7),
+                "student"
         );
     }
 
@@ -100,7 +101,8 @@ public class Main {
                                 username,
                                 email,
                                 phone,
-                                password
+                                password,
+                                "student"
                         );
                         System.out.println("User registered successfully");
                     } catch (Exception e) {
@@ -159,7 +161,8 @@ public class Main {
                                 "Username" + UUID.randomUUID(),
                                 "user" + UUID.randomUUID() + "@test.com",
                                 "090" + UUID.randomUUID().toString().substring(0,7),
-                                "123" + UUID.randomUUID().toString().substring(0,7)
+                                "123" + UUID.randomUUID().toString().substring(0,7),
+                                "student"
                         );
 
                         System.out.println("Automatic test executed");

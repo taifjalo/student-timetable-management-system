@@ -1,4 +1,3 @@
-
 package org.service;
 
 import org.dao.UserDao;
@@ -19,11 +18,17 @@ public class AuthService {
                          String username,
                          String email,
                          String phone,
-                         String password) {
+                         String password,
+                         String role) {
+
 
         // if password exists
         if (userDao.findByUsername(username) != null) {
             throw new RuntimeException("Username already exists");
+        }
+
+        if (role == null || role.isBlank()) {
+            throw new RuntimeException("Role is required");
         }
 
         // save hash password to the database
@@ -37,6 +42,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPhoneNumber(phone);
         user.setPasswordHash(hashedPassword);
+        user.setRole(role);
 
         // save them
         userDao.save(user);
