@@ -2,6 +2,8 @@ package org.controllers;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
+import com.calendarfx.model.Entry;
+import com.calendarfx.model.Interval;
 import com.calendarfx.view.CalendarView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -11,10 +13,13 @@ import javafx.scene.layout.BorderPane;
 import org.application.CustomEntryPopOverContentPane;
 import org.dao.CourseDao;
 import org.dao.GroupDao;
+import org.dao.LessonDao;
 import org.entities.Course;
+import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.service.CourseService;
 import org.service.GroupService;
+import org.service.LessonService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,12 +47,35 @@ public class MainAppController {
 
             // Fetch courses from DB
             CourseService courseService = new CourseService(new CourseDao());
+            LessonService lessonService = new LessonService(new LessonDao());
             CalendarSource myCalendarSource = new CalendarSource("Courses");
             try {
                 List<Course> dbCourses = courseService.getAllCourses();
                 System.out.println("Loaded " + dbCourses.size() + " courses from DB");
                 for (Course course : dbCourses) {
                     Calendar cal = courseService.toCalendar(course);
+
+                    // Load persisted lessons for this course and add as entries
+                    try {
+                        List<Lesson> lessons = lessonService.getLessonsByCourse(course.getId());
+                        System.out.println("  └─ Loaded " + lessons.size() + " lessons for course: " + course.getName());
+                        for (Lesson lesson : lessons) {
+                            Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
+                                    new Entry<>(course.getName());
+                            entry.setInterval(new Interval(
+                                    lesson.getStartAt().toLocalDate(),
+                                    lesson.getStartAt().toLocalTime(),
+                                    lesson.getEndAt().toLocalDate(),
+                                    lesson.getEndAt().toLocalTime()
+                            ));
+                            // Mark as saved so closing the popover won't delete it
+                            entry.setUserObject(new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
+                            cal.addEntry(entry);
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("  └─ Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
+                    }
+
                     myCalendarSource.getCalendars().add(cal);
                 }
             } catch (Exception e) {
@@ -68,9 +96,12 @@ public class MainAppController {
             }
             final List<StudentGroup> finalGroups = groups;
 
+            // Remove CalendarFX's built-in default source
+            calendarView.getCalendarSources().clear();
             calendarView.getCalendarSources().add(myCalendarSource);
             calendarView.setRequestedTime(LocalTime.now());
-            calendarView.setShowSourceTray(true);
+            // Keep CalendarFX default tray hidden until custom tray content is ready.
+            calendarView.setShowSourceTray(false);
             calendarView.setShowToolBar(false);
             calendarView.showWeekPage();
 
@@ -79,6 +110,12 @@ public class MainAppController {
                             param.getPopOver(),
                             param.getDateControl(),
                             param.getEntry()));
+
+            // Disable drag-to-move and drag-to-resize on all entries
+            calendarView.setEntryEditPolicy(param -> switch (param.getEditOperation()) {
+                case MOVE, CHANGE_START, CHANGE_END -> false;
+                default -> true;
+            });
 
             // Time update thread
             Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
@@ -104,6 +141,8 @@ public class MainAppController {
             // Build source tray after CalendarFX has laid out
             SourceTrayController sourceTrayController = new SourceTrayController();
             Platform.runLater(() -> {
+                // Enable tray only when we are ready to replace default content.
+                calendarView.setShowSourceTray(true);
                 calendarView.applyCss();
                 calendarView.layout();
                 sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, finalGroups);
@@ -130,4 +169,3 @@ public class MainAppController {
         }
     }
 }
-

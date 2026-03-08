@@ -168,9 +168,18 @@ public class SourceTrayController {
 
     private void openGroupModal(StudentGroup group, String sectionName, ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-create-modal/create-modal.fxml"));
+            java.net.URL fxmlUrl = getClass().getResource("/source-tray-create-modal/create-modal.fxml");
+            if (fxmlUrl == null) {
+                System.err.println("[SourceTrayController] create-modal.fxml not found on classpath");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
             CreateGroupModalController modalController = loader.getController();
+            if (modalController == null) {
+                System.err.println("[SourceTrayController] CreateGroupModalController is null after load");
+                return;
+            }
             if (group != null) {
                 modalController.setGroup(group);
             }
@@ -179,8 +188,8 @@ public class SourceTrayController {
             modalController.applyProps();
             showModal(root, group != null ? group.getFieldOfStudies() : null, sectionName, event);
         } catch (Exception e) {
+            System.err.println("[SourceTrayController] Failed to open group modal: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Failed to open group modal", e);
         }
     }
 
