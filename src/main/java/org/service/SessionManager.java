@@ -31,5 +31,10 @@ public class SessionManager {
     public boolean isLoggedIn() {
         return currentUser != null;
     }
+
+    /** Returns true if the currently logged-in user has the "teacher" role. */
+    public boolean isTeacher() {
+        return currentUser != null && "teacher".equalsIgnoreCase(currentUser.getRole());
+    }
 }
 

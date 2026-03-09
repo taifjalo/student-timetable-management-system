@@ -20,6 +20,7 @@ import org.entities.StudentGroup;
 import org.service.CourseService;
 import org.service.GroupService;
 import org.service.LessonService;
+import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -65,10 +66,20 @@ public class MainAppController {
                             param.getDateControl(),
                             param.getEntry()));
 
-            calendarView.setEntryEditPolicy(param -> switch (param.getEditOperation()) {
-                case MOVE, CHANGE_START, CHANGE_END -> false;
-                default -> true;
+            calendarView.setEntryEditPolicy(param -> {
+                // Students cannot interact with entries at all
+                if (!SessionManager.getInstance().isTeacher()) return false;
+                // Teachers: no drag-to-move or drag-to-resize
+                return switch (param.getEditOperation()) {
+                    case MOVE, CHANGE_START, CHANGE_END -> false;
+                    default -> true;
+                };
             });
+
+            // Students cannot create new entries by clicking on the calendar
+            if (!SessionManager.getInstance().isTeacher()) {
+                calendarView.setEntryFactory(param -> null);
+            }
 
             Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
                 @Override

@@ -28,6 +28,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.entities.StudentGroup;
+import org.service.SessionManager;
 
 public class SourceTrayController {
 
@@ -74,7 +75,11 @@ public class SourceTrayController {
 
         if (sectionTitleText == null || groupsListContainer == null) return null;
 
-        if (addButton != null) addButton.setUserData(source.getName());
+        if (addButton != null) {
+            addButton.setUserData(source.getName());
+            addButton.setVisible(SessionManager.getInstance().isTeacher());
+            addButton.setManaged(SessionManager.getInstance().isTeacher());
+        }
 
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
@@ -109,7 +114,11 @@ public class SourceTrayController {
 
         if (sectionTitleText == null || groupsListContainer == null) return null;
 
-        if (addButton != null) addButton.setUserData(sectionTitle);
+        if (addButton != null) {
+            addButton.setUserData(sectionTitle);
+            addButton.setVisible(SessionManager.getInstance().isTeacher());
+            addButton.setManaged(SessionManager.getInstance().isTeacher());
+        }
 
         sectionTitleText.setText(sectionTitle);
 
@@ -232,6 +241,8 @@ public class SourceTrayController {
         actionButton.setCursor(Cursor.HAND);
         actionButton.setStyle("-fx-background-color: transparent;");
         actionButton.setOnAction(e -> openGroupModal(calendar, toSingular(sectionName), e));
+        actionButton.setVisible(SessionManager.getInstance().isTeacher());
+        actionButton.setManaged(SessionManager.getInstance().isTeacher());
 
         HBox row = new HBox(colorDot, nameText, spacer, actionButton);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -257,6 +268,8 @@ public class SourceTrayController {
         actionButton.setCursor(Cursor.HAND);
         actionButton.setStyle("-fx-background-color: transparent;");
         actionButton.setOnAction(e -> openGroupModal(group, toSingular(sectionName), e));
+        actionButton.setVisible(SessionManager.getInstance().isTeacher());
+        actionButton.setManaged(SessionManager.getInstance().isTeacher());
 
         HBox row = new HBox(groupNameText, spacer, actionButton);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
