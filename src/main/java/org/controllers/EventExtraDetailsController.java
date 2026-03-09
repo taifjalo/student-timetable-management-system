@@ -46,7 +46,7 @@ public class EventExtraDetailsController {
         User currentUser = SessionManager.getInstance().getCurrentUser();
         String teacherName = currentUser != null
                 ? currentUser.getFirstName() + " " + currentUser.getSureName()
-                : "—";
+                : "-";
         teacherLabel = new Label(teacherName);
 
         groupRow = new HBox(6);
@@ -140,6 +140,67 @@ public class EventExtraDetailsController {
     public String getClassroom() { return classroomField.getText().trim(); }
     public List<StudentGroup> getSelectedGroups() { return new ArrayList<>(selectedGroups); }
     public List<User> getSelectedUsers() { return new ArrayList<>(selectedUsers); }
+
+    /** Makes all input controls non-interactive (student / read-only view). */
+    public void setReadOnly(boolean readOnly) {
+        if (!readOnly) return;
+
+        // ── Classroom: swap TextField → plain Label ───────────────────────────
+        String classroomText = classroomField.getText().trim();
+        Label classroomLabel = new Label(classroomText.isEmpty() ? "—" : classroomText);
+        classroomLabel.setStyle("-fx-padding: 2 0 2 0;");
+        // Replace the TextField in its parent with the label
+        if (classroomField.getParent() instanceof javafx.scene.layout.GridPane gp) {
+            int col = javafx.scene.layout.GridPane.getColumnIndex(classroomField) == null
+                    ? 0 : javafx.scene.layout.GridPane.getColumnIndex(classroomField);
+            int row = javafx.scene.layout.GridPane.getRowIndex(classroomField) == null
+                    ? 0 : javafx.scene.layout.GridPane.getRowIndex(classroomField);
+            gp.getChildren().remove(classroomField);
+            javafx.scene.layout.GridPane.setColumnIndex(classroomLabel, col);
+            javafx.scene.layout.GridPane.setRowIndex(classroomLabel, row);
+            gp.getChildren().add(classroomLabel);
+        }
+
+        // ── Groups: remove Add button, convert chips → plain Labels ──────────
+        List<Node> toReplace = new ArrayList<>(groupRow.getChildren());
+        groupRow.getChildren().clear();
+        for (Node n : toReplace) {
+            if (n instanceof Button btn) {
+                String text = btn.getText();
+                // Skip the "Add group" button entirely
+                if (text != null && text.startsWith("+")) continue;
+                // Convert group chips to plain styled labels
+                Label groupLabel = new Label(text);
+                groupLabel.setStyle(
+                        "-fx-background-radius: 12; -fx-border-radius: 12;" +
+                        "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;" +
+                        "-fx-padding: 2 8 2 8;");
+                groupRow.getChildren().add(groupLabel);
+            }
+        }
+        // If no groups assigned, show a dash
+        if (groupRow.getChildren().isEmpty()) {
+            groupRow.getChildren().add(new Label("—"));
+        }
+
+        // ── Students: hide search field, convert user chips → plain Labels ────
+        List<Node> studentNodes = new ArrayList<>(studentsRow.getChildren());
+        studentsRow.getChildren().clear();
+        for (Node n : studentNodes) {
+            if (n instanceof TextField) continue; // remove search field
+            if (n instanceof Button btn) {
+                Label userLabel = new Label(btn.getText());
+                userLabel.setStyle(
+                        "-fx-background-radius: 12; -fx-border-radius: 12;" +
+                        "-fx-border-color: #aaa; -fx-background-color: #f0f0f0;" +
+                        "-fx-padding: 2 8 2 8;");
+                studentsRow.getChildren().add(userLabel);
+            }
+        }
+        if (studentsRow.getChildren().isEmpty()) {
+            studentsRow.getChildren().add(new Label("—"));
+        }
+    }
 
     private void showGroupPicker(Button addGroupBtn) {
         if (availableGroups.isEmpty()) {
