@@ -14,12 +14,10 @@ public class LessonService {
     private final LessonDao lessonDao;
     private final NotificationService notificationService;
 
-    // Existing constructor — unchanged, backward-compatible
     public LessonService(LessonDao lessonDao) {
         this(lessonDao, null);
     }
 
-    // New constructor — used when notifications are needed
     public LessonService(LessonDao lessonDao, NotificationService notificationService) {
         this.lessonDao = lessonDao;
         this.notificationService = notificationService;
@@ -86,6 +84,10 @@ public class LessonService {
         return lessonDao.findLessonsByCourse(courseId);
     }
 
+    public List<Lesson> getLessonsByCourseWithGroups(Long courseId) {
+        return lessonDao.findLessonsByCourseWithGroups(courseId);
+    }
+
     public Lesson getLessonById(Long lessonId) {
         Lesson lesson = lessonDao.findById(lessonId);
         if (lesson == null) {
@@ -135,7 +137,6 @@ public class LessonService {
         return lesson;
     }
 
-    // New overload — calls existing updateLesson then notifies recipients
     public Lesson updateLesson(Long lessonId, LocalDateTime startAt, LocalDateTime endAt, String classroom,
                                List<Long> recipientIds) {
         Lesson lesson = updateLesson(lessonId, startAt, endAt, classroom);
@@ -149,7 +150,6 @@ public class LessonService {
         return lesson;
     }
 
-    // New overload — notifies recipients with lesson ID before deletion
     public void deleteLesson(Long lessonId, List<Long> recipientIds) {
         Lesson lesson = lessonDao.findById(lessonId);
         if (lesson == null) {

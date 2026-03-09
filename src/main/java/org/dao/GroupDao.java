@@ -96,4 +96,15 @@ public class GroupDao {
             ).setParameter("code", groupCode).getResultList();
         }
     }
+
+    public StudentGroup findGroupByUserId(Long userId) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            List<StudentGroup> results = em.createQuery(
+                    "SELECT sp.studentGroup FROM StudentProfile sp " +
+                    "WHERE sp.user.id = :userId AND sp.studentGroup IS NOT NULL",
+                    StudentGroup.class
+            ).setParameter("userId", userId).getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        }
+    }
 }

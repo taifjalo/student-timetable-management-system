@@ -115,10 +115,15 @@ public class MainAppController {
     public void refresh() {
         new Thread(() -> {
             try {
-
                 CourseService courseService = new CourseService(new CourseDao());
                 LessonService lessonService = new LessonService(new LessonDao());
                 GroupService  groupService  = new GroupService(new GroupDao());
+
+                final boolean isTeacher = SessionManager.getInstance().isTeacher();
+                final String studentGroupCode = resolveStudentGroupCode(isTeacher);
+                final Long studentUserId = isTeacher ? null
+                        : (SessionManager.getInstance().getCurrentUser() != null
+                                ? SessionManager.getInstance().getCurrentUser().getId() : null);
 
                 List<Course> dbCourses;
                 try {
@@ -131,7 +136,10 @@ public class MainAppController {
                 java.util.Map<Course, java.util.List<Lesson>> courseToLessons = new java.util.LinkedHashMap<>();
                 for (Course course : dbCourses) {
                     try {
-                        courseToLessons.put(course, lessonService.getLessonsByCourse(course.getId()));
+                        List<Lesson> lessons = isTeacher
+                                ? lessonService.getLessonsByCourse(course.getId())
+                                : lessonService.getLessonsByCourseWithGroups(course.getId());
+                        courseToLessons.put(course, lessons);
                     } catch (Exception ex) {
                         System.err.println("Refresh: failed lessons for " + course.getName() + ": " + ex.getMessage());
                         courseToLessons.put(course, new ArrayList<>());
@@ -151,12 +159,14 @@ public class MainAppController {
 
                 Platform.runLater(() -> {
                     try {
-                        // Rebuild calendars on the FX thread
                         myCalendarSource.getCalendars().clear();
                         for (java.util.Map.Entry<Course, java.util.List<Lesson>> e : finalMap.entrySet()) {
                             Course course  = e.getKey();
                             Calendar cal   = courseService.toCalendar(course);
                             for (Lesson lesson : e.getValue()) {
+                                if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
+                                    continue;
+                                }
                                 Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
                                         new Entry<>(course.getName());
                                 entry.setInterval(new Interval(
@@ -172,14 +182,10 @@ public class MainAppController {
                             myCalendarSource.getCalendars().add(cal);
                         }
 
-                        // Reload source tray groups
                         sourceTrayController.addSourceSectionsToSourceTray(
                                 calendarView, myCalendarSource, finalGroups);
-
-                        // Refresh notification badge
                         navbarController.refreshBadge();
                     } finally {
-                        // Always stop the spin, even if something threw
                         navbarController.stopSpin();
                     }
                 });
@@ -199,15 +205,26 @@ public class MainAppController {
 
         myCalendarSource.getCalendars().clear();
 
+        final boolean isTeacher = SessionManager.getInstance().isTeacher();
+        final String studentGroupCode = resolveStudentGroupCode(isTeacher);
+        final Long studentUserId = isTeacher ? null
+                : (SessionManager.getInstance().getCurrentUser() != null
+                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+
         try {
             List<Course> dbCourses = courseService.getAllCourses();
             System.out.println("Loaded " + dbCourses.size() + " courses from DB");
             for (Course course : dbCourses) {
                 Calendar cal = courseService.toCalendar(course);
                 try {
-                    List<Lesson> lessons = lessonService.getLessonsByCourse(course.getId());
+                    List<Lesson> lessons = isTeacher
+                            ? lessonService.getLessonsByCourse(course.getId())
+                            : lessonService.getLessonsByCourseWithGroups(course.getId());
                     System.out.println("  └─ Loaded " + lessons.size() + " lessons for course: " + course.getName());
                     for (Lesson lesson : lessons) {
+                        if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
+                            continue;
+                        }
                         Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
                                 new Entry<>(course.getName());
                         entry.setInterval(new Interval(
@@ -269,5 +286,38 @@ public class MainAppController {
         if (!firstLoad) {
             navbarController.refreshBadge();
         }
+    }
+
+    private String resolveStudentGroupCode(boolean isTeacher) {
+        if (isTeacher) return null;
+        org.entities.User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser == null) return null;
+        try {
+            StudentGroup g = new GroupDao().findGroupByUserId(currentUser.getId());
+            if (g != null) {
+                System.out.println("Student '" + currentUser.getUsername() + "' is in group: " + g.getGroupCode());
+            } else {
+                System.out.println("Student '" + currentUser.getUsername() + "' has no group assigned in student_profiles.");
+            }
+            return g != null ? g.getGroupCode() : null;
+        } catch (Exception ex) {
+            System.err.println("Failed to resolve student group: " + ex.getMessage());
+            return null;
+        }
+    }
+
+    private boolean lessonVisibleToStudent(Lesson lesson, String studentGroupCode, Long studentUserId) {
+        // Check individual assignment first (always works regardless of group)
+        List<org.entities.User> assignedUsers = lesson.getAssignedUsers();
+        if (assignedUsers != null && studentUserId != null) {
+            boolean directlyAssigned = assignedUsers.stream()
+                    .anyMatch(u -> studentUserId.equals(u.getId()));
+            if (directlyAssigned) return true;
+        }
+        // Check group assignment
+        if (studentGroupCode == null) return false;
+        List<StudentGroup> assignedGroups = lesson.getAssignedGroups();
+        if (assignedGroups == null || assignedGroups.isEmpty()) return false;
+        return assignedGroups.stream().anyMatch(g -> studentGroupCode.equals(g.getGroupCode()));
     }
 }
