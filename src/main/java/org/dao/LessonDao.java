@@ -87,6 +87,37 @@ public class LessonDao {
         }
     }
 
+
+    public List<Lesson> findLessonsByCourseWithGroups(Long courseId) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            // First query: fetch lessons + assignedGroups
+            List<Lesson> lessons = em.createQuery(
+                    "SELECT DISTINCT l FROM Lesson l " +
+                    "LEFT JOIN FETCH l.assignedGroups " +
+                    "WHERE l.course.id = :courseId " +
+                    "ORDER BY l.startAt ASC",
+                    Lesson.class)
+                .setParameter("courseId", courseId)
+                .getResultList();
+
+            // Second query: fetch assignedUsers for the same lessons (avoids multi-bag)
+            if (!lessons.isEmpty()) {
+                List<Long> ids = lessons.stream().map(Lesson::getId).toList();
+                em.createQuery(
+                        "SELECT DISTINCT l FROM Lesson l " +
+                        "LEFT JOIN FETCH l.assignedUsers " +
+                        "WHERE l.id IN :ids",
+                        Lesson.class)
+                    .setParameter("ids", ids)
+                    .getResultList();
+                // Hibernate merges the results into the first-level cache,
+                // so the lessons list now has assignedUsers populated too.
+            }
+
+            return lessons;
+        }
+    }
+
     public Course findCourseById(Long courseId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             return em.find(Course.class, courseId);
