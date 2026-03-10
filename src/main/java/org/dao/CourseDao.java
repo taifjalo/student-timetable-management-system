@@ -30,6 +30,28 @@ public class CourseDao {
         }
     }
 
+    /**
+     * Returns only the courses that have at least one lesson the given student
+     * can see — either via an assigned group (student_profiles → assigned_groups)
+     * or via a direct individual assignment (assigned_users).
+     */
+    public List<Course> findCoursesForUser(Long userId) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            return em.createQuery(
+                    "SELECT DISTINCT l.course FROM Lesson l " +
+                    "WHERE EXISTS (" +
+                    "  SELECT sp FROM StudentProfile sp " +
+                    "  WHERE sp.user.id = :userId " +
+                    "  AND sp.studentGroup MEMBER OF l.assignedGroups" +
+                    ") OR EXISTS (" +
+                    "  SELECT u FROM l.assignedUsers u WHERE u.id = :userId" +
+                    ") " +
+                    "ORDER BY l.course.name ASC",
+                    Course.class
+            ).setParameter("userId", userId).getResultList();
+        }
+    }
+
     public void delete(Long id) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();

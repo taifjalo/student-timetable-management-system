@@ -125,7 +125,7 @@ public class MainAppController {
 
                 List<Course> dbCourses;
                 try {
-                    dbCourses = courseService.getAllCourses();
+                    dbCourses = courseService.getCoursesForUser(studentUserId);
                 } catch (Exception e) {
                     System.err.println("Refresh: failed to load courses: " + e.getMessage());
                     dbCourses = new ArrayList<>();
@@ -200,7 +200,7 @@ public class MainAppController {
                         ? SessionManager.getInstance().getCurrentUser().getId() : null);
 
         try {
-            List<Course> dbCourses = courseService.getAllCourses();
+            List<Course> dbCourses = courseService.getCoursesForUser(studentUserId);
             System.out.println("Loaded " + dbCourses.size() + " courses from DB");
             for (Course course : dbCourses) {
                 Calendar cal = courseService.toCalendar(course);
