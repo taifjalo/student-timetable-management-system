@@ -52,6 +52,16 @@ public class CourseService {
         return courseDao.findAll();
     }
 
+    /**
+     * Returns the courses visible to the given user.
+     * Pass {@code null} for teachers to get all courses.
+     * Pass the student's user ID to get only courses they have lessons in.
+     */
+    public List<Course> getCoursesForUser(Long userId) {
+        if (userId == null) return courseDao.findAll();
+        return courseDao.findCoursesForUser(userId);
+    }
+
     public Course getCourseById(Long id) {
         Course course = courseDao.findById(id);
         if (course == null) {
