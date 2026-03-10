@@ -108,10 +108,6 @@ public class GroupDao {
         }
     }
 
-    /**
-     * Returns only the groups that the given user belongs to.
-     * Used so students only see their own group in the source tray.
-     */
     public List<StudentGroup> findAllForUser(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             return em.createQuery(

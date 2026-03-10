@@ -40,7 +40,7 @@ public class SourceTrayController {
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
 
-        // Fetch groups here — this is source tray concern, not the caller's
+        // Fetch groups
         Long userId = SessionManager.getInstance().isTeacher() ? null
                 : (SessionManager.getInstance().getCurrentUser() != null
                         ? SessionManager.getInstance().getCurrentUser().getId() : null);
@@ -301,13 +301,13 @@ public class SourceTrayController {
     private static String styleToHex(String style) {
         if (style == null) return "#888888";
         switch (style.toLowerCase()) {
-            case "style1": return "#6495ED";
-            case "style2": return "#FF8C00";
-            case "style3": return "#8B0000";
-            case "style4": return "#6B8E23";
-            case "style5": return "#800080";
-            case "style6": return "#008080";
-            case "style7": return "#C71585";
+            case "style1": return "#77C04B";
+            case "style2": return "#418FCB";
+            case "style3": return "#F7D15B";
+            case "style4": return "#9D5B9F";
+            case "style5": return "#D0525F";
+            case "style6": return "#F9844B";
+            case "style7": return "#AE663E";
             default:       return "#888888";
         }
     }

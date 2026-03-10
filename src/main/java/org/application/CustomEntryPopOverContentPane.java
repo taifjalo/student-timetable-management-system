@@ -50,7 +50,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
 
         final boolean teacher = SessionManager.getInstance().isTeacher();
 
-        // ── Header (different for teacher vs student) ────────────────────────
         if (teacher) {
             // Full CalendarFX header for teachers
             EntryHeaderView header = new EntryHeaderView(entry, dateControl.getCalendars());
@@ -96,7 +95,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             setHeader(studentHeader);
         }
 
-        // ── Load saved lesson for pre-population ─────────────────────────────
         Lesson existingLesson = null;
         if (entry.getUserObject() instanceof SavedLesson sl) {
             try {
@@ -106,14 +104,12 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             }
         }
 
-        // ── Snapshot for revert-on-close ─────────────────────────────────────
         final Interval[] snapshotInterval = {entry.getInterval()};
         final Calendar[] snapshotCalendar = {entry.getCalendar()};
         final boolean[] savedThisSession  = {false};
         final boolean[] savingInProgress  = {false};
 
         if (teacher) {
-            // ── TEACHER: CalendarFX EntryDetailsView + editable fields ────────
             EntryDetailsView details = new EntryDetailsView(entry, dateControl);
             replaceTimeFields(details, entry);
 
@@ -127,14 +123,12 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             setExpandedPane(detailsPane);
 
         } else {
-            // ── STUDENT: pure-Java read-only GridPane ─────────────────────────
             GridPane studentView = buildStudentView(entry, existingLesson);
             PopOverTitledPane detailsPane = new PopOverTitledPane("Details", studentView);
             getPanes().add(detailsPane);
             setExpandedPane(detailsPane);
         }
 
-        // ── Close / revert behaviour (shared) ────────────────────────────────
         popOver.showingProperty().addListener((obs, wasShowing, isShowing) -> {
             if (!isShowing && wasShowing) {
                 if (savingInProgress[0]) return;
@@ -161,7 +155,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         });
     }
 
-    // ── Header helpers ────────────────────────────────────────────────────────
 
     private GridPane buildStudentView(Entry<?> entry, Lesson existingLesson) {
         GridPane grid = new GridPane();
@@ -268,7 +261,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             System.err.println("lockTitleToCalendarName reflection failed: " + e.getMessage());
         }
 
-        // Students: hide the calendar ComboBox next to the entry title
         if (!teacher) {
             header.sceneProperty().addListener((obs, oldScene, newScene) -> {
                 if (newScene != null) {
@@ -284,7 +276,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         });
     }
 
-    // ── Teacher-only helpers ──────────────────────────────────────────────────
 
     private void replaceTimeFields(EntryDetailsView details, Entry<?> entry) {
         GridPane grid = details.getChildren().stream()
