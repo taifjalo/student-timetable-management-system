@@ -13,11 +13,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.dao.NotificationDao;
+import org.entities.User;
 import org.service.NotificationService;
 import org.service.SessionManager;
 
@@ -171,6 +174,31 @@ public class NavbarController {
             stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void openChat(){
+        try {
+            SessionManager sessionManager = SessionManager.getInstance();
+            User currentUser = sessionManager.getCurrentUser();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"));
+            Parent root = loader.load();
+            ChatController ChatController = loader.getController();
+            ChatController.setUserId(currentUser.getId());
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            scene.getStylesheets().add(
+                    getClass().getResource("/chat-view/message.css").toExternalForm()
+            );
+            scene.setFill(null);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        }catch (Exception e){
             e.printStackTrace();
         }
     }

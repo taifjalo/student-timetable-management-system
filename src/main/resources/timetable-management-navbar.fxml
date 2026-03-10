@@ -52,7 +52,7 @@
                <Cursor fx:constant="HAND" />
             </cursor>
          </Button>
-            <Button alignment="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
+            <Button alignment="CENTER" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" mouseTransparent="false" onAction="#openChat" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 5;">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>

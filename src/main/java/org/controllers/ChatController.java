@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -184,6 +185,9 @@ public class ChatController {
     public void initialize() {
         chatPreviews.setAll(chatService.getChatPreviews(userId));
         chatUsers.setItems(chatPreviewsSorted);
+        chatMessages.setSelectionModel(null);
+        chatMessages.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> e.consume());
+        chatMessages.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> e.consume());
         chatMessages.setItems(sortedMessages);
         startPreviewsAutoUpdate();
         rightSideVisibility(false);

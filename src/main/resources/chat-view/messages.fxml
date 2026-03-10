@@ -54,7 +54,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ListView fx:id="chatMessages" prefHeight="652.0" style="-fx-border-width: 0 0  0 0; -fx-border-color: transperent; -fx-background-color: white;">
+                  <ListView fx:id="chatMessages" prefHeight="652.0" style="-fx-border-width: 0 0  0 0; -fx-background-color: white;">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
