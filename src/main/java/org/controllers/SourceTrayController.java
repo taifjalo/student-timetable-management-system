@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.dao.GroupDao;
 import org.entities.StudentGroup;
+import org.service.GroupService;
 import org.service.SessionManager;
 
 public class SourceTrayController {
@@ -35,8 +37,21 @@ public class SourceTrayController {
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
 
-    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<StudentGroup> groups) {
+    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
+
+        // Fetch groups here — this is source tray concern, not the caller's
+        Long userId = SessionManager.getInstance().isTeacher() ? null
+                : (SessionManager.getInstance().getCurrentUser() != null
+                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        List<StudentGroup> groups;
+        try {
+            groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
+        } catch (Exception e) {
+            System.err.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
+            groups = java.util.Collections.emptyList();
+        }
+
         this.groupsList = FXCollections.observableArrayList(groups);
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
@@ -250,6 +265,7 @@ public class SourceTrayController {
     }
 
     private HBox createGroupRow(StudentGroup group, String sectionName) {
+
         Text groupNameText = new Text(group.getFieldOfStudies());
         groupNameText.setStrokeWidth(0.0);
 

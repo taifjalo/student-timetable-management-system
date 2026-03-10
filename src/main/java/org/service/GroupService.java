@@ -81,6 +81,16 @@ public class GroupService {
         return groupDao.findAll();
     }
 
+    /**
+     * Returns the groups visible to the given user.
+     * For students this is only the group they belong to;
+     * pass {@code null} to get all groups (teacher view).
+     */
+    public List<StudentGroup> getGroupsForUser(Long userId) {
+        if (userId == null) return groupDao.findAll();
+        return groupDao.findAllForUser(userId);
+    }
+
     public List<User> getStudentsInGroup(String groupCode) {
         return groupDao.findMembersByGroupCode(groupCode);
     }

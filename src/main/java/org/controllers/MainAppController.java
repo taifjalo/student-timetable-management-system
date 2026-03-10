@@ -18,7 +18,6 @@ import org.entities.Course;
 import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.service.CourseService;
-import org.service.GroupService;
 import org.service.LessonService;
 import org.service.SessionManager;
 
@@ -117,7 +116,6 @@ public class MainAppController {
             try {
                 CourseService courseService = new CourseService(new CourseDao());
                 LessonService lessonService = new LessonService(new LessonDao());
-                GroupService  groupService  = new GroupService(new GroupDao());
 
                 final boolean isTeacher = SessionManager.getInstance().isTeacher();
                 final String studentGroupCode = resolveStudentGroupCode(isTeacher);
@@ -146,15 +144,6 @@ public class MainAppController {
                     }
                 }
 
-                List<StudentGroup> groups;
-                try {
-                    groups = groupService.getAllGroups();
-                } catch (Exception e) {
-                    System.err.println("Refresh: failed to load groups: " + e.getMessage());
-                    groups = new ArrayList<>();
-                }
-
-                final List<StudentGroup> finalGroups = groups;
                 final java.util.Map<Course, java.util.List<Lesson>> finalMap = courseToLessons;
 
                 Platform.runLater(() -> {
@@ -182,8 +171,8 @@ public class MainAppController {
                             myCalendarSource.getCalendars().add(cal);
                         }
 
-                        sourceTrayController.addSourceSectionsToSourceTray(
-                                calendarView, myCalendarSource, finalGroups);
+                        // SourceTrayController fetches its own groups
+                        sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
                         navbarController.refreshBadge();
                     } finally {
                         navbarController.stopSpin();
@@ -201,7 +190,6 @@ public class MainAppController {
     private void loadDataFromDatabase(boolean firstLoad) {
         CourseService courseService = new CourseService(new CourseDao());
         LessonService lessonService = new LessonService(new LessonDao());
-        GroupService  groupService  = new GroupService(new GroupDao());
 
         myCalendarSource.getCalendars().clear();
 
@@ -246,23 +234,12 @@ public class MainAppController {
             e.printStackTrace();
         }
 
-        List<StudentGroup> groups;
-        try {
-            groups = groupService.getAllGroups();
-            System.out.println("Loaded " + groups.size() + " groups from DB");
-        } catch (Exception e) {
-            System.out.println("Failed to load groups: " + e.getMessage());
-            e.printStackTrace();
-            groups = new ArrayList<>();
-        }
-        final List<StudentGroup> finalGroups = groups;
-
         if (firstLoad) {
             Platform.runLater(() -> {
                 calendarView.setShowSourceTray(true);
                 calendarView.applyCss();
                 calendarView.layout();
-                sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, finalGroups);
+                sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
 
                 SplitPane sp = calendarView.lookupAll(".split-pane").stream()
                         .filter(n -> n instanceof SplitPane)
@@ -280,7 +257,7 @@ public class MainAppController {
                 }
             });
         } else {
-            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource, finalGroups);
+            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
         }
 
         if (!firstLoad) {
@@ -307,7 +284,7 @@ public class MainAppController {
     }
 
     private boolean lessonVisibleToStudent(Lesson lesson, String studentGroupCode, Long studentUserId) {
-        // Check individual assignment first (always works regardless of group)
+        // Check individual assignment first
         List<org.entities.User> assignedUsers = lesson.getAssignedUsers();
         if (assignedUsers != null && studentUserId != null) {
             boolean directlyAssigned = assignedUsers.stream()
