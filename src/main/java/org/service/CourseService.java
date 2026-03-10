@@ -52,11 +52,6 @@ public class CourseService {
         return courseDao.findAll();
     }
 
-    /**
-     * Returns the courses visible to the given user.
-     * Pass {@code null} for teachers to get all courses.
-     * Pass the student's user ID to get only courses they have lessons in.
-     */
     public List<Course> getCoursesForUser(Long userId) {
         if (userId == null) return courseDao.findAll();
         return courseDao.findCoursesForUser(userId);
@@ -80,13 +75,14 @@ public class CourseService {
     public static Style colorCodeToStyle(String colorCode) {
         if (colorCode == null) return Style.STYLE1;
         return switch (colorCode.toUpperCase()) {
-            case "#FF8C00" -> Style.STYLE2;
-            case "#8B0000" -> Style.STYLE3;
-            case "#6B8E23" -> Style.STYLE4;
-            case "#800080" -> Style.STYLE5;
-            case "#008080" -> Style.STYLE6;
-            case "#C71585" -> Style.STYLE7;
-            default        -> Style.STYLE1; // #6495ED and fallback
+            case "#77C04B" -> Style.STYLE1;
+            case "#418FCB" -> Style.STYLE2;
+            case "#F7D15B" -> Style.STYLE3;
+            case "#9D5B9F" -> Style.STYLE4;
+            case "#D0525F" -> Style.STYLE5;
+            case "#F9844B" -> Style.STYLE6;
+            case "#AE663E" -> Style.STYLE7;
+            default        -> Style.STYLE1;
         };
     }
 }

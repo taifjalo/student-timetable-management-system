@@ -42,13 +42,13 @@ public class CreateCourseModalController {
     };
 
     private static final String[] STYLE_NAMES = {
-        "Blue", "Orange", "Dark Red", "Green",
-        "Purple", "Teal", "Pink"
+        "Green", "Blue", "Yellow", "Purple",
+        "Red", "Orange", "Brown"
     };
 
     private static final String[] STYLE_COLORS = {
-        "#6495ED", "#FF8C00", "#8B0000", "#6B8E23",
-        "#800080", "#008080", "#C71585"
+        "#77C04B", "#418FCB", "#F7D15B", "#9D5B9F",
+        "#D0525F", "#F9844B", "#AE663E"
     };
 
     public void setProps(String courseName) {
@@ -220,13 +220,13 @@ public class CreateCourseModalController {
     private String styleToHex(Style style) {
         if (style == null) return "#888888";
         return switch (style) {
-            case STYLE1 -> "#6495ED";
-            case STYLE2 -> "#FF8C00";
-            case STYLE3 -> "#8B0000";
-            case STYLE4 -> "#6B8E23";
-            case STYLE5 -> "#800080";
-            case STYLE6 -> "#008080";
-            case STYLE7 -> "#C71585";
+            case STYLE1 -> "#77C04B"; // green
+            case STYLE2 -> "#418FCB"; // blue
+            case STYLE3 -> "#F7D15B"; // yellow
+            case STYLE4 -> "#9D5B9F"; // purple
+            case STYLE5 -> "#D0525F"; // red
+            case STYLE6 -> "#F9844B"; // orange
+            case STYLE7 -> "#AE663E"; // brown
             default     -> "#888888";
         };
     }
