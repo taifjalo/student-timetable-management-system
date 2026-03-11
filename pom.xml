@@ -187,6 +187,32 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <!-- JavaFX controllers - require UI toolkit, untestable without TestFX -->
+                        <exclude>org/controllers/SourceTrayController.class</exclude>
+                        <exclude>org/controllers/MainAppController.class</exclude>
+                        <exclude>org/controllers/NavbarController.class</exclude>
+                        <exclude>org/controllers/ChatController.class</exclude>
+                        <exclude>org/controllers/ChatPreviewController.class</exclude>
+                        <exclude>org/controllers/ChatSearchingContainerController.class</exclude>
+                        <exclude>org/controllers/ChatUserSearchResultController.class</exclude>
+                        <exclude>org/controllers/CreateCourseModalController.class</exclude>
+                        <exclude>org/controllers/CreateGroupModalController.class</exclude>
+                        <exclude>org/controllers/CreateLessonModalController.class</exclude>
+                        <exclude>org/controllers/EventExtraDetailsController.class</exclude>
+                        <exclude>org/controllers/LoginController.class</exclude>
+                        <exclude>org/controllers/MessageController.class</exclude>
+                        <exclude>org/controllers/NotificationsPopupController.class</exclude>
+                        <exclude>org/controllers/RegisterController.class</exclude>
+                        <exclude>org/controllers/UserSettingsController.class</exclude>
+                        <!-- JavaFX application entry point -->
+                        <exclude>org/application/CalendarApp.class</exclude>
+                        <exclude>org/application/CustomEntryPopOverContentPane.class</exclude>
+                        <!-- Database connection bootstrap -->
+                        <exclude>org/datasource/TimetableConnection.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <plugin>
