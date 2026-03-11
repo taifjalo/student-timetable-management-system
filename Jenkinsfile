@@ -17,6 +17,11 @@ pipeline {
 
 
     stages {
+        stage('Check Docker') {
+            steps {
+                bat 'docker --version'
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -30,9 +35,15 @@ pipeline {
             }
         }
 
-        stage('Generate Report') {
+        stage('Code Coverage') {
             steps {
                 bat 'mvn jacoco:report'
+            }
+        }
+
+        stage('Publish Test Results') {
+            steps {
+                junit '**/target/surefire-reports/*.xml'
             }
         }
 
