@@ -16,6 +16,14 @@ class SessionManagerTest {
         SessionManager.getInstance().logout();
     }
 
+    private User createUser(String role) {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testUser");
+        user.setRole(role);
+        return user;
+    }
+
     @Test
     @DisplayName("Singleton: getInstance should always return the same instance")
     void shouldReturnSameInstance() {
@@ -31,18 +39,10 @@ class SessionManagerTest {
     }
 
     @Test
-    @DisplayName("isLoggedIn: Should return false when no user is logged in")
-    void shouldReturnFalseWhenNotLoggedIn() {
-        assertFalse(SessionManager.getInstance().isLoggedIn());
-    }
-
-    @Test
     @DisplayName("Login: Should set current user")
     void shouldSetCurrentUserOnLogin() {
-        User user = new User();
-        user.setUsername("testUser");
 
-        SessionManager.getInstance().login(user);
+        SessionManager.getInstance().login(createUser("teacher"));
 
         assertNotNull(SessionManager.getInstance().getCurrentUser());
         assertEquals("testUser", SessionManager.getInstance().getCurrentUser().getUsername());
@@ -85,5 +85,58 @@ class SessionManagerTest {
         SessionManager.getInstance().login(user2);
 
         assertEquals("user2", SessionManager.getInstance().getCurrentUser().getUsername());
+    }
+
+
+    // Role is Teacher
+
+
+    @Test
+    @DisplayName("isTeacher: Should return true when role is 'teacher'")
+    void shouldReturnTrueForTeacherRole() {
+        SessionManager.getInstance().login(createUser("teacher"));
+        assertTrue(SessionManager.getInstance().isTeacher());
+    }
+
+    @Test
+    @DisplayName("isTeacher: Should return true when role is 'TEACHER' (uppercase)")
+    void shouldReturnTrueForUppercaseTeacher() {
+        SessionManager.getInstance().login(createUser("TEACHER"));
+        assertTrue(SessionManager.getInstance().isTeacher());
+    }
+
+    @Test
+    @DisplayName("isTeacher: Should return false when role is 'student'")
+    void shouldReturnFalseForStudentRole() {
+        SessionManager.getInstance().login(createUser("student"));
+        assertFalse(SessionManager.getInstance().isTeacher());
+    }
+
+    @Test
+    @DisplayName("isTeacher: Should return false when no user is logged in")
+    void shouldReturnFalseWhenNotLoggedIn() {
+        assertFalse(SessionManager.getInstance().isTeacher());
+    }
+
+    @Test
+    @DisplayName("isTeacher: Should return false when role is null")
+    void shouldReturnFalseWhenRoleIsNull() {
+        SessionManager.getInstance().login(createUser(null));
+        assertFalse(SessionManager.getInstance().isTeacher());
+    }
+
+    @Test
+    @DisplayName("isLoggedIn: Should be true after login")
+    void shouldBeLoggedInAfterLogin() {
+        SessionManager.getInstance().login(createUser("student"));
+        assertTrue(SessionManager.getInstance().isLoggedIn());
+    }
+
+    @Test
+    @DisplayName("isLoggedIn: Should be false after logout")
+    void shouldNotBeLoggedInAfterLogout() {
+        SessionManager.getInstance().login(createUser("teacher"));
+        SessionManager.getInstance().logout();
+        assertFalse(SessionManager.getInstance().isLoggedIn());
     }
 }
