@@ -5,17 +5,17 @@ import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@DisplayName("Logic Test: Tests are applied with JUnit 5 & Mockito for func Logic Test purpose")
-
+@DisplayName("Logic Test: UserService tests with JUnit 5 & Mockito")
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -23,111 +23,93 @@ class UserServiceTest {
     UserDao userDao;
 
     @InjectMocks
-    AuthService authService;
+    UserService userService;
 
-    // Login Tests:
-    @Test
-    @DisplayName("Login Test: Should call login when credentials are correct")
-    void shouldReturnUserWhenCredentialsAreCorrect() {
-
-        String rawPassword = "12345678";
-        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
-
+    private User createUser(Long id, String firstName, String sureName) {
         User user = new User();
-        user.setUsername("user");
-        user.setPasswordHash(hashed);
-
-        when(userDao.findByUsername("user")).thenReturn(user);
-
-        // Call Login Method:
-        User result = authService.login("user", rawPassword);
-
-        assertNotNull(result);
-        assertEquals("user", result.getUsername());
+        user.setId(id);
+        user.setFirstName(firstName);
+        user.setSureName(sureName);
+        return user;
     }
 
-    @Test
-    @DisplayName("Login Test: Should throw exception when username does not exist")
-    void shouldThrowExceptionWhenUsernameNotExist() {
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            authService.login("user", "wrongPassword");
-        });
-
-        assertEquals("Invalid username or password", exception.getMessage());
-    }
+    // ── getAllStudents ──────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Login Test: Should throw exception when password is incorrect")
-    void shouldThrowExceptionWhenPasswordIncorrect() {
-        String rawPassword = "12345678";
-        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
-
-        User user = new User();
-        user.setUsername("user");
-        user.setPasswordHash(hashed);
-
-        when(userDao.findByUsername("user")).thenReturn(user);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            authService.login("user", "wrongPassword");
-        });
-
-        assertEquals("Invalid username or password", exception.getMessage());
-    }
-
-    // Register Tests:
-    @Test
-    @DisplayName("Register Test: Should call save when credentials are correct")
-    void shouldRegisterUserWhenCredentialsAreCorrect() {
-
-        // First find if user exist or doesn't exist in the database:
-        when(userDao.findByUsername("user")).thenReturn(null);
-        // in this condition when calling save() method to save new user don't do anything:
-        doNothing().when(userDao).save(any(User.class));
-
-        // Call Register Method
-        authService.register(
-                "Logic",
-                "Testing",
-                "user",
-                "Testing@test.com",
-                "090123456",
-                "87654321",
-                "Student"
+    @DisplayName("GetAllStudents: Should return all users from DAO")
+    void shouldReturnAllStudents() {
+        List<User> users = List.of(
+                createUser(1L, "Alice", "Smith"),
+                createUser(2L, "Bob", "Jones")
         );
+        when(userDao.findAll()).thenReturn(users);
 
-        // Verify the user to regist called one time the save() user method.
-        verify(userDao, times(1)).save(any(User.class));
+        List<User> result = userService.getAllStudents();
+
+        assertEquals(2, result.size());
+        verify(userDao).findAll();
     }
 
     @Test
-    @DisplayName("Register Test: Should throw exception if username exists")
-    void shouldThrowExceptionWhenUsernameExists() {
+    @DisplayName("GetAllStudents: Should return empty list when no users exist")
+    void shouldReturnEmptyListWhenNoStudents() {
+        when(userDao.findAll()).thenReturn(Collections.emptyList());
 
-        // If user exist
-        User existingUser = new User();
-        existingUser.setUsername("user");
+        List<User> result = userService.getAllStudents();
 
+        assertTrue(result.isEmpty());
+        verify(userDao).findAll();
+    }
 
-        // First find if user exist or doesn't exist in the database, if the user exist then Return (existingUser):
-        when(userDao.findByUsername("user")).thenReturn(existingUser);
+    // ── searchStudents ─────────────────────────────────────────────────────────
 
+    @Test
+    @DisplayName("SearchStudents: Should call searchByName with trimmed query")
+    void shouldSearchByNameWhenQueryProvided() {
+        List<User> users = List.of(createUser(1L, "Alice", "Smith"));
+        when(userDao.searchByName("alice")).thenReturn(users);
 
-        // Throw RuntimeException when Call Register Method
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> authService.register(
-                "Logic",
-                "Testing",
-                "user",
-                "Testing@test.com",
-                "090123456",
-                "87654321",
-                "Student"
-        ));
+        List<User> result = userService.searchStudents("  alice  ");
 
+        assertEquals(1, result.size());
+        verify(userDao).searchByName("alice");
+        verify(userDao, never()).findAll();
+    }
 
-        assertEquals("Username already exists", exception.getMessage());
-        // Verify the user to regist SHOULD NOT called one time the save() user method.
-        verify(userDao, never()).save(any(User.class));
+    @Test
+    @DisplayName("SearchStudents: Should return all when query is null")
+    void shouldReturnAllWhenQueryIsNull() {
+        List<User> users = List.of(createUser(1L, "Alice", "Smith"));
+        when(userDao.findAll()).thenReturn(users);
+
+        List<User> result = userService.searchStudents(null);
+
+        assertEquals(1, result.size());
+        verify(userDao).findAll();
+        verify(userDao, never()).searchByName(any());
+    }
+
+    @Test
+    @DisplayName("SearchStudents: Should return all when query is blank")
+    void shouldReturnAllWhenQueryIsBlank() {
+        List<User> users = List.of(createUser(1L, "Bob", "Jones"));
+        when(userDao.findAll()).thenReturn(users);
+
+        List<User> result = userService.searchStudents("   ");
+
+        assertEquals(1, result.size());
+        verify(userDao).findAll();
+        verify(userDao, never()).searchByName(any());
+    }
+
+    @Test
+    @DisplayName("SearchStudents: Should return empty list when no match found")
+    void shouldReturnEmptyWhenNoMatch() {
+        when(userDao.searchByName("xyz")).thenReturn(Collections.emptyList());
+
+        List<User> result = userService.searchStudents("xyz");
+
+        assertTrue(result.isEmpty());
+        verify(userDao).searchByName("xyz");
     }
 }

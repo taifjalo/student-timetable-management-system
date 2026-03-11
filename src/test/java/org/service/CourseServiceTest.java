@@ -1,5 +1,6 @@
 package org.service;
 
+import com.calendarfx.model.Calendar;
 import org.dao.CourseDao;
 import org.dao.LessonDao;
 import org.entities.Course;
@@ -14,11 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Logic Test: CourseService tests with JUnit 5 & Mockito")
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +45,7 @@ class CourseServiceTest {
         return user;
     }
 
-    @DisplayName("Helper Method: First Should Create Course")
+    @DisplayName("Helper Method: Second Should Create Course")
     private Course createCourse(Long id, String name, String colorCode) {
         Course course = new Course();
         course.setId(id);
@@ -77,6 +78,68 @@ class CourseServiceTest {
     }
 
     @Test
+    @DisplayName("Create: Should throw when colorCode is null")
+    void shouldThrowWhenColorCodeIsNull() {
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.createCourse("Math", null));
+        verify(courseDao, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Create: Should throw when colorCode is blank")
+    void shouldThrowWhenColorCodeIsBlank() {
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.createCourse("Math", "   "));
+        verify(courseDao, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("GetById: Should return course when found")
+    void shouldReturnCourseWhenFound() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        when(courseDao.findById(1L)).thenReturn(course);
+
+        Course result = courseService.getCourseById(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    @DisplayName("GetById: Should throw when course not found")
+    void shouldThrowWhenCourseNotFound() {
+        when(courseDao.findById(99L)).thenReturn(null);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.getCourseById(99L));
+    }
+
+    @Test
+    @DisplayName("GetAll: Should return all courses from DAO")
+    void shouldReturnAllCourses() {
+        List<Course> courses = List.of(
+                createCourse(1L, "Math", "#FF0000"),
+                createCourse(2L, "Physics", "#FF8C00")
+        );
+        when(courseDao.findAll()).thenReturn(courses);
+
+        List<Course> result = courseService.getAllCourses();
+
+        assertEquals(2, result.size());
+        verify(courseDao).findAll();
+    }
+
+    @Test
+    @DisplayName("ToCalendar: Should attach course as userObject")
+    void shouldAttachCourseAsUserObject() {
+        Course course = createCourse(1L, "Physics", "#800080");
+
+        Calendar calendar = courseService.toCalendar(course);
+
+        assertSame(course, calendar.getUserObject());
+    }
+
+    @Test
     @DisplayName("Update Course: Should successfully update a course when all fields are valid")
     void shouldUpdateCourse() {
 
@@ -101,14 +164,29 @@ class CourseServiceTest {
     }
 
     @Test
-    @DisplayName("Color Course: Should Map Color To Style")
-    void shouldMapColorToStyle() {
-
-        assertEquals(
-                com.calendarfx.model.Calendar.Style.STYLE2,
-                CourseService.colorCodeToStyle("#FF8C00")
-        );
+    @DisplayName("ColorCodeToStyle: Should map all known color codes correctly")
+    void shouldMapAllColorCodesToStyles() {
+        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#6495ED"));
     }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should return STYLE1 for unknown color code")
+    void shouldReturnStyle1ForUnknownColorCode() {
+        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#UNKNOWN"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should return STYLE1 for null")
+    void shouldReturnStyle1ForNull() {
+        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle(null));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should be case-insensitive")
+    void shouldBeCaseInsensitive() {
+        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#ff8c00"));
+    }
+
 
     @Test
     @DisplayName("Find Course: Should Throw If Course Not Found")
