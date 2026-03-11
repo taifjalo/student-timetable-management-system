@@ -37,6 +37,3 @@ Sometimes team members weren't as attentive as they could have been.
 - Coding the MVP
 - Trello update
 
-## A table to demonstrate the time spent by each memeber during the spring
-
-Time table avalible as team agreed in **shared Excel file** [this link](https://metropoliafi-my.sharepoint.com/:x:/g/personal/nikitary_metropolia_fi/IQB20WIaSG4KQb5SYS59ArIDAX2AwaDizUYHcyAbWEy8BYo?e=IPk7FS).

@@ -55,7 +55,3 @@ During the Sprint Review, the team demonstrated:
 - Expand Jenkins pipeline (linting, notifications, static analysis)
 - Planning for Sprint 4
 - Trello update
-
-## A table to demonstrate the time spent by each member during the sprint
-
-Time table available as team agreed in **shared Excel file** [this link](https://metropoliafi-my.sharepoint.com/:x:/g/personal/nikitary_metropolia_fi/IQB20WIaSG4KQb5SYS59ArIDAX2AwaDizUYHcyAbWEy8BYo?e=IPk7FS).
