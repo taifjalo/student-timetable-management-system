@@ -17,6 +17,11 @@ pipeline {
 
 
     stages {
+        stage('Check Docker') {
+            steps {
+                bat 'docker --version'
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -30,7 +35,7 @@ pipeline {
             }
         }
 
-        stage('Generate Report') {
+        stage('Code Coverage') {
             steps {
                 bat 'mvn jacoco:report'
             }

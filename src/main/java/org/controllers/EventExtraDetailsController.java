@@ -141,11 +141,9 @@ public class EventExtraDetailsController {
     public List<StudentGroup> getSelectedGroups() { return new ArrayList<>(selectedGroups); }
     public List<User> getSelectedUsers() { return new ArrayList<>(selectedUsers); }
 
-    /** Makes all input controls non-interactive (student / read-only view). */
     public void setReadOnly(boolean readOnly) {
         if (!readOnly) return;
 
-        // ── Classroom: swap TextField → plain Label ───────────────────────────
         String classroomText = classroomField.getText().trim();
         Label classroomLabel = new Label(classroomText.isEmpty() ? "—" : classroomText);
         classroomLabel.setStyle("-fx-padding: 2 0 2 0;");
@@ -161,7 +159,6 @@ public class EventExtraDetailsController {
             gp.getChildren().add(classroomLabel);
         }
 
-        // ── Groups: remove Add button, convert chips → plain Labels ──────────
         List<Node> toReplace = new ArrayList<>(groupRow.getChildren());
         groupRow.getChildren().clear();
         for (Node n : toReplace) {
@@ -183,7 +180,6 @@ public class EventExtraDetailsController {
             groupRow.getChildren().add(new Label("—"));
         }
 
-        // ── Students: hide search field, convert user chips → plain Labels ────
         List<Node> studentNodes = new ArrayList<>(studentsRow.getChildren());
         studentsRow.getChildren().clear();
         for (Node n : studentNodes) {

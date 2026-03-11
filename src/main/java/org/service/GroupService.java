@@ -13,12 +13,10 @@ public class GroupService {
     private final GroupDao groupDao;
     private final NotificationService notificationService;
 
-    // Existing constructor — unchanged, backward-compatible
     public GroupService(GroupDao groupDao) {
         this(groupDao, null);
     }
 
-    // New constructor — used when notifications are needed
     public GroupService(GroupDao groupDao, NotificationService notificationService) {
         this.groupDao = groupDao;
         this.notificationService = notificationService;
@@ -79,6 +77,11 @@ public class GroupService {
 
     public List<StudentGroup> getAllGroups() {
         return groupDao.findAll();
+    }
+
+    public List<StudentGroup> getGroupsForUser(Long userId) {
+        if (userId == null) return groupDao.findAll();
+        return groupDao.findAllForUser(userId);
     }
 
     public List<User> getStudentsInGroup(String groupCode) {

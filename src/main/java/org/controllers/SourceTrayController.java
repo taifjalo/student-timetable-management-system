@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.dao.GroupDao;
 import org.entities.StudentGroup;
+import org.service.GroupService;
 import org.service.SessionManager;
 
 public class SourceTrayController {
@@ -35,8 +37,21 @@ public class SourceTrayController {
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
 
-    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource, List<StudentGroup> groups) {
+    public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
+
+        // Fetch groups
+        Long userId = SessionManager.getInstance().isTeacher() ? null
+                : (SessionManager.getInstance().getCurrentUser() != null
+                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        List<StudentGroup> groups;
+        try {
+            groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
+        } catch (Exception e) {
+            System.err.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
+            groups = java.util.Collections.emptyList();
+        }
+
         this.groupsList = FXCollections.observableArrayList(groups);
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
@@ -250,6 +265,7 @@ public class SourceTrayController {
     }
 
     private HBox createGroupRow(StudentGroup group, String sectionName) {
+
         Text groupNameText = new Text(group.getFieldOfStudies());
         groupNameText.setStrokeWidth(0.0);
 
@@ -285,13 +301,13 @@ public class SourceTrayController {
     private static String styleToHex(String style) {
         if (style == null) return "#888888";
         switch (style.toLowerCase()) {
-            case "style1": return "#6495ED";
-            case "style2": return "#FF8C00";
-            case "style3": return "#8B0000";
-            case "style4": return "#6B8E23";
-            case "style5": return "#800080";
-            case "style6": return "#008080";
-            case "style7": return "#C71585";
+            case "style1": return "#77C04B";
+            case "style2": return "#418FCB";
+            case "style3": return "#F7D15B";
+            case "style4": return "#9D5B9F";
+            case "style5": return "#D0525F";
+            case "style6": return "#F9844B";
+            case "style7": return "#AE663E";
             default:       return "#888888";
         }
     }
