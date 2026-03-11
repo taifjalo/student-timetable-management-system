@@ -37,16 +37,6 @@ public class User {
     @Column(name="role")
     private String role;
 
-
-
-    /*
-    @Column(nullable=false)
-    private boolean enabled = true;
-
-    @Column(name="created_at", updatable=false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-     */
-
     public User() {}
 
     public Long getId() {
