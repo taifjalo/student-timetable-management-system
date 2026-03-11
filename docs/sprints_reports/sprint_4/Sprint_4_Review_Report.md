@@ -2,7 +2,7 @@
 
 ## Sprint Goal
 
-The goal of the sprint was to improve the performance of the MVP, create an image and publish it, and also present your application to the class.
+The goal of the sprint was to improve the performance of the MVP, create an image and publish it, and also present the application to the class.
 
 ## Completed User Stories / Tasks
 
