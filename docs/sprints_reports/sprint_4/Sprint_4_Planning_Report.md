@@ -10,7 +10,7 @@
 
 ## Sprint Goal
 
-The goal of the sprint is to improve the performance of the MVP, create an image and publish it, and also present your application to the class.
+The goal of the sprint is to improve the performance of the MVP, create an image and publish it, and also present the application to the class.
 
 ## Selected Product Backlog Items
 
