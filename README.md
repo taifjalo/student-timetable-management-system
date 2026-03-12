@@ -27,4 +27,4 @@ The database schema obtained from the ER diagram.
 ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Use%20case%20diagram.png)
 The use case diagram shows how users interact with the system and what actions they can perform.
 
-## ![Sprint reports](https://github.com/taifjalo/student-timetable-management-system/tree/main/docs/sprints_reports)
+## [Sprint reports](https://github.com/taifjalo/student-timetable-management-system/tree/main/docs/sprints_reports)
