@@ -6,7 +6,7 @@
 ## Sprint Number & Dates
 
 **Sprint Number:** Sprint 5  
-**Sprint Duration:** 2 Weeks (23 Mar 2026 – 6 Apr 2026)
+**Sprint Duration:** 2 Weeks (17 Mar 2026 – 31 Mar 2026)
 
 ## Sprint Goal
 
