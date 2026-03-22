@@ -195,9 +195,7 @@ public class MainAppController {
 
         final boolean isTeacher = SessionManager.getInstance().isTeacher();
         final String studentGroupCode = resolveStudentGroupCode(isTeacher);
-        final Long studentUserId = isTeacher ? null
-                : (SessionManager.getInstance().getCurrentUser() != null
-                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        final Long studentUserId = isTeacher ? null : (SessionManager.getInstance().getCurrentUser() != null ? SessionManager.getInstance().getCurrentUser().getId() : null);
 
         try {
             List<Course> dbCourses = courseService.getCoursesForUser(studentUserId);
@@ -208,13 +206,12 @@ public class MainAppController {
                     List<Lesson> lessons = isTeacher
                             ? lessonService.getLessonsByCourse(course.getId())
                             : lessonService.getLessonsByCourseWithGroups(course.getId());
-                    System.out.println("  └─ Loaded " + lessons.size() + " lessons for course: " + course.getName());
+                    System.out.println("Loaded " + lessons.size() + " lessons for course: " + course.getName());
                     for (Lesson lesson : lessons) {
                         if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                             continue;
                         }
-                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
-                                new Entry<>(course.getName());
+                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getName());
                         entry.setInterval(new Interval(
                                 lesson.getStartAt().toLocalDate(),
                                 lesson.getStartAt().toLocalTime(),
@@ -225,7 +222,7 @@ public class MainAppController {
                         cal.addEntry(entry);
                     }
                 } catch (Exception ex) {
-                    System.out.println("  └─ Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
+                    System.out.println("Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
                 }
                 myCalendarSource.getCalendars().add(cal);
             }
