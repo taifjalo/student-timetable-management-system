@@ -24,14 +24,6 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-      <!--            <ImageView fitHeight="941.0" fitWidth="1120.0" pickOnBounds="true" preserveRatio="true">-->
-      <!--               <image>-->
-      <!--                  <Image url="@images/login_background.jpg" />-->
-      <!--               </image>-->
-      <!--               <viewport>-->
-      <!--                  <Rectangle2D />-->
-      <!--               </viewport>-->
-      <!--            </ImageView>-->
                   <VBox alignment="CENTER_LEFT" maxWidth="600.0" prefHeight="500.0" prefWidth="250.0" spacing="3.0" style="-fx-background-color: #0B1F2A; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0.2, 0, 4);;" HBox.hgrow="ALWAYS">
                      <children>
                         <ImageView fitHeight="150.0" fitWidth="270.0" pickOnBounds="true" preserveRatio="true">
