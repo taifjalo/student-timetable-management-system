@@ -12,6 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.dao.UserDao;
 import org.service.AuthService;
+import org.service.LocalizationService;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class RegisterController {
 
@@ -22,6 +26,7 @@ public class RegisterController {
 
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
+    LocalizationService localizationService = new LocalizationService();
 
     @FXML
     private void handleRegister(ActionEvent event) {
@@ -50,14 +55,7 @@ public class RegisterController {
             authService.register(username, username, username, username + "@placeholder.com", "000000000", password, "student");
             System.out.println("Registered: " + username);
 
-            // Redirect to login
-            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
+            navigateToLogin(event);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,15 +66,27 @@ public class RegisterController {
     @FXML
     private void handleGoToLogin(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
+            navigateToLogin(event);
         } catch (Exception e) {
             e.printStackTrace();
+            messageLabel.setText("Siirtyminen kirjautumiseen epäonnistui.");
         }
+    }
+
+    private void navigateToLogin(ActionEvent event) throws IOException {
+        URL loginFxml = getClass().getResource("/login.fxml");
+        if (loginFxml == null) {
+            throw new IllegalArgumentException("login.fxml not found");
+        }
+
+        FXMLLoader loader = new FXMLLoader(loginFxml, localizationService.getBundle());
+        Parent root = loader.load();
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        stage.setScene(scene);
+        stage.setMaximized(true);
+        stage.show();
     }
 }
