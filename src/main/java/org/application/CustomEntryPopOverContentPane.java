@@ -31,18 +31,23 @@ import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.entities.User;
 import org.service.LessonService;
+import org.service.LocalizationService;
 import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class CustomEntryPopOverContentPane extends PopOverContentPane {
 
     public record SavedLesson(Long lessonId) {}
+
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
 
     public CustomEntryPopOverContentPane(PopOver popOver,
                                          DateControl dateControl,
@@ -118,13 +123,13 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             appendExtraFields(details, entry, ctrl, popOver,
                     savedThisSession, savingInProgress, snapshotInterval, snapshotCalendar);
 
-            PopOverTitledPane detailsPane = new PopOverTitledPane("Details", details);
+            PopOverTitledPane detailsPane = new PopOverTitledPane(selectedBundle.getString("event.details"), details);
             getPanes().add(detailsPane);
             setExpandedPane(detailsPane);
 
         } else {
             GridPane studentView = buildStudentView(entry, existingLesson);
-            PopOverTitledPane detailsPane = new PopOverTitledPane("Details", studentView);
+            PopOverTitledPane detailsPane = new PopOverTitledPane(selectedBundle.getString("event.details"), studentView);
             getPanes().add(detailsPane);
             setExpandedPane(detailsPane);
         }
@@ -216,9 +221,9 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
                         .collect(Collectors.joining(", "));
         }
 
-        addRow(grid, 0, "Luokka:",      valueLabel(classroom));
-        addRow(grid, 1, "Opettaja:",    valueLabel(teacherName));
-        addRow(grid, 3, "Ryhmä:",       valueLabel(groupsText));
+        addRow(grid, 0, selectedBundle.getString("event.class"),      valueLabel(classroom));
+        addRow(grid, 1, selectedBundle.getString("event.teacher"),    valueLabel(teacherName));
+        addRow(grid, 3, selectedBundle.getString("event.group"),       valueLabel(groupsText));
 //        addRow(grid, 7, "Opiskelijat:", valueLabel(studentsText));
 
         return grid;
@@ -316,16 +321,16 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             GridPane.setRowIndex(n, (r == null ? 0 : r) + EXTRA_ROWS);
         });
 
-        buildRow(grid, 0, "Luokka:",      ctrl.getClassIdNode());
-        buildRow(grid, 1, "Opettaja:",    ctrl.getTeacherNode());
-        buildRow(grid, 2, "Ryhmä:",       ctrl.getGroupRowNode());
-        buildRow(grid, 3, "Opiskelijat:", ctrl.getStudentsNode());
+        buildRow(grid, 0, selectedBundle.getString("event.class"),      ctrl.getClassIdNode());
+        buildRow(grid, 1, selectedBundle.getString("event.teacher"),    ctrl.getTeacherNode());
+        buildRow(grid, 2, selectedBundle.getString("event.group"),       ctrl.getGroupRowNode());
+        buildRow(grid, 3, selectedBundle.getString("event.students"), ctrl.getStudentsNode());
 
         int lastRow = grid.getChildren().stream()
                 .mapToInt(n -> { Integer r = GridPane.getRowIndex(n); return r == null ? 0 : r; })
                 .max().orElse(EXTRA_ROWS);
 
-        Button deleteBtn = new Button("Delete");
+        Button deleteBtn = new Button(selectedBundle.getString("event.delete.button"));
         deleteBtn.setStyle("-fx-background-color: #D03800; -fx-text-fill: white;" +
                            " -fx-cursor: hand; -fx-background-radius: 6;");
         deleteBtn.setOnAction(e -> {
@@ -338,7 +343,7 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             entry.removeFromCalendar();
         });
 
-        Button saveBtn = new Button("Save");
+        Button saveBtn = new Button(selectedBundle.getString("event.save.button"));
         saveBtn.setStyle("-fx-background-color: #00956D; -fx-text-fill: white;" +
                          " -fx-cursor: hand; -fx-background-radius: 6;");
         saveBtn.setOnAction(e -> {

@@ -15,12 +15,14 @@ import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.entities.User;
 import org.service.GroupService;
+import org.service.LocalizationService;
 import org.service.SessionManager;
 import org.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class EventExtraDetailsController {
 
@@ -35,6 +37,9 @@ public class EventExtraDetailsController {
 
     private final GroupService groupService = new GroupService(new GroupDao());
     private final UserService userService = new UserService(new UserDao());
+
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
 
     public EventExtraDetailsController(Entry<?> entry, Lesson existingLesson) {
         classroomField = new TextField();
@@ -52,7 +57,7 @@ public class EventExtraDetailsController {
         groupRow = new HBox(6);
         groupRow.setAlignment(Pos.CENTER_LEFT);
 
-        Button addGroupBtn = new Button("+ Add group");
+        Button addGroupBtn = new Button(selectedBundle.getString("event.add.group.button"));
         addGroupBtn.setStyle("-fx-cursor: hand;");
         addGroupBtn.setOnAction(e -> showGroupPicker(addGroupBtn));
         groupRow.getChildren().add(addGroupBtn);
@@ -76,7 +81,7 @@ public class EventExtraDetailsController {
         studentsRow.setAlignment(Pos.CENTER_LEFT);
 
         TextField userSearchField = new TextField();
-        userSearchField.setPromptText("Search user…");
+        userSearchField.setPromptText(selectedBundle.getString("event.search.users.prompt"));
         userSearchField.setPrefWidth(180);
 
         ContextMenu userSuggestions = new ContextMenu();

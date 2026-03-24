@@ -19,12 +19,14 @@ import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.service.CourseService;
 import org.service.LessonService;
+import org.service.LocalizationService;
 import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class MainAppController {
 
@@ -35,11 +37,14 @@ public class MainAppController {
     private CalendarSource myCalendarSource;
     private SourceTrayController sourceTrayController;
     private NavbarController navbarController;
+    private final LocalizationService localizationService = new LocalizationService();
+
+    ResourceBundle selectedBundle = localizationService.getBundle();
 
     @FXML
     public void initialize() {
         try {
-            FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"));
+            FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"), localizationService.getBundle());
             BorderPane navbar = navbarLoader.load();
             navbarController = navbarLoader.getController();
             mainRoot.setTop(navbar);
@@ -51,7 +56,7 @@ public class MainAppController {
             // Give the navbar a handle so the refresh button can call back here
             navbarController.setMainAppController(this);
 
-            myCalendarSource = new CalendarSource("Courses");
+            myCalendarSource = new CalendarSource(selectedBundle.getString("sourcetray.courses.section.title"));
             calendarView.getCalendarSources().clear();
             calendarView.getCalendarSources().add(myCalendarSource);
             calendarView.setRequestedTime(LocalTime.now());
