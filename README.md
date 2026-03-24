@@ -13,17 +13,18 @@ The project uses the following key technologies:
 - **Continuous Integration / Delivery:** [Jenkins](https://www.jenkins.io/#:~:text=As%20an%20extensible%20automation%20server%2C,delivery%20hub%20for%20any%20project) is used as the CI/CD server. It automatically builds the project on each commit, runs the JUnit tests, and invokes JaCoCo to record coverage metrics. (The Jenkins JaCoCo plugin enforces coverage thresholds on the build.
   ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/CI_Jenkins.png)
 - **Containerization:** [Docker](https://docs.docker.com/reference/cli/docker/image/push/#:~:text=Use%20,hosted%20one) is used to package the application for deployment. A `Dockerfile` is provided to build a runnable image of the Java app. We push the image to Docker Hub so it can be shared and deployed easily.
-- **Localization:** Java's built-in `java.util.ResourceBundle` is used for UI internationalization (i18n). Translation strings are stored in `.properties` files under `src/main/resources/messages/`. The `LanguageManager` service handles runtime language switching and RTL layout detection for Arabic.
+- **Localization:** Java's built-in `java.util.ResourceBundle` is used for UI internationalization (i18n). Translation strings are stored in `.properties` files under `src/main/resources/MessagesBundle/`. The `LanguageManager` service handles runtime language switching and RTL layout detection for Arabic.
 - **Project Management:** [Trello](https://trello.com/w/sep1_studenttimetablemanagementsystem/home) was used to manage the [product backlog](https://www.atlassian.com/agile/scrum/backlogs#:~:text=A%20product%20backlog%20is%20a,knows%20what%20to%20deliver%20first) and sprint boards, following Scrum guidelines. [User stories](https://app.uxcel.com/glossary/user-stories) were written in the format "As a [user], I want [functionality] so that [benefit] and prioritized based on business value. All design artifacts (UI mockups, database diagrams) and sprint reports are stored in the `Documents/` folder of the repository.
 
 ## Language Support
 
 The application supports the following languages, selectable from the Settings screen:
 
-| Language | Code | Direction |
-|----------|------|-----------|
-| English | `en` | LTR (default) |
-| Arabic — العربية | `ar` | RTL |
+| Language          | Code | Direction |
+|-------------------|------|-----------|
+| English           | `en` | LTR (default) |
+| Finnish           | `fi` | LTR |
+| Arabic — العربية  | `ar` | RTL |
 | Russian — Русский | `ru` | LTR |
 
 **How to switch language:**
@@ -32,10 +33,12 @@ The application supports the following languages, selectable from the Settings s
 3. The UI updates instantly across all screens
 4. Selecting Arabic automatically switches the layout to **Right-to-Left**
 
-Translation files are located at `src/main/resources/messages/`:
-- `messages_en.properties`
-- `messages_ar.properties`
-- `messages_ru.properties`
+Translation files are located at `src/main/resources/MessagesBundle/`:
+- `MessagesBundle_en_US.properties`
+- `MessagesBundle_fi_FI.properties`
+- `MessagesBundle_ar_IQ.properties`
+- `MessagesBundle_ru_RU.properties`
+
 
 ## ER diagram
 ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Timetable%20ER-schema.png)
