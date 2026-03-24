@@ -25,17 +25,24 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.dao.GroupDao;
 import org.entities.StudentGroup;
 import org.service.GroupService;
+import org.service.LocalizationService;
 import org.service.SessionManager;
 
 public class SourceTrayController {
 
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
+
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
+
 
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
@@ -104,6 +111,7 @@ public class SourceTrayController {
         };
 
         sectionTitleText.setText(source.getName());
+
         refreshRows.run();
 
         source.nameProperty().addListener((obs, oldName, newName) -> sectionTitleText.setText(newName));
@@ -135,7 +143,9 @@ public class SourceTrayController {
             addButton.setManaged(SessionManager.getInstance().isTeacher());
         }
 
-        sectionTitleText.setText(sectionTitle);
+//        sectionTitleText.setText(sectionTitle);
+        sectionTitleText.setText(selectedBundle.getString("sourcetray.groups.section.title"));
+
 
         // Render initial rows
         groupsListContainer.getChildren().clear();

@@ -15,10 +15,10 @@
                   <ToggleGroup fx:id="calendarViewGroup" />
                </toggleGroup>
                <buttons>
-                  <ToggleButton fx:id="calViewDay" text="Day" toggleGroup="$calendarViewGroup" />
-                  <ToggleButton fx:id="calViewWeek" selected="true" text="Week" toggleGroup="$calendarViewGroup" />
-                  <ToggleButton fx:id="calViewMonth" text="Month" toggleGroup="$calendarViewGroup" />
-                  <ToggleButton fx:id="calViewYear" text="Year" toggleGroup="$calendarViewGroup" />
+                  <ToggleButton fx:id="calViewDay" text="%navbar.calendar.view.day" toggleGroup="$calendarViewGroup" />
+                  <ToggleButton fx:id="calViewWeek" selected="true" text="%navbar.calendar.view.week" toggleGroup="$calendarViewGroup" />
+                  <ToggleButton fx:id="calViewMonth" text="%navbar.calendar.view.month" toggleGroup="$calendarViewGroup" />
+                  <ToggleButton fx:id="calViewYear" text="%navbar.calendar.view.year" toggleGroup="$calendarViewGroup" />
                </buttons>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -27,7 +27,7 @@
       </center>
       <right>
          <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
-            <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="Search events, people" styleClass="searchField" stylesheets="@style.css">
+            <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%navbar.search.prompt" styleClass="searchField" stylesheets="@style.css">
               <!-- <left>
                   <Label styleClass="searchBoxLabel">
                      <graphic>
