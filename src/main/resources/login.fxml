@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controllers.LoginController">
    <center>
       <StackPane styleClass="login-stack-pane" stylesheets="@style.css" BorderPane.alignment="CENTER">
          <children>
@@ -90,7 +79,7 @@
                         <TextFlow>
                            <children>
                               <Text fill="#00b484" strokeType="OUTSIDE" strokeWidth="0.0" text="%login.create.account.question" />
-                              <Hyperlink text="%login.create.account.hyper.link" textFill="#ff4400" onAction="#handleGoToRegister" />
+                              <Hyperlink onAction="#handleGoToRegister" text="%login.create.account.hyper.link" textFill="#ff4400" />
                            </children>
                            <VBox.margin>
                               <Insets top="10.0" />
@@ -99,6 +88,12 @@
                         <Label fx:id="messageLabel" textFill="#ff4400">
                            <VBox.margin><Insets top="8.0" /></VBox.margin>
                         </Label>
+                        <MenuButton fx:id="languageMenuButton" mnemonicParsing="false" text="Language">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Finnish" onAction="#handleChangeLocalization" fx:id="fiItem" />
+                            <MenuItem mnemonicParsing="false" text="English" onAction="#handleChangeLocalization" fx:id="enItem"/>
+                          </items>
+                        </MenuButton>
                      </children>
                      <padding>
                         <Insets left="60.0" right="60.0" />

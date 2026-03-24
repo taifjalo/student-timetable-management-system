@@ -7,19 +7,31 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.dao.UserDao;
 import org.entities.User;
 import org.service.AuthService;
+import org.service.LocalizationService;
 import org.service.SessionManager;
+import javafx.scene.control.MenuButton;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Locale;
 
 public class LoginController {
+
+    private final LocalizationService localizationService = new LocalizationService();
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Label messageLabel;
+    @FXML private MenuButton languageMenuButton;
+    @FXML private MenuItem fiItem;
+    @FXML private MenuItem enItem;
 
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
@@ -55,9 +67,56 @@ public class LoginController {
     }
 
     @FXML
+    private void initialize() {
+        applyLanguageMenuSelection();
+    }
+
+    @FXML
+    private void handleChangeLocalization(ActionEvent event) throws IOException {
+
+        MenuItem selectedItem = (MenuItem) event.getSource();
+
+        if (event.getSource() == fiItem) {
+            // Finnish
+            System.out.println("Finnish localization selected");
+            localizationService.switchLanguage("fi");
+        } else if (event.getSource() == enItem) {
+            // English
+            System.out.println("English localization selected");
+            localizationService.switchLanguage("en");
+        }
+
+        // Keep the selected value visible before and after scene reload.
+        languageMenuButton.setText(selectedItem.getText());
+        Stage stage = (Stage) languageMenuButton.getScene().getWindow();
+        localizationService.reloadScene(stage, "/login.fxml");
+
+    }
+
+    private void applyLanguageMenuSelection() {
+        if (languageMenuButton == null) {
+            return;
+        }
+
+        Locale currentLocale = localizationService.getCurrentLocale();
+        if (currentLocale != null && "fi".equalsIgnoreCase(currentLocale.getLanguage())) {
+            languageMenuButton.setText(fiItem != null ? fiItem.getText() : "Finnish");
+        } else {
+            languageMenuButton.setText(enItem != null ? enItem.getText() : "English");
+        }
+    }
+
+    @FXML
     private void handleGoToRegister(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/register.fxml"));
+            URL registerFxml = getClass().getResource("/register.fxml");
+            if (registerFxml == null) {
+                throw new IllegalArgumentException("register.fxml not found");
+            }
+
+            FXMLLoader loader = new FXMLLoader(registerFxml, localizationService.getBundle());
+            Parent root = loader.load();
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());

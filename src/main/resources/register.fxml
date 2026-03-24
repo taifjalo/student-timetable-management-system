@@ -42,7 +42,7 @@
                               <Insets bottom="50.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Rekisteröidy">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="%register.title">
                            <font>
                               <Font size="32.0" />
                            </font>
@@ -52,12 +52,12 @@
                         </Text>
                         <VBox spacing="5.0">
                            <children>
-                              <Label text="Käyttäjänimi" textFill="WHITE">
+                              <Label text="%register.username.label.and.prompt" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="usernameField" prefHeight="40.0" promptText="Käyttäjänimi">
+                              <TextField fx:id="usernameField" prefHeight="40.0" promptText="%register.username.label.and.prompt">
                                  <padding>
                                     <Insets left="10.0" right="10.0" />
                                  </padding>
@@ -69,12 +69,12 @@
                         </VBox>
                         <VBox spacing="5.0">
                            <children>
-                              <Label text="Salasana" textFill="WHITE">
+                              <Label text="%login.password.label.and.prompt" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <PasswordField fx:id="passwordField" prefHeight="40.0" promptText="Salasana">
+                              <PasswordField fx:id="passwordField" prefHeight="40.0" promptText="%login.password.label.and.prompt">
                                  <padding>
                                     <Insets left="10.0" right="10.0" />
                                  </padding>
@@ -86,12 +86,12 @@
                         </VBox>
                         <VBox layoutX="70.0" layoutY="298.0" spacing="5.0">
                            <children>
-                              <Label text="Salasana uudestaan" textFill="WHITE">
+                              <Label text="%register.password.again.label.and.prompt" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Label>
-                              <PasswordField fx:id="passwordAgainField" prefHeight="40.0" promptText="Salasana uudestaan">
+                              <PasswordField fx:id="passwordAgainField" prefHeight="40.0" promptText="%register.password.again.label.and.prompt">
                                  <padding>
                                     <Insets left="10.0" right="10.0" />
                                  </padding>
@@ -101,7 +101,7 @@
                               </PasswordField>
                            </children>
                         </VBox>
-                        <Button mnemonicParsing="false" onAction="#handleRegister" style="-fx-background-color: #00B484;" text="Rekisteröidy" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#handleRegister" style="-fx-background-color: #00B484;" text="%register.button" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
@@ -114,8 +114,8 @@
                         </Button>
                         <TextFlow>
                            <children>
-                              <Text fill="#00b484" strokeType="OUTSIDE" strokeWidth="0.0" text="Löytyykö käyttäjä?" />
-                              <Hyperlink text="Kirjaudu" textFill="#ff4400" onAction="#handleGoToLogin" />
+                              <Text fill="#00b484" strokeType="OUTSIDE" strokeWidth="0.0" text="%register.create.account.question" />
+                              <Hyperlink text="%register.create.account.hyper.link" textFill="#ff4400" onAction="#handleGoToLogin" />
                            </children>
                            <VBox.margin>
                               <Insets top="10.0" />
