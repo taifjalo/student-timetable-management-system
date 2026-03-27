@@ -32,16 +32,16 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
-                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                       <children>
-                           <Label text="Käyttäjänimi:" />
-                           <TextField fx:id="usernameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
-                       </children>
-                   </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="%settings.modal.username.label" />
+                        <TextField fx:id="usernameField" promptText="%settings.modal.username.label" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Etunimi:" />
-                        <TextField fx:id="firstNameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                        <Label text="%settings.modal.first.name.label" />
+                        <TextField fx:id="firstNameField" promptText="%settings.modal.first.name.label" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
                      </children>
                   </VBox>
                </children>
@@ -50,14 +50,14 @@
                <children>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Sukunimi:" />
-                        <TextField fx:id="lastNameField" promptText="John" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                        <Label text="%settings.modal.last.name.label" />
+                        <TextField fx:id="lastNameField" promptText="%settings.modal.last.name.label" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Sähköposti:" />
-                        <TextField fx:id="emailField" promptText="john@example.com" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                        <Label text="%settings.modal.email.label" />
+                        <TextField fx:id="emailField" promptText="%settings.modal.email.label" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
                      </children>
                   </VBox>
                </children>
@@ -66,8 +66,8 @@
                <children>
                   <VBox maxWidth="260.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Puhelinnumero:" />
-                        <TextField fx:id="phoneField" promptText="+358..." style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
+                        <Label text="%settings.modal.phone.label" />
+                        <TextField fx:id="phoneField" promptText="%settings.modal.phone.label" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
                      </children>
                   </VBox>
                </children>
@@ -76,7 +76,7 @@
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-color: #F4F4F4; -fx-border-color: #A5A5A5; -fx-border-width: 2; -fx-border-radius: 7;">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vaihda salasana">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%settings.change.password.title.and.button">
                <font>
                   <Font size="18.0" />
                </font>
@@ -88,8 +88,8 @@
                <children>
                   <VBox layoutX="10.0" layoutY="10.0" maxWidth="229.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Nykyinen salasana:" />
-                        <PasswordField fx:id="currentPasswordField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                        <Label text="%settings.change.password.current.label" />
+                        <PasswordField fx:id="currentPasswordField" prefHeight="40.0" promptText="%settings.change.password.current.label" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
                      </children>
                   </VBox>
                </children>
@@ -98,19 +98,19 @@
                <children>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Uusi salasana:" />
-                        <PasswordField fx:id="newPasswordField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                        <Label text="%settings.change.password.new.label" />
+                        <PasswordField fx:id="newPasswordField" prefHeight="40.0" promptText="%settings.change.password.new.label" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Uudestaan:" />
-                        <PasswordField fx:id="newPasswordAgainField" prefHeight="40.0" promptText="password" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
+                        <Label text="%settings.change.password.again.label" />
+                        <PasswordField fx:id="newPasswordAgainField" prefHeight="40.0" promptText="%settings.change.password.again.label" style="-fx-border-color: grey; -fx-border-radius: 5; -fx-pref-height: 40;" />
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#handleChangePassword" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Vaihda salasana" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#handleChangePassword" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="%settings.change.password.title.and.button" textFill="WHITE">
                <font><Font size="16.0" /></font>
                <cursor><Cursor fx:constant="HAND" /></cursor>
                <VBox.margin><Insets top="15.0" /></VBox.margin>
@@ -124,12 +124,12 @@
       </VBox>
       <HBox alignment="CENTER">
          <children>
-            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="Log out" textFill="WHITE">
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="%settings.logout.button" textFill="WHITE">
                <font><Font size="16.0" /></font>
                <cursor><Cursor fx:constant="HAND" /></cursor>
             </Button>
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleSave" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Save" textFill="WHITE">
+            <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleSave" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="%settings.save.button" textFill="WHITE">
                <font><Font size="16.0" /></font>
                <cursor><Cursor fx:constant="HAND" /></cursor>
             </Button>

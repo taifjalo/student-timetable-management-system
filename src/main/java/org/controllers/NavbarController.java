@@ -138,19 +138,19 @@ public class NavbarController {
     @FXML
     private void handleProfileClick(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"));
+            ResourceBundle bundle = new LocalizationService().getBundle();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"), bundle);
             Parent root = loader.load();
             UserSettingsController controller = loader.getController();
 
             Stage modalStage = new Stage();
-            modalStage.setTitle("Käyttäjäasetukset");
+            //modalStage.setTitle(bundle.getString("%settings.modal.settings.title"));
             modalStage.setScene(new Scene(root));
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
             modalStage.setResizable(false);
 
             controller.setStage(modalStage);
-
             modalStage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
