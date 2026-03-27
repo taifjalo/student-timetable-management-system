@@ -3,12 +3,14 @@ package org.controllers;
 import dto.NotificationDto;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.dao.NotificationDao;
+import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
 
@@ -16,23 +18,31 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class NotificationsPopupController {
 
+    @FXML private VBox popupRoot;
     @FXML private VBox notificationList;
     @FXML private Label markAllLabel;
 
     private final NotificationService notificationService = new NotificationService(new NotificationDao());
+    private final LocalizationService localizationService = new LocalizationService();
     private final List<NotificationRow> rows = new ArrayList<>();
     private Long userId;
+    private ResourceBundle bundle;
 
     @FXML
     public void initialize() {
+        bundle = localizationService.getBundle();
+        if ("ar".equalsIgnoreCase(localizationService.getCurrentLocale().getLanguage())) {
+            popupRoot.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        }
         userId = SessionManager.getInstance().getCurrentUser().getId();
         List<NotificationDto> notifications = notificationService.getNotificationDtosForUser(userId);
 
         if (notifications.isEmpty()) {
-            Label empty = new Label("No notifications");
+            Label empty = new Label(bundle.getString("notifications.popup.empty"));
             empty.setStyle("-fx-text-fill: #999; -fx-font-size: 13; -fx-padding: 20;");
             notificationList.getChildren().add(empty);
             if (markAllLabel != null) markAllLabel.setVisible(false);
@@ -44,7 +54,8 @@ public class NotificationsPopupController {
                     dto.getContent(),
                     formatTime(dto.getSentAt()),
                     !dto.isRead(),
-                    () -> notificationService.markAsRead(userId, dto.getNotificationId())
+                    () -> notificationService.markAsRead(userId, dto.getNotificationId()),
+                    bundle.getString("notifications.popup.mark.read.button")
             );
             rows.add(row);
             notificationList.getChildren().add(row.getRoot());
@@ -59,12 +70,12 @@ public class NotificationsPopupController {
 
     private String formatTime(LocalDateTime sentAt) {
         long minutes = ChronoUnit.MINUTES.between(sentAt, LocalDateTime.now());
-        if (minutes < 1)  return "Just now";
-        if (minutes < 60) return minutes + " min ago";
+        if (minutes < 1)  return bundle.getString("notifications.popup.time.just.now");
+        if (minutes < 60) return minutes + " " + bundle.getString("notifications.popup.time.min.ago");
         long hours = ChronoUnit.HOURS.between(sentAt, LocalDateTime.now());
-        if (hours < 24)   return hours + " h ago";
+        if (hours < 24)   return hours + " " + bundle.getString("notifications.popup.time.h.ago");
         long days = ChronoUnit.DAYS.between(sentAt, LocalDateTime.now());
-        return days + " d ago";
+        return days + " " + bundle.getString("notifications.popup.time.d.ago");
     }
 
     private static class NotificationRow {
@@ -75,7 +86,7 @@ public class NotificationsPopupController {
         private final Label markReadBtn;
         private boolean unread;
 
-        NotificationRow(String content, String time, boolean unread, Runnable onMarkRead) {
+        NotificationRow(String content, String time, boolean unread, Runnable onMarkRead, String markReadText) {
             this.unread = unread;
 
             dot = new Region();
@@ -89,7 +100,7 @@ public class NotificationsPopupController {
             Label timeLabel = new Label(time);
             timeLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 11;");
 
-            markReadBtn = new Label("Mark read");
+            markReadBtn = new Label(markReadText);
             markReadBtn.setStyle("-fx-text-fill: #00956D; -fx-font-size: 11; -fx-cursor: hand;");
             markReadBtn.setVisible(unread);
             markReadBtn.setOnMouseClicked(e -> {

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="320.0" spacing="0.0"
+<VBox fx:id="popupRoot" prefWidth="320.0" spacing="0.0"
       style="-fx-background-color: white;"
       xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
@@ -17,9 +17,9 @@
     <!-- Header -->
     <HBox alignment="CENTER_LEFT" style="-fx-background-color: white;">
         <padding><Insets bottom="12.0" left="16.0" right="16.0" top="14.0"/></padding>
-        <Label text="Notifications" style="-fx-font-size: 15; -fx-font-weight: bold;"/>
+        <Label text="%notifications.popup.title" style="-fx-font-size: 15; -fx-font-weight: bold;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label fx:id="markAllLabel" text="Mark all as read"
+        <Label fx:id="markAllLabel" text="%notifications.popup.mark.all.as.read.button"
                style="-fx-text-fill: #00956D; -fx-cursor: hand; -fx-font-size: 12;"
                onMouseClicked="#handleMarkAllRead"/>
     </HBox>

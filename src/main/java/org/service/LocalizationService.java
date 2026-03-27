@@ -39,6 +39,10 @@ public class LocalizationService {
             case "fi" -> setLocale(new Locale("fi", "FI"));
             case "en" -> setLocale(new Locale("en", "US"));
             //case "en" -> setLocale(Locale.ENGLISH);
+            // TODO: "ar" (ar_IQ) and "ru" (ru_RU) bundles exist with full translations but are not
+            // reachable until these cases are added and language menu items are added to login.fxml.
+            // case "ar" -> setLocale(new Locale("ar", "IQ"));
+            // case "ru" -> setLocale(new Locale("ru", "RU"));
             default -> throw new IllegalArgumentException("Unsupported language code: " + languageCode);
         }
     }
