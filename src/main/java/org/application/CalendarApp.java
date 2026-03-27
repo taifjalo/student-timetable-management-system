@@ -15,7 +15,7 @@ public class CalendarApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        ResourceBundle bundle = ResourceBundle.getBundle("messages", Locale.getDefault());
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", Locale.getDefault());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), bundle);
 

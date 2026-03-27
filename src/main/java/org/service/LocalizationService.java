@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 public class LocalizationService {
 
-    private static final String BUNDLE_BASE_NAME = "messages";
+    private static final String BUNDLE_BASE_NAME = "i18n/MessagesBundle";
     private static Locale currentLocale = Locale.ENGLISH;
 
     public Locale getCurrentLocale() {
@@ -37,7 +37,8 @@ public class LocalizationService {
 
         switch (languageCode.toLowerCase()) {
             case "fi" -> setLocale(new Locale("fi", "FI"));
-            case "en" -> setLocale(Locale.ENGLISH);
+            case "en" -> setLocale(new Locale("en", "US"));
+            //case "en" -> setLocale(Locale.ENGLISH);
             default -> throw new IllegalArgumentException("Unsupported language code: " + languageCode);
         }
     }
