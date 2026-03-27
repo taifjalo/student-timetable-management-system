@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainAppController {
@@ -45,10 +46,12 @@ public class MainAppController {
     public void initialize() {
         try {
             FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"), localizationService.getBundle());
+            localizationService.swapSides(mainRoot);
             BorderPane navbar = navbarLoader.load();
             navbarController = navbarLoader.getController();
             mainRoot.setTop(navbar);
 
+            System.out.println(Locale.getDefault());
             calendarView = new CalendarView();
             mainRoot.setCenter(calendarView);
 

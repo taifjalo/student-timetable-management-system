@@ -29,6 +29,7 @@ public class LocalizationService {
             throw new IllegalArgumentException("Locale cannot be null");
         }
         currentLocale = locale;
+        Locale.setDefault(currentLocale);
     }
 
     public void switchLanguage(String languageCode) {
