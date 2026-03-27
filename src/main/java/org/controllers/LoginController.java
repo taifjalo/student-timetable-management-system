@@ -32,6 +32,8 @@ public class LoginController {
     @FXML private MenuButton languageMenuButton;
     @FXML private MenuItem fiItem;
     @FXML private MenuItem enItem;
+    @FXML private MenuItem arItem;
+    @FXML private MenuItem ruItem;
 
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
@@ -85,6 +87,16 @@ public class LoginController {
             System.out.println("English localization selected");
             localizationService.switchLanguage("en");
         }
+        else if (event.getSource() == arItem) {
+            // Arabic
+            System.out.println("تم اختيار اللغة العربية");
+            localizationService.switchLanguage("ar");
+        }
+        else if (event.getSource() == ruItem) {
+            // English
+            System.out.println("Russian localization selected");
+            localizationService.switchLanguage("ru");
+        }
 
         // Keep the selected value visible before and after scene reload.
         languageMenuButton.setText(selectedItem.getText());
@@ -99,11 +111,13 @@ public class LoginController {
         }
 
         Locale currentLocale = localizationService.getCurrentLocale();
-        if (currentLocale != null && "fi".equalsIgnoreCase(currentLocale.getLanguage())) {
-            languageMenuButton.setText(fiItem != null ? fiItem.getText() : "Finnish");
-        } else {
-            languageMenuButton.setText(enItem != null ? enItem.getText() : "English");
-        }
+        String lang = currentLocale.getLanguage();
+        languageMenuButton.setText(switch (lang) {
+            case "fi" -> fiItem.getText();
+            case "ar" -> arItem.getText();
+            case "ru" -> ruItem.getText();
+            default   -> enItem.getText();
+        });
     }
 
     @FXML
