@@ -80,35 +80,35 @@ public class LoginController {
 
     @FXML
     private void handleChangeLocalization(ActionEvent event) throws IOException {
-
         MenuItem selectedItem = (MenuItem) event.getSource();
 
         if (event.getSource() == fiItem) {
-            // Finnish
-            System.out.println("Finnish localization selected");
             localizationService.switchLanguage("fi");
         } else if (event.getSource() == enItem) {
-            // English
-            System.out.println("English localization selected");
             localizationService.switchLanguage("en");
-        }
-        else if (event.getSource() == arItem) {
-            // Arabic
-            System.out.println("تم اختيار اللغة العربية");
+        } else if (event.getSource() == arItem) {
             localizationService.switchLanguage("ar");
-        }
-        else if (event.getSource() == ruItem) {
-            // English
-            System.out.println("Русский localization selected");
+        } else if (event.getSource() == ruItem) {
             localizationService.switchLanguage("ru");
         }
 
-        // Keep the selected value visible before and after scene reload.
         languageMenuButton.setText(selectedItem.getText());
+
+        // Reload the Scene when the Lang changes
         Stage stage = (Stage) languageMenuButton.getScene().getWindow();
-        localizationService.reloadScene(stage, "/login.fxml");
+        ResourceBundle bundle = localizationService.getBundle();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), bundle);
+        Parent root = loader.load();
 
+        // To RTL or LTL
+        localizationService.swapSides(root);
 
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            stage.setScene(new Scene(root));
+        } else {
+            scene.setRoot(root);
+        }
     }
 
     private void applyLanguageMenuSelection() {
