@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.dao.NotificationDao;
 import org.entities.User;
+import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
 
@@ -107,8 +108,11 @@ public class NavbarController {
             return;
         }
         try {
+            // Bundle must be passed here — notifications-popup.fxml uses %key syntax for localized
+            // strings. If loaded without a bundle, JavaFX throws MissingResourceException at runtime.
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/notifications-popup/notifications-popup.fxml"));
+                    getClass().getResource("/notifications-popup/notifications-popup.fxml"),
+                    new LocalizationService().getBundle());
             Node content = loader.load();
 
             notificationsPopOver = new org.controlsfx.control.PopOver(content);
