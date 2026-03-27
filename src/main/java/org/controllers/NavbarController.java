@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,6 +25,9 @@ import org.entities.User;
 import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class NavbarController {
 
@@ -187,8 +191,16 @@ public class NavbarController {
         try {
             SessionManager sessionManager = SessionManager.getInstance();
             User currentUser = sessionManager.getCurrentUser();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"));
+            Locale locale = Locale.getDefault();
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", locale);;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"), bundle);
             Parent root = loader.load();
+
+            if (locale.getLanguage().equals("ar")) {
+                root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+            } else {
+                root.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+            }
             ChatController ChatController = loader.getController();
             ChatController.setUserId(currentUser.getId());
             Scene scene = new Scene(root);

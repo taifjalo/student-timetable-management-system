@@ -12,14 +12,14 @@
          <children>
             <VBox maxWidth="414.0" prefHeight="868.0" prefWidth="414.0" style="-fx-background-radius: 0 0 0 7; -fx-border-radius: 0 0 0 7;">
                <children>
-                  <TextField fx:id="chatSearchField" maxHeight="38.0" maxWidth="388.0" onAction="#searchChatUsers" prefHeight="38.0" prefWidth="388.0" promptText="Search teachers" style="-fx-border-radius: 59px; -fx-background-radius: 59px;">
+                  <TextField fx:id="chatSearchField" maxHeight="38.0" maxWidth="388.0" onAction="#searchChatUsers" prefHeight="38.0" prefWidth="388.0" promptText="%chat.search.prompt" style="-fx-border-radius: 59px; -fx-background-radius: 59px;">
                      <VBox.margin>
                         <Insets left="12.0" top="17.0" />
                      </VBox.margin>
                   </TextField>
                   <Pane prefHeight="70.0" prefWidth="415.0" style="-fx-border-color: #A5A5A5; -fx-border-width: 0 0  1 0;">
                      <children>
-                        <Label layoutX="21.0" layoutY="12.0" text="My messages:">
+                        <Label layoutX="21.0" layoutY="12.0" text="%chat.list">
                            <font>
                               <Font size="32.0" />
                            </font>
@@ -63,7 +63,7 @@
                      <children>
                         <HBox prefHeight="70.0" prefWidth="544.0" style="-fx-background-color: D9D9D9; -fx-border-radius: 11px; -fx-background-radius: 11px;">
                            <children>
-                              <TextField fx:id="messageTypeField" prefHeight="70.0" prefWidth="422.0" promptText="Type here..." style="-fx-background-color: transparent;">
+                              <TextField fx:id="messageTypeField" prefHeight="70.0" prefWidth="422.0" promptText="%chat.wright.prompt" style="-fx-background-color: transparent;">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -71,7 +71,7 @@
                                     <Insets left="19.0" />
                                  </padding>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#sendMessage" prefHeight="46.0" prefWidth="119.0" style="-fx-background-radius: 7; -fx-background-color: #00956D;" text="Send" textFill="WHITE">
+                              <Button mnemonicParsing="false" onAction="#sendMessage" prefHeight="46.0" prefWidth="119.0" style="-fx-background-radius: 7; -fx-background-color: #00956D;" text="%chat.button.prompt" textFill="WHITE">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
