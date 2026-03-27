@@ -90,10 +90,10 @@
                         </Label>
                         <MenuButton fx:id="languageMenuButton" mnemonicParsing="false" text="Language">
                           <items>
-                            <MenuItem mnemonicParsing="false" text="Finnish" onAction="#handleChangeLocalization" fx:id="fiItem" />
+                            <MenuItem mnemonicParsing="false" text="Suomi" onAction="#handleChangeLocalization" fx:id="fiItem" />
                             <MenuItem mnemonicParsing="false" text="English" onAction="#handleChangeLocalization" fx:id="enItem"/>
                             <MenuItem mnemonicParsing="false" text="العربية" onAction="#handleChangeLocalization" fx:id="arItem"/>
-                            <MenuItem mnemonicParsing="false" text="Russian" onAction="#handleChangeLocalization" fx:id="ruItem"/>
+                            <MenuItem mnemonicParsing="false" text="Русский" onAction="#handleChangeLocalization" fx:id="ruItem"/>
                           </items>
                         </MenuButton>
                      </children>

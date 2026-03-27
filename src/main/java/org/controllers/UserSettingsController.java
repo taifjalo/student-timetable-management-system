@@ -13,7 +13,10 @@ import javafx.stage.Stage;
 import org.dao.UserDao;
 import org.entities.User;
 import org.mindrot.jbcrypt.BCrypt;
+import org.service.LocalizationService;
 import org.service.SessionManager;
+
+import java.util.ResourceBundle;
 
 public class UserSettingsController {
 
@@ -35,6 +38,7 @@ public class UserSettingsController {
 
     private Stage stage;
     private final UserDao userDao = new UserDao();
+    LocalizationService localizationService = new LocalizationService();
 
     public void setStage(Stage stage) {
         this.stage = stage;

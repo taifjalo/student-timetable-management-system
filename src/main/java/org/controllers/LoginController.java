@@ -21,6 +21,8 @@ import javafx.scene.control.MenuButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.ResourceBundle;
+
 
 public class LoginController {
 
@@ -34,6 +36,7 @@ public class LoginController {
     @FXML private MenuItem enItem;
     @FXML private MenuItem arItem;
     @FXML private MenuItem ruItem;
+
 
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
@@ -54,9 +57,11 @@ public class LoginController {
             System.out.println("Logged in as: " + user.getUsername());
 
             // Switch to the main calendar app scene
-            Parent root = FXMLLoader.load(getClass().getResource("/main-app.fxml"));
+            ResourceBundle bundle = localizationService.getBundle();
+            Parent root = FXMLLoader.load(getClass().getResource("/main-app.fxml"), bundle);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
+            localizationService.swapSides(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
             stage.setScene(scene);
             stage.setMaximized(true);
@@ -94,7 +99,7 @@ public class LoginController {
         }
         else if (event.getSource() == ruItem) {
             // English
-            System.out.println("Russian localization selected");
+            System.out.println("Русский localization selected");
             localizationService.switchLanguage("ru");
         }
 
@@ -102,6 +107,7 @@ public class LoginController {
         languageMenuButton.setText(selectedItem.getText());
         Stage stage = (Stage) languageMenuButton.getScene().getWindow();
         localizationService.reloadScene(stage, "/login.fxml");
+
 
     }
 
@@ -128,8 +134,10 @@ public class LoginController {
                 throw new IllegalArgumentException("register.fxml not found");
             }
 
+            ResourceBundle bundle = localizationService.getBundle();
             FXMLLoader loader = new FXMLLoader(registerFxml, localizationService.getBundle());
             Parent root = loader.load();
+            localizationService.swapSides(root);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
