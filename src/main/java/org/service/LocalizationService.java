@@ -1,6 +1,7 @@
 package org.service;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -60,6 +61,14 @@ public class LocalizationService {
             stage.setScene(new Scene(root));
         } else {
             currentScene.setRoot(root);
+        }
+    }
+
+    public void swapSides(Parent root){
+        if (currentLocale.getLanguage().equals("ar")) {
+            root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        } else {
+            root.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
         }
     }
 }

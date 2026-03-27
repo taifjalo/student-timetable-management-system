@@ -34,6 +34,7 @@ public class NavbarController {
     private org.controlsfx.control.PopOver notificationsPopOver;
     private final NotificationService notificationService = new NotificationService(new NotificationDao());
     private MainAppController mainAppController;
+    LocalizationService localizationService = new LocalizationService();
 
     @FXML private ToggleButton calViewDay;
     @FXML private ToggleButton calViewWeek;
@@ -191,16 +192,10 @@ public class NavbarController {
         try {
             SessionManager sessionManager = SessionManager.getInstance();
             User currentUser = sessionManager.getCurrentUser();
-            Locale locale = Locale.getDefault();
-            ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", locale);;
+            ResourceBundle bundle = localizationService.getBundle();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"), bundle);
             Parent root = loader.load();
-
-            if (locale.getLanguage().equals("ar")) {
-                root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-            } else {
-                root.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-            }
+            localizationService.swapSides(root);
             ChatController ChatController = loader.getController();
             ChatController.setUserId(currentUser.getId());
             Scene scene = new Scene(root);
