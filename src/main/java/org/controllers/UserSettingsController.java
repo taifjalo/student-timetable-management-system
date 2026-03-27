@@ -67,6 +67,7 @@ public class UserSettingsController {
         User user = SessionManager.getInstance().getCurrentUser();
         if (user == null) return;
 
+
         user.setUsername(usernameField.getText().trim());
         user.setFirstName(firstNameField.getText().trim());
         user.setSureName(lastNameField.getText().trim());

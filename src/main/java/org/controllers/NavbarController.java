@@ -141,10 +141,12 @@ public class NavbarController {
             ResourceBundle bundle = new LocalizationService().getBundle();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"), bundle);
             Parent root = loader.load();
+            localizationService.swapSides(root);
+
             UserSettingsController controller = loader.getController();
 
             Stage modalStage = new Stage();
-            //modalStage.setTitle(bundle.getString("%settings.modal.settings.title"));
+            modalStage.setTitle(bundle.getString("settings.modal.stage.title"));
             modalStage.setScene(new Scene(root));
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
@@ -192,10 +194,12 @@ public class NavbarController {
         try {
             SessionManager sessionManager = SessionManager.getInstance();
             User currentUser = sessionManager.getCurrentUser();
+
             ResourceBundle bundle = localizationService.getBundle();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"), bundle);
             Parent root = loader.load();
             localizationService.swapSides(root);
+
             ChatController ChatController = loader.getController();
             ChatController.setUserId(currentUser.getId());
             Scene scene = new Scene(root);
