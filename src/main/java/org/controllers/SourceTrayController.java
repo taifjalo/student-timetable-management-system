@@ -187,8 +187,9 @@ public class SourceTrayController {
 
     private void openGroupModal(Calendar calendar, String sectionName, ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
             Parent root = loader.load();
+            localizationService.swapSides(root);
             CreateCourseModalController modalController = loader.getController();
             modalController.setCalendar(calendar);
             modalController.setCalendarSource(calendarSource);
