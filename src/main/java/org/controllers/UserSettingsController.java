@@ -1,13 +1,12 @@
 package org.controllers;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.dao.UserDao;
@@ -16,6 +15,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class UserSettingsController {
@@ -28,6 +28,12 @@ public class UserSettingsController {
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
+
+    @FXML private MenuButton languageMenuButton;
+    @FXML private MenuItem fiItem;
+    @FXML private MenuItem enItem;
+    @FXML private MenuItem arItem;
+    @FXML private MenuItem ruItem;
 
     @FXML private PasswordField currentPasswordField;
     @FXML private PasswordField newPasswordField;
@@ -84,6 +90,41 @@ public class UserSettingsController {
         } catch (Exception e) {
             messageLabel.setText("Tallennus epäonnistui: " + e.getMessage());
             System.out.println("Save failed: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleChangeLocalization(ActionEvent event) throws IOException {
+        MenuItem selectedItem = (MenuItem) event.getSource();
+
+        if (event.getSource() == fiItem) {
+            localizationService.switchLanguage("fi");
+        } else if (event.getSource() == enItem) {
+            localizationService.switchLanguage("en");
+        } else if (event.getSource() == arItem) {
+            localizationService.switchLanguage("ar");
+        } else if (event.getSource() == ruItem) {
+            localizationService.switchLanguage("ru");
+        }
+
+        languageMenuButton.setText(selectedItem.getText());
+
+        // Reload the Scene when the Lang changes
+        Stage stage = (Stage) languageMenuButton.getScene().getWindow();
+        ResourceBundle bundle = localizationService.getBundle();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"), bundle);
+        Parent root = loader.load();
+
+//        reloadScene(getCurrentStage(), "/user-settings-modal.fxml");
+
+        // To RTL or LTL
+        localizationService.swapSides(root);
+
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            stage.setScene(new Scene(root));
+        } else {
+            scene.setRoot(root);
         }
     }
 

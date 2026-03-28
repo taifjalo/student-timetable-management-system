@@ -14,7 +14,7 @@
             <children>
             <HBox alignment="CENTER">
                <children>
-                      <Text fx:id="modalTitleLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Create group">
+                    <Text fx:id="modalTitleLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Create group">
                      <font>
                         <Font size="28.0" />
                      </font>

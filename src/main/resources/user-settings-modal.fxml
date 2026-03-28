@@ -28,6 +28,14 @@
             </VBox>
          </children>
       </HBox>
+      <MenuButton fx:id="languageMenuButton" mnemonicParsing="false" text="Language">
+         <items>
+            <MenuItem mnemonicParsing="false" text="Suomi" onAction="#handleChangeLocalization" fx:id="fiItem" />
+            <MenuItem mnemonicParsing="false" text="English" onAction="#handleChangeLocalization" fx:id="enItem"/>
+            <MenuItem mnemonicParsing="false" text="العربية" onAction="#handleChangeLocalization" fx:id="arItem"/>
+            <MenuItem mnemonicParsing="false" text="Русский" onAction="#handleChangeLocalization" fx:id="ruItem"/>
+         </items>
+      </MenuButton>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">

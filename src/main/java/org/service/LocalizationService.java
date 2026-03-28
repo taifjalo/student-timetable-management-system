@@ -37,6 +37,7 @@ public class LocalizationService {
             throw new IllegalArgumentException("Language code cannot be null or blank");
         }
 
+
         switch (languageCode.toLowerCase()) {
             case "fi" -> setLocale(new Locale("fi", "FI"));
             case "en" -> setLocale(new Locale("en", "US"));

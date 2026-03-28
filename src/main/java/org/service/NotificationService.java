@@ -5,11 +5,15 @@ import org.dao.NotificationDao;
 import org.entities.NotificationReceiver;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class NotificationService {
 
     private final NotificationDao notificationDao;
+
+    private static final LocalizationService localizationService = new LocalizationService();
+    static ResourceBundle selectedBundle = localizationService.getBundle();
 
     public NotificationService(NotificationDao notificationDao) {
         this.notificationDao = notificationDao;
