@@ -9,14 +9,15 @@ import com.calendarfx.view.popover.EntryDetailsView;
 import com.calendarfx.view.popover.EntryHeaderView;
 import com.calendarfx.view.popover.PopOverContentPane;
 import com.calendarfx.view.popover.PopOverTitledPane;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -36,9 +37,7 @@ import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -100,6 +99,7 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             setHeader(studentHeader);
         }
 
+
         Lesson existingLesson = null;
         if (entry.getUserObject() instanceof SavedLesson sl) {
             try {
@@ -158,6 +158,8 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
                 });
             }
         });
+        Platform.runLater(this::applyLocalizationAndRTL);
+        popOver.setOnShown(e -> applyLocalizationAndRTL());
     }
 
 
@@ -501,5 +503,62 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
 
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private void applyLocalizationAndRTL() {
+
+        ResourceBundle bundle = localizationService.getBundle();
+        boolean isRTL = bundle.getLocale().getLanguage().equals("ar");
+
+        if (isRTL) {
+            this.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        }
+
+        Platform.runLater(() -> {
+
+            this.lookupAll("*").forEach(node -> {
+
+                if (isRTL) {
+                    node.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+                }
+
+
+                if (node instanceof Labeled labeled) {
+
+                    String text = labeled.getText();
+                    if (text == null || text.isBlank()) return;
+
+                    String localized = translate(text, bundle);
+                    if (localized != null) {
+                        labeled.setText(localized);
+                    }
+                }
+            });
+        });
+    }
+
+    private String translate(String text, ResourceBundle bundle) {
+
+        String clean = text.replace(":", "").trim();
+
+        Map<String, String> map = Map.of(
+                "Today", "today.button",
+                "Full Day", "calendar.label.allDay",
+                "From", "event.from",
+                "To", "event.to",
+                "Repeat", "event.repeat"
+        );
+
+        String key = map.get(clean);
+        if (key == null) return null;
+
+        try {
+            String translated = bundle.getString(key);
+
+            return text.contains(":") ? translated + ":" : translated;
+
+        } catch (Exception e) {
+            return text;
+        }
     }
 }
