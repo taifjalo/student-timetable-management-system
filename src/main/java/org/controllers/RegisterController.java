@@ -16,6 +16,7 @@ import org.service.LocalizationService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ResourceBundle;
 
 public class RegisterController {
 
@@ -26,7 +27,8 @@ public class RegisterController {
 
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
-    LocalizationService localizationService = new LocalizationService();
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
 
     @FXML
     private void handleRegister(ActionEvent event) {
@@ -36,15 +38,15 @@ public class RegisterController {
 
         // Validation
         if (username == null || username.isBlank()) {
-            messageLabel.setText("Käyttäjänimi on pakollinen.");
+            messageLabel.setText(selectedBundle.getString("register.username.error"));
             return;
         }
         if (password == null || password.isBlank()) {
-            messageLabel.setText("Salasana on pakollinen.");
+            messageLabel.setText(selectedBundle.getString("register.no.password.error"));
             return;
         }
         if (!password.equals(passwordAgain)) {
-            messageLabel.setText("Salasanat eivät täsmää.");
+            messageLabel.setText(selectedBundle.getString("register.password.error"));
             passwordField.clear();
             passwordAgainField.clear();
             return;
@@ -59,7 +61,7 @@ public class RegisterController {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            messageLabel.setText("Rekisteröinti epäonnistui: " + e.getMessage());
+            messageLabel.setText(selectedBundle.getString("register.invalid.credentials.error") + e.getMessage());
         }
     }
 
@@ -69,7 +71,7 @@ public class RegisterController {
             navigateToLogin(event);
         } catch (Exception e) {
             e.printStackTrace();
-            messageLabel.setText("Siirtyminen kirjautumiseen epäonnistui.");
+            messageLabel.setText(selectedBundle.getString("register.failed.credentials.error"));
         }
     }
 
