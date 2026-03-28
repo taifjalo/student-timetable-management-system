@@ -7,7 +7,6 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.NodeOrientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,7 +25,6 @@ import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class NavbarController {
@@ -162,7 +160,10 @@ public class NavbarController {
     @FXML
     private void handleGoToRegister(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/register.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/register.fxml"), localizationService.getBundle());
+            Parent root = loader.load();
+            localizationService.swapSides(root);
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
@@ -177,7 +178,10 @@ public class NavbarController {
     @FXML
     private void handleGoToLogin(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), localizationService.getBundle());
+            Parent root = loader.load();
+            localizationService.swapSides(root);
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
