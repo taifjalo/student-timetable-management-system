@@ -8,6 +8,7 @@ import com.calendarfx.view.CalendarView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.application.CustomEntryPopOverContentPane;
@@ -112,6 +113,16 @@ public class MainAppController {
 
             // Load initial data
             loadDataFromDatabase(true);
+
+            Platform.runLater(() -> {
+                calendarView.lookupAll(".button").forEach(node -> {
+                    if (node instanceof Button b) {
+                        if ("Today".equals(b.getText())) {
+                            b.setText(localizationService.getBundle().getString("today.button"));
+                        }
+                    }
+                });
+            });
 
         } catch (Exception e) {
             System.out.println("Failed to initialize: " + e.getMessage());
