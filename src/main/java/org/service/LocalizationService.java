@@ -56,6 +56,7 @@ public class LocalizationService {
 
         FXMLLoader loader = new FXMLLoader(resource, getBundle());
         Parent root = loader.load();
+        swapSides(root);
 
         Scene currentScene = stage.getScene();
         if (currentScene == null) {
