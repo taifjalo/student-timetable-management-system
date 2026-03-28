@@ -26,8 +26,6 @@ import java.util.ResourceBundle;
 
 public class LoginController {
 
-    private final LocalizationService localizationService = new LocalizationService();
-
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Label messageLabel;
@@ -41,13 +39,16 @@ public class LoginController {
     UserDao userDao = new UserDao();
     AuthService authService = new AuthService(userDao);
 
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
+
     @FXML
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
         if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            messageLabel.setText("Syötä käyttäjänimi ja salasana.");
+            messageLabel.setText(selectedBundle.getString("login.error"));
             return;
         }
 
@@ -69,7 +70,7 @@ public class LoginController {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            messageLabel.setText("Kirjautuminen epäonnistui: " + e.getMessage());
+            messageLabel.setText(selectedBundle.getString("login.invalid.credentials.error") + e.getMessage());
         }
     }
 
