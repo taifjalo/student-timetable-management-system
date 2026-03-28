@@ -1,6 +1,5 @@
 package org.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,8 +14,6 @@ import org.entities.User;
 import org.mindrot.jbcrypt.BCrypt;
 import org.service.LocalizationService;
 import org.service.SessionManager;
-
-import java.util.ResourceBundle;
 
 public class UserSettingsController {
 
@@ -132,17 +129,25 @@ public class UserSettingsController {
     private void handleLogout() {
         SessionManager.getInstance().logout();
         try {
-            // Close the modal first
-            if (stage != null) stage.close();
+            Stage currentStage = getCurrentStage();
+            Stage mainStage = currentStage.getOwner() instanceof Stage owner ? owner : currentStage;
 
-            // Navigate the main window back to login
-            Stage mainStage = (Stage) stage.getOwner();
-            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
+            // Close modal if this controller is shown in one.
+            if (currentStage != mainStage) {
+                currentStage.close();
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), localizationService.getBundle());
+            Parent root = loader.load();
+            localizationService.swapSides(root);
+
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
             mainStage.setScene(scene);
             mainStage.setMaximized(true);
             mainStage.show();
+
+            System.out.println("Logout successful.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,9 +166,3 @@ public class UserSettingsController {
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 }
-
-
-
-
-
-
