@@ -37,6 +37,11 @@ import org.service.SessionManager;
 
 public class SourceTrayController {
 
+    private static final String SECTION_TYPE_COURSE = "COURSE";
+    private static final String SECTION_TYPE_GROUP = "GROUP";
+    private static final String SECTION_NAME_COURSE = "Course";
+    private static final String SECTION_NAME_GROUP = "Group";
+
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
 
@@ -98,7 +103,7 @@ public class SourceTrayController {
         if (sectionTitleText == null || groupsListContainer == null) return null;
 
         if (addButton != null) {
-            addButton.setUserData(source.getName());
+            addButton.setUserData(SECTION_TYPE_COURSE);
             addButton.setVisible(SessionManager.getInstance().isTeacher());
             addButton.setManaged(SessionManager.getInstance().isTeacher());
         }
@@ -138,7 +143,7 @@ public class SourceTrayController {
         if (sectionTitleText == null || groupsListContainer == null) return null;
 
         if (addButton != null) {
-            addButton.setUserData(sectionTitle);
+            addButton.setUserData(SECTION_TYPE_GROUP);
             addButton.setVisible(SessionManager.getInstance().isTeacher());
             addButton.setManaged(SessionManager.getInstance().isTeacher());
         }
@@ -176,12 +181,11 @@ public class SourceTrayController {
 
     public void handleOpenCreateGroupModal(ActionEvent event) {
         Button source = (Button) event.getSource();
-        String sectionName = source.getUserData() != null ? source.getUserData().toString() : "Group";
-        String singular = toSingular(sectionName);
-        if ("Course".equalsIgnoreCase(singular)) {
-            openGroupModal((Calendar) null, singular, event);
+        String sectionType = source.getUserData() != null ? source.getUserData().toString() : SECTION_TYPE_GROUP;
+        if (SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType)) {
+            openGroupModal((Calendar) null, SECTION_NAME_COURSE, event);
         } else {
-            openGroupModal((StudentGroup) null, singular, event);
+            openGroupModal((StudentGroup) null, SECTION_NAME_GROUP, event);
         }
     }
 
@@ -208,8 +212,9 @@ public class SourceTrayController {
                 System.err.println("[SourceTrayController] create-modal.fxml not found on classpath");
                 return;
             }
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            FXMLLoader loader = new FXMLLoader(fxmlUrl, localizationService.getBundle());
             Parent root = loader.load();
+            localizationService.swapSides(root);
             CreateGroupModalController modalController = loader.getController();
             if (modalController == null) {
                 System.err.println("[SourceTrayController] CreateGroupModalController is null after load");

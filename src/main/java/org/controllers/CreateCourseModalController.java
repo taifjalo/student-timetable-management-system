@@ -33,7 +33,7 @@ public class CreateCourseModalController {
     private Style selectedStyle = Style.STYLE1;
     private Long dbCourseId = null;
     private static ResourceBundle bundle = new LocalizationService().getBundle();
-;
+
     private final CourseService courseService = new CourseService(new CourseDao());
 
     public void setCalendarSource(CalendarSource calendarSource) {
@@ -121,8 +121,8 @@ public class CreateCourseModalController {
 
     public void applyProps() {
         if (isEditMode) {
-            modalTitleLabel.setText("Edit Course");
-            confirmButton.setText("Save");
+            modalTitleLabel.setText(bundle.getString("modal.edit.course.title"));
+            confirmButton.setText(bundle.getString("modal.course.save.button"));
             deleteButton.setVisible(true);
             if (calendar != null) {
                 groupNameField.setText(calendar.getName());
@@ -135,8 +135,8 @@ public class CreateCourseModalController {
                 }
             }
         } else {
-            modalTitleLabel.setText("Create Course");
-            confirmButton.setText("Add");
+            modalTitleLabel.setText(bundle.getString("modal.create.course.title"));
+            confirmButton.setText(bundle.getString("modal.group.add.button"));
             deleteButton.setVisible(false);
             groupNameField.setText("");
             // Default to first color
