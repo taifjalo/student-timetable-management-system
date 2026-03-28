@@ -5,12 +5,16 @@ import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.model.Interval;
 import com.calendarfx.view.CalendarView;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Duration;
 import org.application.CustomEntryPopOverContentPane;
 import org.dao.CourseDao;
 import org.dao.GroupDao;
@@ -25,10 +29,7 @@ import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainAppController {
 
@@ -46,6 +47,9 @@ public class MainAppController {
     @FXML
     public void initialize() {
         try {
+
+
+
             FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"), localizationService.getBundle());
             localizationService.swapSides(mainRoot);
             BorderPane navbar = navbarLoader.load();
@@ -55,6 +59,15 @@ public class MainAppController {
             System.out.println(Locale.getDefault());
             calendarView = new CalendarView();
             mainRoot.setCenter(calendarView);
+
+            calendarView.selectedPageProperty().addListener((obs, o, n) ->
+                    localizeCalendarSafe());
+
+            calendarView.dateProperty().addListener((obs, o, n) ->
+                    localizeCalendarSafe());
+
+            calendarView.skinProperty().addListener((obs, o, n) ->
+                    localizeCalendarSafe());
 
             navbarController.setCalendarView(calendarView);
             // Give the navbar a handle so the refresh button can call back here
@@ -114,15 +127,6 @@ public class MainAppController {
             // Load initial data
             loadDataFromDatabase(true);
 
-            Platform.runLater(() -> {
-                calendarView.lookupAll(".button").forEach(node -> {
-                    if (node instanceof Button b) {
-                        if ("Today".equals(b.getText())) {
-                            b.setText(localizationService.getBundle().getString("today.button"));
-                        }
-                    }
-                });
-            });
 
         } catch (Exception e) {
             System.out.println("Failed to initialize: " + e.getMessage());
@@ -312,5 +316,56 @@ public class MainAppController {
         List<StudentGroup> assignedGroups = lesson.getAssignedGroups();
         if (assignedGroups == null || assignedGroups.isEmpty()) return false;
         return assignedGroups.stream().anyMatch(g -> studentGroupCode.equals(g.getGroupCode()));
+    }
+
+    private void localizeCalendar() {
+
+        // берём переводы один раз
+        String todayLocalized = localizationService.getBundle().getString("today.button");
+
+        Set<String> todayVariants = getVariants("today.button");
+
+        calendarView.lookupAll(".button").forEach(node -> {
+            if (node instanceof Button b) {
+
+                String text = b.getText();
+                if (text == null) return;
+
+                if (todayVariants.contains(text) || text.equals(todayLocalized)) {
+                    b.setText(todayLocalized);
+                }
+            }
+        });
+
+        String allDayLocalized = localizationService.getBundle().getString("calendar.label.allDay");
+        Set<String> allDayVariants = getVariants("calendar.label.allDay");
+        calendarView.lookupAll(".label").forEach(node -> {
+            if (node instanceof Label l) {
+
+                String text = l.getText();
+                if (text == null) return;
+
+                if (allDayVariants.contains(text)) {
+                    l.setText(allDayLocalized);
+                }
+            }
+        });
+    }
+
+    private void localizeCalendarSafe() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.millis(50), e -> localizeCalendar())
+        );
+        timeline.setCycleCount(5); // 5 попыток
+        timeline.play();
+    }
+
+    private Set<String> getVariants(String key) {
+        return Set.of(
+                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("en","US")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ru", "RU")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("fi", "FI")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ar", "IQ")).getString(key)
+        );
     }
 }
