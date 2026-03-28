@@ -15,6 +15,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 
+import java.util.ResourceBundle;
+
 public class UserSettingsController {
 
     @FXML private Text displayNameText;
@@ -35,7 +37,9 @@ public class UserSettingsController {
 
     private Stage stage;
     private final UserDao userDao = new UserDao();
-    LocalizationService localizationService = new LocalizationService();
+
+    private final LocalizationService localizationService = new LocalizationService();
+    ResourceBundle selectedBundle = localizationService.getBundle();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -48,7 +52,7 @@ public class UserSettingsController {
 
         // Header
         displayNameText.setText(user.getFirstName());
-        String role = user.getRole() != null ? capitalize(user.getRole()) : "Käyttäjä";
+        String role = user.getRole() != null ? capitalize(user.getRole()) : selectedBundle.getString("settings.modal.role.label");
         roleText.setText(role);
 
         // Fields
@@ -76,10 +80,10 @@ public class UserSettingsController {
             SessionManager.getInstance().login(updated);
             // Refresh header
             displayNameText.setText(updated.getFirstName());
-            messageLabel.setText("Tiedot tallennettu.");
+            messageLabel.setText(selectedBundle.getString("setting.modal.save.success.message"));
             System.out.println("Profile saved for: " + updated.getUsername());
         } catch (Exception e) {
-            messageLabel.setText("Tallennus epäonnistui: " + e.getMessage());
+            messageLabel.setText(selectedBundle.getString("settings.modal.save.error.message") + e.getMessage());
             System.out.println("Save failed: " + e.getMessage());
         }
     }
@@ -95,16 +99,16 @@ public class UserSettingsController {
         String newPwAgain = newPasswordAgainField.getText();
 
         if (current.isBlank() || newPw.isBlank() || newPwAgain.isBlank()) {
-            passwordMessageLabel.setText("Täytä kaikki salasanakentät.");
+            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.blank.error.message"));
             return;
         }
         if (!BCrypt.checkpw(current, user.getPasswordHash())) {
-            passwordMessageLabel.setText("Nykyinen salasana on väärä.");
+            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.current.error.message"));
             currentPasswordField.clear();
             return;
         }
         if (!newPw.equals(newPwAgain)) {
-            passwordMessageLabel.setText("Uudet salasanat eivät täsmää.");
+            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.validation.error.message"));
             newPasswordField.clear();
             newPasswordAgainField.clear();
             return;
@@ -118,10 +122,10 @@ public class UserSettingsController {
             newPasswordField.clear();
             newPasswordAgainField.clear();
             passwordMessageLabel.setStyle("-fx-text-fill: #00956D;");
-            passwordMessageLabel.setText("Salasana vaihdettu.");
+            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.success.message"));
             System.out.println("Password changed for: " + updated.getUsername());
         } catch (Exception e) {
-            passwordMessageLabel.setText("Salasanan vaihto epäonnistui: " + e.getMessage());
+            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.error.message") + e.getMessage());
         }
     }
 
@@ -146,8 +150,6 @@ public class UserSettingsController {
             mainStage.setScene(scene);
             mainStage.setMaximized(true);
             mainStage.show();
-
-            System.out.println("Logout successful.");
         } catch (Exception e) {
             e.printStackTrace();
         }
