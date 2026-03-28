@@ -14,7 +14,7 @@
             <children>
             <HBox alignment="CENTER">
                <children>
-                      <Text fx:id="modalTitleLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Create group">
+                      <Text fx:id="modalTitleLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="%modal.create.group.title">
                      <font>
                         <Font size="28.0" />
                      </font>
@@ -23,13 +23,13 @@
             </HBox>
                 <VBox spacing="10.0">
                     <children>
-                        <Label text="Name:" />
+                        <Label text="%modal.course.name.label" />
                         <TextField fx:id="groupNameField" promptText="TVT24-O" style="-fx-pref-height: 40; -fx-border-color: grey; -fx-border-radius: 5;" />
                     </children>
                 </VBox>
                 <VBox layoutX="10.0" layoutY="26.0" spacing="10.0">
                     <children>
-                        <Label text="Students in group:" />
+                        <Label text="%modal.group.students.in.group.label" />
                         <VBox style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
                             <children>
                                 <ListView fx:id="groupStudentListView" prefHeight="150.0" maxWidth="1.7976931348623157E308" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-insets: 0; -fx-background-insets: 0;" />
@@ -41,12 +41,12 @@
 
                         <HBox alignment="CENTER">
                             <children>
-                                <Label text="Add students:" />
+                                <Label text="%modal.group.add.students.label" />
                             </children>
                         </HBox>
                         <VBox alignment="TOP_CENTER" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
                      <children>
-                                <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="Search students" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../style.css">
+                                <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%chat.search.prompt" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../style.css">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -61,7 +61,7 @@
                 </VBox>
             <HBox alignment="CENTER">
                <children>
-                  <Button fx:id="deleteButton" layoutX="444.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="Delete" textFill="WHITE">
+                  <Button fx:id="deleteButton" layoutX="444.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #D03800; -fx-border-radius: 15;" text="%modal.course.delete.button" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -70,7 +70,7 @@
                      </cursor>
                   </Button>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="Add" textFill="WHITE">
+                  <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: #00956D; -fx-border-radius: 15;" text="%modal.group.add.button" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
