@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 import org.dao.CourseDao;
 import org.entities.Course;
 import org.service.CourseService;
+import org.service.LocalizationService;
+
+import java.util.ResourceBundle;
 
 public class CreateCourseModalController {
 
@@ -29,7 +32,8 @@ public class CreateCourseModalController {
     private boolean isEditMode = false;
     private Style selectedStyle = Style.STYLE1;
     private Long dbCourseId = null;
-
+    private static ResourceBundle bundle = new LocalizationService().getBundle();
+;
     private final CourseService courseService = new CourseService(new CourseDao());
 
     public void setCalendarSource(CalendarSource calendarSource) {
@@ -42,8 +46,8 @@ public class CreateCourseModalController {
     };
 
     private static final String[] STYLE_NAMES = {
-        "Green", "Blue", "Yellow", "Purple",
-        "Red", "Orange", "Brown"
+        bundle.getString("color.green"), bundle.getString("color.blue"), bundle.getString("color.yellow"), bundle.getString("color.purple"),
+            bundle.getString("color.red"), bundle.getString("color.orange"), bundle.getString("color.brown")
     };
 
     private static final String[] STYLE_COLORS = {
