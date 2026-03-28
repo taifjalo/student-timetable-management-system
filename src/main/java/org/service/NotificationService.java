@@ -5,59 +5,77 @@ import org.dao.NotificationDao;
 import org.entities.NotificationReceiver;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class NotificationService {
 
     private final NotificationDao notificationDao;
+    private LocalizationService localizationService = new LocalizationService();
 
     public NotificationService(NotificationDao notificationDao) {
         this.notificationDao = notificationDao;
     }
 
-    // ── Lesson events ──────────────────────────────────────────────────────────
 
     public void notifyLessonAdded(String courseName, String classroom, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = String.format("New lesson: %s in %s", courseName, classroom);
+        String content = String.format(
+                localizationService.getBundle().getString("notification.newLesson"),
+                courseName, classroom
+        );
+
         notificationDao.saveNotification(content, recipientIds);
     }
 
     public void notifyLessonUpdated(String courseName, String classroom, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = String.format("Course %s class changes to %s", courseName, classroom);
+        String content = String.format(
+                localizationService.getBundle().getString("notification.courseChanged"),
+                courseName, classroom
+        );
         notificationDao.saveNotification(content, recipientIds);
     }
 
     public void notifyLessonDeleted(Long lessonId, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = "Class " + lessonId + " was cancelled";
+        String content = String.format(
+                localizationService.getBundle().getString("notification.lessonCancelled"),
+                lessonId
+        );
         notificationDao.saveNotification(content, recipientIds);
     }
 
-    // ── Group events ───────────────────────────────────────────────────────────
 
     public void notifyStudentAddedToGroup(String groupCode, Long recipientId) {
         if (recipientId == null) return;
-        String content = "You have been added to group " + groupCode;
+        String content = String.format(
+                localizationService.getBundle().getString("notification.groupAdded"),
+                groupCode
+        );
         notificationDao.saveNotification(content, List.of(recipientId));
     }
 
     public void notifyStudentRemovedFromGroup(String groupCode, Long recipientId) {
         if (recipientId == null) return;
-        String content = "You have been removed from group " + groupCode;
+        String content = String.format(
+                localizationService.getBundle().getString("notification.groupRemoved"),
+                groupCode
+        );
+
         notificationDao.saveNotification(content, List.of(recipientId));
     }
 
-    // ── Message event ──────────────────────────────────────────────────────────
 
     public void notifyNewMessage(Long senderId, String senderName, Long recipientId) {
         if (recipientId == null || recipientId.equals(senderId)) return;
-        String content = "You have a new message from " + senderName + "!";
+        String content = String.format(
+                localizationService.getBundle().getString("notification.newMessage"),
+                senderName
+        );
         notificationDao.saveNotification(content, List.of(recipientId));
     }
 
-    // ── Query ──────────────────────────────────────────────────────────────────
 
     public List<NotificationReceiver> getNotificationsForUser(Long userId) {
         return notificationDao.findByUserId(userId);
