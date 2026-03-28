@@ -39,9 +39,6 @@ public class SourceTrayController {
 
     private static final String SECTION_TYPE_COURSE = "COURSE";
     private static final String SECTION_TYPE_GROUP = "GROUP";
-    private static final String SECTION_NAME_COURSE = "Course";
-    private static final String SECTION_NAME_GROUP = "Group";
-
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
 
@@ -51,6 +48,7 @@ public class SourceTrayController {
 
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
+        this.selectedBundle = localizationService.getBundle();
 
         // Fetch groups
         Long userId = SessionManager.getInstance().isTeacher() ? null
@@ -111,7 +109,7 @@ public class SourceTrayController {
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
             for (Calendar calendar : source.getCalendars()) {
-                groupsListContainer.getChildren().add(createCalendarRow(calendar, source.getName()));
+                groupsListContainer.getChildren().add(createCalendarRow(calendar, SECTION_TYPE_COURSE));
             }
         };
 
@@ -155,7 +153,7 @@ public class SourceTrayController {
         // Render initial rows
         groupsListContainer.getChildren().clear();
         for (StudentGroup group : items) {
-            groupsListContainer.getChildren().add(createGroupRow(group, sectionTitle));
+            groupsListContainer.getChildren().add(createGroupRow(group, SECTION_TYPE_GROUP));
         }
 
         // Listen for new groups added/removed so the tray updates live
@@ -163,14 +161,14 @@ public class SourceTrayController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (StudentGroup added : change.getAddedSubList()) {
-                        groupsListContainer.getChildren().add(createGroupRow(added, sectionTitle));
+                        groupsListContainer.getChildren().add(createGroupRow(added, SECTION_TYPE_GROUP));
                     }
                 }
                 if (change.wasRemoved()) {
                     // Rebuild on removal — simplest safe approach
                     groupsListContainer.getChildren().clear();
                     for (StudentGroup group : items) {
-                        groupsListContainer.getChildren().add(createGroupRow(group, sectionTitle));
+                        groupsListContainer.getChildren().add(createGroupRow(group, SECTION_TYPE_GROUP));
                     }
                 }
             }
@@ -183,13 +181,13 @@ public class SourceTrayController {
         Button source = (Button) event.getSource();
         String sectionType = source.getUserData() != null ? source.getUserData().toString() : SECTION_TYPE_GROUP;
         if (SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType)) {
-            openGroupModal((Calendar) null, SECTION_NAME_COURSE, event);
+            openGroupModal((Calendar) null, SECTION_TYPE_COURSE, event);
         } else {
-            openGroupModal((StudentGroup) null, SECTION_NAME_GROUP, event);
+            openGroupModal((StudentGroup) null, SECTION_TYPE_GROUP, event);
         }
     }
 
-    private void openGroupModal(Calendar calendar, String sectionName, ActionEvent event) {
+    private void openGroupModal(Calendar calendar, String sectionType, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
             Parent root = loader.load();
@@ -198,14 +196,14 @@ public class SourceTrayController {
             modalController.setCalendar(calendar);
             modalController.setCalendarSource(calendarSource);
             modalController.applyProps();
-            showModal(root, calendar != null ? calendar.getName() : null, sectionName, event);
+            showModal(root, calendar != null ? calendar.getName() : null, sectionType, event);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to open course modal", e);
         }
     }
 
-    private void openGroupModal(StudentGroup group, String sectionName, ActionEvent event) {
+    private void openGroupModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
             java.net.URL fxmlUrl = getClass().getResource("/source-tray-create-modal/create-modal.fxml");
             if (fxmlUrl == null) {
@@ -223,19 +221,20 @@ public class SourceTrayController {
             if (group != null) {
                 modalController.setGroup(group);
             }
-            modalController.setSectionName(sectionName);
             modalController.setGroupsList(groupsList);
             modalController.applyProps();
-            showModal(root, group != null ? group.getFieldOfStudies() : null, sectionName, event);
+            showModal(root, group != null ? group.getFieldOfStudies() : null, sectionType, event);
         } catch (Exception e) {
             System.err.println("[SourceTrayController] Failed to open group modal: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void showModal(Parent root, String groupName, String sectionName, ActionEvent event) {
+    private void showModal(Parent root, String entityName, String sectionType, ActionEvent event) {
         Stage dialogStage = new Stage();
-        dialogStage.setTitle(groupName != null ? "Edit " + sectionName : "Create " + sectionName);
+        boolean isEditMode = entityName != null;
+        String titleKey = resolveModalTitleKey(sectionType, isEditMode);
+        dialogStage.setTitle(localizationService.getBundle().getString(titleKey));
         dialogStage.setScene(new Scene(root));
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         dialogStage.initOwner(((Node) event.getSource()).getScene().getWindow());
@@ -243,7 +242,15 @@ public class SourceTrayController {
         dialogStage.showAndWait();
     }
 
-    private HBox createCalendarRow(Calendar calendar, String sectionName) {
+    private String resolveModalTitleKey(String sectionType, boolean isEditMode) {
+        boolean isCourse = SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType);
+        if (isCourse) {
+            return isEditMode ? "modal.edit.course.title" : "modal.create.course.title";
+        }
+        return isEditMode ? "modal.edit.group.title" : "modal.create.group.title";
+    }
+
+    private HBox createCalendarRow(Calendar calendar, String sectionType) {
         Region colorDot = new Region();
         colorDot.setMinSize(12, 12);
         colorDot.setMaxSize(12, 12);
@@ -271,7 +278,7 @@ public class SourceTrayController {
         actionButton.setGraphic(editIcon);
         actionButton.setCursor(Cursor.HAND);
         actionButton.setStyle("-fx-background-color: transparent;");
-        actionButton.setOnAction(e -> openGroupModal(calendar, toSingular(sectionName), e));
+        actionButton.setOnAction(e -> openGroupModal(calendar, sectionType, e));
         actionButton.setVisible(SessionManager.getInstance().isTeacher());
         actionButton.setManaged(SessionManager.getInstance().isTeacher());
 
@@ -280,7 +287,7 @@ public class SourceTrayController {
         return row;
     }
 
-    private HBox createGroupRow(StudentGroup group, String sectionName) {
+    private HBox createGroupRow(StudentGroup group, String sectionType) {
 
         Text groupNameText = new Text(group.getFieldOfStudies());
         groupNameText.setStrokeWidth(0.0);
@@ -299,7 +306,7 @@ public class SourceTrayController {
         actionButton.setGraphic(editIcon);
         actionButton.setCursor(Cursor.HAND);
         actionButton.setStyle("-fx-background-color: transparent;");
-        actionButton.setOnAction(e -> openGroupModal(group, toSingular(sectionName), e));
+        actionButton.setOnAction(e -> openGroupModal(group, sectionType, e));
         actionButton.setVisible(SessionManager.getInstance().isTeacher());
         actionButton.setManaged(SessionManager.getInstance().isTeacher());
 
@@ -308,11 +315,6 @@ public class SourceTrayController {
         return row;
     }
 
-    private String toSingular(String word) {
-        if (word == null || word.isEmpty()) return word;
-        if (word.endsWith("s") || word.endsWith("S")) return word.substring(0, word.length() - 1);
-        return word;
-    }
 
     private static String styleToHex(String style) {
         if (style == null) return "#888888";
