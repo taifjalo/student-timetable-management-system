@@ -33,7 +33,7 @@ The application supports the following languages, selectable from the Settings s
 3. The UI updates instantly across all screens
 4. Selecting Arabic automatically switches the layout to **Right-to-Left**
 
-Translation files are located at `src/main/resources/MessagesBundle/`:
+Translation files are located at `src/main/resources/i18n/MessagesBundle//`:
 - `MessagesBundle_en_US.properties`
 - `MessagesBundle_fi_FI.properties`
 - `MessagesBundle_ar_IQ.properties`
