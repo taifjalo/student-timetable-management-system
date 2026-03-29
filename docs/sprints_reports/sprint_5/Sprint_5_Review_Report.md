@@ -16,7 +16,7 @@ The full Product Backlog and Sprint setup are available in the Trello workspace:
     + `MessagesBundle_ar_IQ.properties` — Arabic
     + `MessagesBundle_ru_RU.properties` — Russian
 * `LocalizationService.java` service was created in `org.service`, handling locale switching, `ResourceBundle` loading, and RTL detection via `isRTL()`.
-* A language selector `ComboBox` was added to `UserSettingsController`, allowing users to switch between English, العربية, and Русский at runtime.
+* A language selector `ComboBox` was added to `LoginController` and TODO `UserSettingsController`, allowing users to switch between English, Suomi, العربية, and Русский at runtime.
 * RTL layout support was implemented using `NodeOrientation.RIGHT_TO_LEFT` on the root pane in `MainAppController`. All child components inherit the direction automatically.
 * A `refreshUI()` method was implemented in `LoginController` to reload all UI text after a language switch without restarting the application.
 * README.md was updated with a language support section and instructions for switching languages.
@@ -42,7 +42,7 @@ The Arabic RTL layout was demonstrated, showing how the entire application layou
 
 * Java's built-in `ResourceBundle` was straightforward to integrate with no additional dependencies
 * RTL support via `NodeOrientation` worked cleanly across all JavaFX components
-* The `LocalizationService` singleton made it easy to access translations from any controller
+* The `LocalizationService` made it easy to access translations from any controller
 * Good team collaboration and clear task distribution
 * All planned tasks were completed within the sprint
 
