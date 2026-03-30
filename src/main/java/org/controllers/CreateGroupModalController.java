@@ -16,10 +16,12 @@ import org.dao.UserDao;
 import org.entities.StudentGroup;
 import org.entities.User;
 import org.service.GroupService;
+import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.UserService;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class CreateGroupModalController {
 
@@ -36,6 +38,8 @@ public class CreateGroupModalController {
     private String sectionName = "Item";
     private StudentGroup existingGroup = null;
     private ObservableList<StudentGroup> groupsList = null;
+
+    private final ResourceBundle bundle = new LocalizationService().getBundle();
 
     private final UserService userService = new UserService(new UserDao());
     private final GroupService groupService = new GroupService(new GroupDao(), new NotificationService(new NotificationDao()));
@@ -124,8 +128,12 @@ public class CreateGroupModalController {
 
     public void applyProps() {
         if (isEditMode) {
-            modalTitleLabel.setText("Edit " + sectionName);
-            confirmButton.setText("Save");
+//            modalTitleLabel.setText("Edit " + sectionName);
+            modalTitleLabel.setText(bundle.getString("modal.edit.group.title"));
+
+//            confirmButton.setText("Save");
+            confirmButton.setText(bundle.getString("modal.course.save.button"));
+
             deleteButton.setVisible(true);
 
             if (existingGroup != null) {
@@ -140,8 +148,12 @@ public class CreateGroupModalController {
                 }, "load-group-students-thread").start();
             }
         } else {
-            modalTitleLabel.setText("Create " + sectionName);
-            confirmButton.setText("Add");
+//            modalTitleLabel.setText("Create " + sectionName);
+            modalTitleLabel.setText(bundle.getString("modal.create.group.title"));
+
+//            confirmButton.setText("Add");
+            confirmButton.setText(bundle.getString("modal.group.add.button"));
+
             deleteButton.setVisible(false);
         }
         groupNameField.setText(initialName);

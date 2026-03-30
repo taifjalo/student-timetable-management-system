@@ -48,8 +48,6 @@ public class MainAppController {
     public void initialize() {
         try {
 
-
-
             FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"), localizationService.getBundle());
             localizationService.swapSides(mainRoot);
             BorderPane navbar = navbarLoader.load();

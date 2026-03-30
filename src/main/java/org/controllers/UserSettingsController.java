@@ -1,12 +1,11 @@
 package org.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.dao.UserDao;
@@ -15,6 +14,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 
+import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UserSettingsController {
@@ -34,6 +35,12 @@ public class UserSettingsController {
 
     @FXML private Label passwordMessageLabel;
     @FXML private Label messageLabel;
+
+    @FXML private MenuButton languageMenuButton;
+    @FXML private MenuItem fiItem;
+    @FXML private MenuItem enItem;
+    @FXML private MenuItem arItem;
+    @FXML private MenuItem ruItem;
 
     private Stage stage;
     private final UserDao userDao = new UserDao();
@@ -61,6 +68,9 @@ public class UserSettingsController {
         lastNameField.setText(nullSafe(user.getSureName()));
         emailField.setText(nullSafe(user.getEmail()));
         phoneField.setText(nullSafe(user.getPhoneNumber()));
+
+        applyLanguageMenuSelection();
+
     }
 
     @FXML
@@ -86,6 +96,55 @@ public class UserSettingsController {
             messageLabel.setText(selectedBundle.getString("settings.modal.save.error.message") + e.getMessage());
             System.out.println("Save failed: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void handleChangeLocalization(ActionEvent event) {
+        MenuItem selectedItem = (MenuItem) event.getSource();
+
+        if (event.getSource() == fiItem) {
+            localizationService.switchLanguage("fi");
+        } else if (event.getSource() == enItem) {
+            localizationService.switchLanguage("en");
+        } else if (event.getSource() == arItem) {
+            localizationService.switchLanguage("ar");
+        } else if (event.getSource() == ruItem) {
+            localizationService.switchLanguage("ru");
+        }
+
+        languageMenuButton.setText(selectedItem.getText());
+        selectedBundle = localizationService.getBundle();
+
+        // Reload the owner stage so the whole main app uses the new bundle.
+        Stage currentStage = getCurrentStage();
+        Stage mainStage = currentStage.getOwner() instanceof Stage owner ? owner : currentStage;
+
+        try {
+            localizationService.reloadScene(mainStage, "/main-app.fxml");
+
+            // Close settings modal after the main app has been recreated in the new locale.
+            if (currentStage != mainStage) {
+                currentStage.close();
+            }
+        } catch (IOException e) {
+            messageLabel.setText("Failed to apply language change.");
+            e.printStackTrace();
+        }
+    }
+
+    private void applyLanguageMenuSelection() {
+        if (languageMenuButton == null) {
+            return;
+        }
+
+        Locale currentLocale = localizationService.getCurrentLocale();
+        String lang = currentLocale.getLanguage();
+        languageMenuButton.setText(switch (lang) {
+            case "fi" -> fiItem.getText();
+            case "ar" -> arItem.getText();
+            case "ru" -> ruItem.getText();
+            default   -> enItem.getText();
+        });
     }
 
     @FXML

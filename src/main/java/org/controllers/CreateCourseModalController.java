@@ -32,8 +32,8 @@ public class CreateCourseModalController {
     private boolean isEditMode = false;
     private Style selectedStyle = Style.STYLE1;
     private Long dbCourseId = null;
-    private static ResourceBundle bundle = new LocalizationService().getBundle();
-;
+    private final LocalizationService localizationService = new LocalizationService();
+
     private final CourseService courseService = new CourseService(new CourseDao());
 
     public void setCalendarSource(CalendarSource calendarSource) {
@@ -43,11 +43,6 @@ public class CreateCourseModalController {
     private static final Style[] STYLES = {
         Style.STYLE1, Style.STYLE2, Style.STYLE3, Style.STYLE4,
         Style.STYLE5, Style.STYLE6, Style.STYLE7
-    };
-
-    private static final String[] STYLE_NAMES = {
-        bundle.getString("color.green"), bundle.getString("color.blue"), bundle.getString("color.yellow"), bundle.getString("color.purple"),
-            bundle.getString("color.red"), bundle.getString("color.orange"), bundle.getString("color.brown")
     };
 
     private static final String[] STYLE_COLORS = {
@@ -82,11 +77,12 @@ public class CreateCourseModalController {
     }
 
     private void buildColorMenu() {
+        String[] styleNames = getStyleNames();
         colorPicker.getItems().clear();
         for (int i = 0; i < STYLES.length; i++) {
             final Style style = STYLES[i];
             final String color = STYLE_COLORS[i];
-            final String name = STYLE_NAMES[i];
+            final String name = styleNames[i];
 
             // Colored dot
             Region dot = new Region();
@@ -120,28 +116,45 @@ public class CreateCourseModalController {
     }
 
     public void applyProps() {
+        ResourceBundle bundle = localizationService.getBundle();
+        String[] styleNames = getStyleNames();
+        buildColorMenu();
+
         if (isEditMode) {
-            modalTitleLabel.setText("Edit Course");
-            confirmButton.setText("Save");
+            modalTitleLabel.setText(bundle.getString("modal.edit.course.title"));
+            confirmButton.setText(bundle.getString("modal.course.save.button"));
             deleteButton.setVisible(true);
             if (calendar != null) {
                 groupNameField.setText(calendar.getName());
                 // Show the calendar's current color as the pre-selected option
                 for (int i = 0; i < STYLES.length; i++) {
                     if (STYLES[i].name().equalsIgnoreCase(calendar.getStyle())) {
-                        selectStyle(STYLES[i], STYLE_COLORS[i], STYLE_NAMES[i]);
+                        selectStyle(STYLES[i], STYLE_COLORS[i], styleNames[i]);
                         break;
                     }
                 }
             }
         } else {
-            modalTitleLabel.setText("Create Course");
-            confirmButton.setText("Add");
+            modalTitleLabel.setText(bundle.getString("modal.create.course.title"));
+            confirmButton.setText(bundle.getString("modal.group.add.button"));
             deleteButton.setVisible(false);
             groupNameField.setText("");
             // Default to first color
-            selectStyle(STYLES[0], STYLE_COLORS[0], STYLE_NAMES[0]);
+            selectStyle(STYLES[0], STYLE_COLORS[0], styleNames[0]);
         }
+    }
+
+    private String[] getStyleNames() {
+        ResourceBundle bundle = localizationService.getBundle();
+        return new String[] {
+                bundle.getString("color.green"),
+                bundle.getString("color.blue"),
+                bundle.getString("color.yellow"),
+                bundle.getString("color.purple"),
+                bundle.getString("color.red"),
+                bundle.getString("color.orange"),
+                bundle.getString("color.brown")
+        };
     }
 
     @FXML

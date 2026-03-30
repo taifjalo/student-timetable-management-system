@@ -47,7 +47,7 @@
                                         </image>
                                     </ImageView>
                                 </graphic>
-                     <cursor>
+                    <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                             </Button>
