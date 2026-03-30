@@ -35,7 +35,7 @@ The Arabic RTL layout was demonstrated, showing how the entire application layou
 |---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------------|
 | Taif Jalo | LocalizationService service, MessagesBundle_en/ar/ru.properties — Part of all string translations, Sprint Planning, Sprint reports, UserSettingsController update, | 0                | Submitted      |
 | Miska Voutilainen |                                                                                                                                                                    | 0                | ?              |
-| Elias Norta | LocalizationService service, Language selector UI, refreshUI()                                                                                                     | 0                | ?              |
+| Elias Norta | LocalizationService service, MessagesBundle_en_US.properties, externalizing strings, Language selector UI (login/user settings), refreshUI()                                                                                                     | 25                | Submitted              |
 | Nikita Rybakov | RTL support, NodeOrientation, layout adjustments across all screens                                                                                                | 0                | ?              |
 
 ## What Went Well
