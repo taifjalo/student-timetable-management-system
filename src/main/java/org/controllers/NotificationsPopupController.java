@@ -51,7 +51,7 @@ public class NotificationsPopupController {
 
         for (NotificationDto dto : notifications) {
             NotificationRow row = new NotificationRow(
-                    dto.getContent(),
+                    localizeNotification(dto.getContent(), bundle),
                     formatTime(dto.getSentAt()),
                     !dto.isRead(),
                     () -> notificationService.markAsRead(userId, dto.getNotificationId()),
@@ -148,5 +148,51 @@ public class NotificationsPopupController {
         }
 
         VBox getRoot() { return root; }
+
+
+    }
+
+    private String localizeNotification(String content, ResourceBundle bundle) {
+
+        try {
+            if (content.startsWith("You have been added to group ")) {
+                String group = content.replace("You have been added to group ", "");
+                return String.format(bundle.getString("notification.groupAdded"), group);
+            }
+
+            if (content.startsWith("You have been removed from group ")) {
+                String group = content.replace("You have been removed from group ", "");
+                return String.format(bundle.getString("notification.groupRemoved"), group);
+            }
+
+            if (content.startsWith("You have a new message from ")) {
+                String sender = content.replace("You have a new message from ", "").replace("!", "");
+                return String.format(bundle.getString("notification.newMessage"), sender);
+            }
+
+            if (content.startsWith("New lesson: ")) {
+                String[] parts = content.replace("New lesson: ", "").split(" in ");
+                if (parts.length == 2) {
+                    return String.format(bundle.getString("notification.newLesson"), parts[0], parts[1]);
+                }
+            }
+
+            if (content.startsWith("Course ")) {
+                String temp = content.replace("Course ", "");
+                String[] parts = temp.split(" class changes to ");
+                if (parts.length == 2) {
+                    return String.format(bundle.getString("notification.courseChanged"), parts[0], parts[1]);
+                }
+            }
+
+            if (content.startsWith("Class ") && content.endsWith(" was cancelled")) {
+                String id = content.replace("Class ", "").replace(" was cancelled", "");
+                return String.format(bundle.getString("notification.lessonCancelled"), id);
+            }
+
+        } catch (Exception e) {
+        }
+
+        return content;
     }
 }
