@@ -31,12 +31,12 @@ The Arabic RTL layout was demonstrated, showing how the entire application layou
 
 ## Team Member Contributions
 
-| Team Member Name | Assigned Tasks                                                                                                                                                     | Time Spent (hrs) | In-class Tasks |
-|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------------|
-| Taif Jalo | LocalizationService service, MessagesBundle_en/ar/ru.properties — Part of all string translations, Sprint Planning, Sprint reports, UserSettingsController update, | 0                | Submitted      |
-| Miska Voutilainen |                                                                                                                                                                    | 0                | ?              |
-| Elias Norta | Add LocalizationService, MessagesBundle_en_US.properties, externalizing strings, Language selector UI (login/user settings), refreshUI()                           | 25               | Submitted      |
-| Nikita Rybakov | RTL support, NodeOrientation, layout adjustments across all screens. Chat, FX Calendar, Create course modal, Event window, Notification localization               | 23               | Submitted      |
+| Team Member Name | Assigned Tasks                                                                                                                                                                                | Time Spent (hrs) | In-class Tasks |
+|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------------|
+| Taif Jalo | LocalizationService service, MessagesBundle_en/ar/ru.properties — Part of all string translations, Sprint Planning, Sprint reports, UserSettingsController update, Login and Register update. | 30               | Submitted      |
+| Miska Voutilainen |                                                                                                                                                                                               | ?                | ?              |
+| Elias Norta | Add LocalizationService, MessagesBundle_en_US.properties, externalizing strings, Language selector UI (login/user settings), refreshUI()                                                      | 25               | Submitted      |
+| Nikita Rybakov | RTL support, NodeOrientation, layout adjustments across all screens. Chat, FX Calendar, Create course modal, Event window, Notification localization                                          | 23               | Submitted      |
 
 ## What Went Well
 
