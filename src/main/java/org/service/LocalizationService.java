@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 public class LocalizationService {
 
     private static final String BUNDLE_BASE_NAME = "i18n/MessagesBundle";
-    private static Locale currentLocale = Locale.ENGLISH;
+    private static Locale currentLocale = new Locale("en", "US");
 
     /**
      * Returns the currently active locale.

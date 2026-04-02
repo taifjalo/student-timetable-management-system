@@ -25,8 +25,16 @@ public class CalendarApp extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Locale systemLocale = Locale.getDefault();
+        Locale startupLocale;
+        switch (systemLocale.getLanguage()) {
+            case "fi" -> startupLocale = new Locale("fi", "FI");
+            case "ar" -> startupLocale = new Locale("ar", "IQ");
+            case "ru" -> startupLocale = new Locale("ru", "RU");
+            default -> startupLocale = new Locale("en", "US");
+        }
 
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", Locale.getDefault());
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", startupLocale);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), bundle);
 
