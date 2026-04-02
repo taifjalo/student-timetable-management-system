@@ -51,7 +51,7 @@ public class NotificationsPopupController {
 
         for (NotificationDto dto : notifications) {
             NotificationRow row = new NotificationRow(
-                    localizeNotification(dto.getContent(), bundle),
+                    localizeNotification(dto, bundle),
                     formatTime(dto.getSentAt()),
                     !dto.isRead(),
                     () -> notificationService.markAsRead(userId, dto.getNotificationId()),
@@ -152,47 +152,16 @@ public class NotificationsPopupController {
 
     }
 
-    private String localizeNotification(String content, ResourceBundle bundle) {
-
-        try {
-            if (content.startsWith("You have been added to group ")) {
-                String group = content.replace("You have been added to group ", "");
-                return String.format(bundle.getString("notification.groupAdded"), group);
+    private String localizeNotification(NotificationDto dto, ResourceBundle bundle) {
+        if (dto.getMessageKey() != null) {
+            String[] params = dto.getMessageParams() != null
+                    ? dto.getMessageParams().split("\\|") : new String[0];
+            try {
+                return String.format(bundle.getString(dto.getMessageKey()), (Object[]) params);
+            } catch (Exception e) {
+                return dto.getContent(); // key missing from bundle — safe fallback
             }
-
-            if (content.startsWith("You have been removed from group ")) {
-                String group = content.replace("You have been removed from group ", "");
-                return String.format(bundle.getString("notification.groupRemoved"), group);
-            }
-
-            if (content.startsWith("You have a new message from ")) {
-                String sender = content.replace("You have a new message from ", "").replace("!", "");
-                return String.format(bundle.getString("notification.newMessage"), sender);
-            }
-
-            if (content.startsWith("New lesson: ")) {
-                String[] parts = content.replace("New lesson: ", "").split(" in ");
-                if (parts.length == 2) {
-                    return String.format(bundle.getString("notification.newLesson"), parts[0], parts[1]);
-                }
-            }
-
-            if (content.startsWith("Course ")) {
-                String temp = content.replace("Course ", "");
-                String[] parts = temp.split(" class changes to ");
-                if (parts.length == 2) {
-                    return String.format(bundle.getString("notification.courseChanged"), parts[0], parts[1]);
-                }
-            }
-
-            if (content.startsWith("Class ") && content.endsWith(" was cancelled")) {
-                String id = content.replace("Class ", "").replace(" was cancelled", "");
-                return String.format(bundle.getString("notification.lessonCancelled"), id);
-            }
-
-        } catch (Exception e) {
         }
-
-        return content;
+        return dto.getContent(); // old rows without key
     }
 }

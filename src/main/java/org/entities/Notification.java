@@ -18,11 +18,24 @@ public class Notification {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "message_key")
+    private String messageKey;
+
+    // pipe-separated args matching the bundle key's %s placeholders, e.g. "CS101|Room 202"
+    @Column(name = "message_params")
+    private String messageParams;
+
     public Notification() {}
 
     public Notification(LocalDateTime sentAt, String content) {
         this.sentAt = sentAt;
         this.content = content;
+    }
+
+    public Notification(LocalDateTime sentAt, String messageKey, String messageParams) {
+        this.sentAt = sentAt;
+        this.messageKey = messageKey;
+        this.messageParams = messageParams;
     }
 
     public Long getId() { return id; }
@@ -33,4 +46,10 @@ public class Notification {
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    public String getMessageKey() { return messageKey; }
+    public void setMessageKey(String messageKey) { this.messageKey = messageKey; }
+
+    public String getMessageParams() { return messageParams; }
+    public void setMessageParams(String messageParams) { this.messageParams = messageParams; }
 }

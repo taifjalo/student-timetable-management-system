@@ -18,40 +18,32 @@ public class NotificationService {
 
     public void notifyLessonAdded(String courseName, String classroom, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = String.format("New lesson: %s in %s", courseName, classroom);
-        notificationDao.saveNotification(content, recipientIds);
+        notificationDao.saveNotification("notification.newLesson", courseName + "|" + classroom, recipientIds);
     }
 
     public void notifyLessonUpdated(String courseName, String classroom, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = String.format("Course %s class changes to %s", courseName, classroom);
-        notificationDao.saveNotification(content, recipientIds);
+        notificationDao.saveNotification("notification.courseChanged", courseName + "|" + classroom, recipientIds);
     }
 
     public void notifyLessonDeleted(Long lessonId, List<Long> recipientIds) {
         if (recipientIds == null || recipientIds.isEmpty()) return;
-        String content = "Class " + lessonId + " was cancelled";
-        notificationDao.saveNotification(content, recipientIds);
+        notificationDao.saveNotification("notification.lessonCancelled", lessonId.toString(), recipientIds);
     }
-
 
     public void notifyStudentAddedToGroup(String groupCode, Long recipientId) {
         if (recipientId == null) return;
-        String content = "You have been added to group " + groupCode;
-        notificationDao.saveNotification(content, List.of(recipientId));
+        notificationDao.saveNotification("notification.groupAdded", groupCode, List.of(recipientId));
     }
 
     public void notifyStudentRemovedFromGroup(String groupCode, Long recipientId) {
         if (recipientId == null) return;
-        String content = "You have been removed from group " + groupCode;
-        notificationDao.saveNotification(content, List.of(recipientId));
+        notificationDao.saveNotification("notification.groupRemoved", groupCode, List.of(recipientId));
     }
-
 
     public void notifyNewMessage(Long senderId, String senderName, Long recipientId) {
         if (recipientId == null || recipientId.equals(senderId)) return;
-        String content = "You have a new message from " + senderName + "!";
-        notificationDao.saveNotification(content, List.of(recipientId));
+        notificationDao.saveNotification("notification.newMessage", senderName, List.of(recipientId));
     }
 
 
@@ -63,6 +55,8 @@ public class NotificationService {
         return notificationDao.findByUserId(userId).stream()
                 .map(nr -> new NotificationDto(
                         nr.getNotification().getId(),
+                        nr.getNotification().getMessageKey(),
+                        nr.getNotification().getMessageParams(),
                         nr.getNotification().getContent(),
                         nr.getNotification().getSentAt(),
                         nr.isRead()
