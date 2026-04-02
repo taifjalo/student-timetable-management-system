@@ -18,6 +18,11 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the user settings modal ({@code user-settings-modal.fxml}).
+ * Lets the logged-in user update their profile fields, change their password,
+ * switch the application language, and log out.
+ */
 public class UserSettingsController {
 
     @FXML private Text displayNameText;
@@ -48,10 +53,20 @@ public class UserSettingsController {
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
+    /**
+     * Injects the owning stage so the controller can close itself or swap scenes
+     * without relying on the scene graph traversal.
+     *
+     * @param stage the stage this modal is displayed in
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * JavaFX initialize callback — pre-fills fields with the current user's data
+     * and syncs the language menu button.
+     */
     @FXML
     public void initialize() {
         User user = SessionManager.getInstance().getCurrentUser();
@@ -73,6 +88,10 @@ public class UserSettingsController {
 
     }
 
+    /**
+     * FXML action handler for the save button.
+     * Persists updated profile fields and refreshes the session user.
+     */
     @FXML
     private void handleSave() {
         User user = SessionManager.getInstance().getCurrentUser();
@@ -98,6 +117,12 @@ public class UserSettingsController {
         }
     }
 
+    /**
+     * FXML action handler for language menu items.
+     * Switches the active locale, reloads the main app scene, and closes this modal.
+     *
+     * @param event the action event from the selected menu item
+     */
     @FXML
     private void handleChangeLocalization(ActionEvent event) {
         MenuItem selectedItem = (MenuItem) event.getSource();
@@ -132,6 +157,9 @@ public class UserSettingsController {
         }
     }
 
+    /**
+     * Syncs the language menu button label to the currently active locale.
+     */
     private void applyLanguageMenuSelection() {
         if (languageMenuButton == null) {
             return;
@@ -147,6 +175,11 @@ public class UserSettingsController {
         });
     }
 
+    /**
+     * FXML action handler for the change-password button.
+     * Validates the current password and the new password confirmation before
+     * BCrypt-hashing and persisting the new password.
+     */
     @FXML
     private void handleChangePassword() {
         passwordMessageLabel.setText("");
@@ -188,6 +221,10 @@ public class UserSettingsController {
         }
     }
 
+    /**
+     * FXML action handler for the logout button.
+     * Clears the session and navigates to the login screen.
+     */
     @FXML
     private void handleLogout() {
         SessionManager.getInstance().logout();
@@ -214,14 +251,33 @@ public class UserSettingsController {
         }
     }
 
+    /**
+     * Returns the stage this controller is displayed in.
+     * Falls back to resolving it from the scene graph if {@link #setStage(Stage)}
+     * was not called.
+     *
+     * @return the owning {@link Stage}
+     */
     private Stage getCurrentStage() {
         return stage != null ? stage : (Stage) messageLabel.getScene().getWindow();
     }
 
+    /**
+     * Returns the value if non-null, otherwise returns an empty string.
+     *
+     * @param value the string to check
+     * @return {@code value} or {@code ""}
+     */
     private String nullSafe(String value) {
         return value != null ? value : "";
     }
 
+    /**
+     * Capitalizes the first character of a string and lowercases the rest.
+     *
+     * @param s the string to capitalize
+     * @return the capitalized string, or {@code s} unchanged if null/empty
+     */
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();

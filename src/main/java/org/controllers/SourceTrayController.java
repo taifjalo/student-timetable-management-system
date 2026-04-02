@@ -35,6 +35,20 @@ import org.service.GroupService;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 
+/**
+ * Controller for the CalendarFX source-tray sidebar.
+ * Replaces the default CalendarFX source-tray content with two custom sections:
+ * <ul>
+ *   <li><b>Courses</b> — one colored row per {@link com.calendarfx.model.Calendar},
+ *       with an edit button visible only to teachers.</li>
+ *   <li><b>Groups</b> — one row per {@link org.entities.StudentGroup} from the database,
+ *       also teacher-editable. Backed by an {@link ObservableList} so the tray
+ *       updates live when groups are added or deleted.</li>
+ * </ul>
+ * Both sections are loaded from {@code sourcetray-groups.fxml} using this controller
+ * as their FXML controller, allowing the FXML action handler
+ * ({@link #handleOpenCreateGroupModal(ActionEvent)}) to serve both add-buttons.
+ */
 public class SourceTrayController {
 
     private static final String SECTION_TYPE_COURSE = "COURSE";
@@ -46,6 +60,16 @@ public class SourceTrayController {
     ResourceBundle selectedBundle = localizationService.getBundle();
 
 
+    /**
+     * Replaces the CalendarFX source-tray scroll-pane content with the two custom
+     * sections (courses + groups). Fetches groups from the database using the current
+     * user's ID (students see only their own groups; teachers see all groups).
+     * Must be called after the {@link CalendarView} skin has been applied so the
+     * scroll-pane lookup succeeds.
+     *
+     * @param calendarView the CalendarFX view whose source tray to populate
+     * @param courseSource the {@link CalendarSource} backing the courses section
+     */
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         this.calendarSource = courseSource;
         this.selectedBundle = localizationService.getBundle();
@@ -83,6 +107,14 @@ public class SourceTrayController {
         sourceScrollPane.setContent(wrapper);
     }
 
+    /**
+     * Builds the courses section node from {@code sourcetray-groups.fxml}.
+     * Wires up reactive listeners so the row list refreshes whenever a calendar
+     * is added to or removed from {@code source}.
+     *
+     * @param source the {@link CalendarSource} whose calendars to display
+     * @return the root {@link Node} for the section, or {@code null} on load failure
+     */
     private Node createSourceSectionNode(CalendarSource source) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
@@ -123,6 +155,15 @@ public class SourceTrayController {
         return sourceSection;
     }
 
+    /**
+     * Builds the groups section node from {@code sourcetray-groups.fxml}.
+     * Listens on {@code items} for additions (appended individually) and removals
+     * (full rebuild for safety).
+     *
+     * @param sectionTitle the section header label (currently overridden by the bundle key)
+     * @param items        the live observable list of groups to display
+     * @return the root {@link Node} for the section, or {@code null} on load failure
+     */
     private Node createGroupsSectionNode(String sectionTitle, ObservableList<StudentGroup> items) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
@@ -177,6 +218,14 @@ public class SourceTrayController {
         return sourceSection;
     }
 
+    /**
+     * FXML action handler for both "+" add-buttons in the source tray.
+     * Reads the button's {@code userData} to decide whether to open the course modal
+     * ({@link #openGroupModal(Calendar, String, ActionEvent)}) or the group modal
+     * ({@link #openGroupModal(StudentGroup, String, ActionEvent)}).
+     *
+     * @param event the action event from the clicked add-button
+     */
     public void handleOpenCreateGroupModal(ActionEvent event) {
         Button source = (Button) event.getSource();
         String sectionType = source.getUserData() != null ? source.getUserData().toString() : SECTION_TYPE_GROUP;
@@ -187,6 +236,13 @@ public class SourceTrayController {
         }
     }
 
+    /**
+     * Opens the course create/edit modal ({@code course-modal.fxml}).
+     *
+     * @param calendar    the calendar to edit, or {@code null} to create a new course
+     * @param sectionType the section type constant ({@value #SECTION_TYPE_COURSE})
+     * @param event       the originating action event (used to resolve the owner window)
+     */
     private void openGroupModal(Calendar calendar, String sectionType, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
@@ -203,6 +259,13 @@ public class SourceTrayController {
         }
     }
 
+    /**
+     * Opens the group create/edit modal ({@code create-modal.fxml}).
+     *
+     * @param group       the group to edit, or {@code null} to create a new group
+     * @param sectionType the section type constant ({@value #SECTION_TYPE_GROUP})
+     * @param event       the originating action event (used to resolve the owner window)
+     */
     private void openGroupModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
             java.net.URL fxmlUrl = getClass().getResource("/source-tray-create-modal/create-modal.fxml");
@@ -230,6 +293,15 @@ public class SourceTrayController {
         }
     }
 
+    /**
+     * Displays a loaded FXML root as an application-modal, non-resizable dialog.
+     * Resolves the window title from the bundle using the section type and edit/create mode.
+     *
+     * @param root        the loaded FXML scene root
+     * @param entityName  the existing entity's name ({@code null} = create mode)
+     * @param sectionType the section type constant
+     * @param event       the originating action event (used to resolve the owner window)
+     */
     private void showModal(Parent root, String entityName, String sectionType, ActionEvent event) {
         Stage dialogStage = new Stage();
         boolean isEditMode = entityName != null;
@@ -242,6 +314,13 @@ public class SourceTrayController {
         dialogStage.showAndWait();
     }
 
+    /**
+     * Returns the bundle key for the modal window title based on section type and mode.
+     *
+     * @param sectionType the section type constant
+     * @param isEditMode  {@code true} for edit, {@code false} for create
+     * @return the i18n bundle key string
+     */
     private String resolveModalTitleKey(String sectionType, boolean isEditMode) {
         boolean isCourse = SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType);
         if (isCourse) {
@@ -250,6 +329,15 @@ public class SourceTrayController {
         return isEditMode ? "modal.edit.group.title" : "modal.create.group.title";
     }
 
+    /**
+     * Builds a single row in the courses section: a colored dot, the calendar name,
+     * a spacer, and an edit-icon button (teacher-only). The dot and name are kept
+     * in sync via property listeners.
+     *
+     * @param calendar    the CalendarFX calendar to represent
+     * @param sectionType the section type constant (passed to the edit modal)
+     * @return the constructed {@link HBox} row node
+     */
     private HBox createCalendarRow(Calendar calendar, String sectionType) {
         Region colorDot = new Region();
         colorDot.setMinSize(12, 12);
@@ -287,6 +375,14 @@ public class SourceTrayController {
         return row;
     }
 
+    /**
+     * Builds a single row in the groups section: the group name, a spacer, and an
+     * edit-icon button (teacher-only).
+     *
+     * @param group       the group to represent
+     * @param sectionType the section type constant (passed to the edit modal)
+     * @return the constructed {@link HBox} row node
+     */
     private HBox createGroupRow(StudentGroup group, String sectionType) {
 
         Text groupNameText = new Text(group.getFieldOfStudies());
@@ -316,6 +412,13 @@ public class SourceTrayController {
     }
 
 
+    /**
+     * Maps a CalendarFX style name string (e.g. {@code "style1"}) to its corresponding
+     * hex color string. Case-insensitive.
+     *
+     * @param style the CalendarFX style name
+     * @return hex color string, or {@code "#888888"} for unknown styles
+     */
     private static String styleToHex(String style) {
         if (style == null) return "#888888";
         switch (style.toLowerCase()) {
