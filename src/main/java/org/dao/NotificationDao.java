@@ -11,18 +11,17 @@ import java.util.List;
 
 public class NotificationDao {
 
-    public Notification saveNotification(String content, List<Long> recipientIds) {
+    public Notification saveNotification(String messageKey, String messageParams, List<Long> recipientIds) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
 
-            Notification notification = new Notification(LocalDateTime.now(), content);
+            Notification notification = new Notification(LocalDateTime.now(), messageKey, messageParams);
             em.persist(notification);
             em.flush(); // ensure notification_id is generated before creating receivers
 
             for (Long recipientId : recipientIds) {
                 User user = em.getReference(User.class, recipientId);
-                NotificationReceiver receiver = new NotificationReceiver(user, notification);
-                em.persist(receiver);
+                em.persist(new NotificationReceiver(user, notification));
             }
 
             em.getTransaction().commit();
