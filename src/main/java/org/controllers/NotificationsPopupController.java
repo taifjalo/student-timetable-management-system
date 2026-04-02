@@ -20,6 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the notifications popup ({@code notifications-popup.fxml}).
+ * Renders each notification as a styled row with a relative timestamp and a
+ * "mark as read" action. Supports right-to-left layout for Arabic.
+ *
+ * <p>Notifications are displayed in two modes:
+ * <ul>
+ *   <li><b>Localized</b> — the i18n bundle key and pipe-separated params are
+ *       resolved via {@link #localizeNotification} into the active locale's text.</li>
+ *   <li><b>Legacy</b> — the raw {@code content} string is displayed as-is.</li>
+ * </ul>
+ */
 public class NotificationsPopupController {
 
     @FXML private VBox popupRoot;
@@ -32,6 +44,10 @@ public class NotificationsPopupController {
     private Long userId;
     private ResourceBundle bundle;
 
+    /**
+     * JavaFX initialize callback — loads the current user's notifications and
+     * builds the popup content. Sets RTL orientation for Arabic.
+     */
     @FXML
     public void initialize() {
         bundle = localizationService.getBundle();
@@ -62,12 +78,25 @@ public class NotificationsPopupController {
         }
     }
 
+    /**
+     * FXML action handler for the "Mark all as read" label click.
+     * Persists all-read state and updates every row's visual state.
+     *
+     * @param event the mouse event
+     */
     @FXML
     private void handleMarkAllRead(MouseEvent event) {
         notificationService.markAllAsRead(userId);
         rows.forEach(NotificationRow::markRead);
     }
 
+    /**
+     * Formats a notification timestamp as a human-readable relative time string
+     * using the active locale's bundle (e.g. "5 min ago", "2 h ago").
+     *
+     * @param sentAt the time the notification was sent
+     * @return a localized relative time string
+     */
     private String formatTime(LocalDateTime sentAt) {
         long minutes = ChronoUnit.MINUTES.between(sentAt, LocalDateTime.now());
         if (minutes < 1)  return bundle.getString("notifications.popup.time.just.now");
@@ -78,6 +107,11 @@ public class NotificationsPopupController {
         return days + " " + bundle.getString("notifications.popup.time.d.ago");
     }
 
+    /**
+     * Programmatically constructed notification row widget.
+     * Displays the message content, relative time, and a "mark as read" link
+     * that hides itself once clicked.
+     */
     private static class NotificationRow {
 
         private final VBox root;
@@ -86,6 +120,15 @@ public class NotificationsPopupController {
         private final Label markReadBtn;
         private boolean unread;
 
+        /**
+         * Constructs a notification row.
+         *
+         * @param content      the localized notification text
+         * @param time         the relative time string
+         * @param unread       {@code true} if the notification has not been read
+         * @param onMarkRead   action to run when the user marks this notification as read
+         * @param markReadText localized label for the mark-as-read button
+         */
         NotificationRow(String content, String time, boolean unread, Runnable onMarkRead, String markReadText) {
             this.unread = unread;
 
@@ -132,6 +175,7 @@ public class NotificationsPopupController {
             root = new VBox(row, sep);
         }
 
+        /** Applies the background and dot color based on the current read state. */
         private void applyStyle() {
             row.setStyle((unread ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;") +
                     " -fx-cursor: hand;");
@@ -140,6 +184,7 @@ public class NotificationsPopupController {
                     : "-fx-background-color: transparent;");
         }
 
+        /** Marks this row as read, hiding the mark-read button and updating styling. */
         void markRead() {
             unread = false;
             markReadBtn.setVisible(false);
@@ -147,11 +192,22 @@ public class NotificationsPopupController {
             applyStyle();
         }
 
+        /** Returns the root VBox node to add to the notification list. */
         VBox getRoot() { return root; }
 
 
     }
 
+    /**
+     * Resolves the display text for a notification.
+     * For localized notifications (where {@code messageKey} is set), the bundle
+     * string is looked up and formatted with the pipe-split params.
+     * Falls back to {@code content} if the key is absent or the bundle lookup fails.
+     *
+     * @param dto    the notification data transfer object
+     * @param bundle the active locale's resource bundle
+     * @return the display string to show in the notification row
+     */
     private String localizeNotification(NotificationDto dto, ResourceBundle bundle) {
         if (dto.getMessageKey() != null) {
             String[] params = dto.getMessageParams() != null
