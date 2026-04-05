@@ -1,10 +1,13 @@
 package org.service;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -56,7 +59,6 @@ public class LocalizationService {
 
         FXMLLoader loader = new FXMLLoader(resource, getBundle());
         Parent root = loader.load();
-        swapSides(root);
 
         Scene currentScene = stage.getScene();
         if (currentScene == null) {
@@ -64,6 +66,7 @@ public class LocalizationService {
         } else {
             currentScene.setRoot(root);
         }
+        swapSides(root);
     }
 
     public void swapSides(Parent root){
