@@ -41,50 +41,13 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-/**
- * Custom CalendarFX pop-over content pane shown when a user clicks on a calendar entry.
- * Replaces the default CalendarFX pop-over with a role-aware layout:
- *
- * <ul>
- *   <li><b>Teachers</b> get the full CalendarFX {@link EntryHeaderView} (title locked to
- *       the calendar name), custom HH:MM time inputs, and the {@link EventExtraDetailsController}
- *       extra fields (classroom, teacher, groups, students) plus Save/Delete action buttons.</li>
- *   <li><b>Students</b> get a simple read-only header (course name label) and a
- *       {@link javafx.scene.layout.GridPane} grid showing start/end time, classroom,
- *       teacher, and assigned groups — no editing controls.</li>
- * </ul>
- *
- * <p>Unsaved new entries are removed from the calendar when the pop-over closes.
- * Saved entries whose interval was changed but not yet re-saved are reverted to the
- * snapshot taken at construction time.
- *
- * <p>After the pop-over is shown, {@link #applyLocalizationAndRTL()} is called to
- * translate any residual English CalendarFX labels and apply RTL orientation for Arabic.
- */
 public class CustomEntryPopOverContentPane extends PopOverContentPane {
 
-    /**
-     * Lightweight value holder that identifies a persisted lesson by its database ID.
-     * Stored as the user object on a CalendarFX {@link Entry} to distinguish saved
-     * entries from newly created, unsaved ones.
-     *
-     * @param lessonId the database primary key of the persisted lesson
-     */
     public record SavedLesson(Long lessonId) {}
 
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
-    /**
-     * Constructs the pop-over content for a calendar entry.
-     * Builds a role-appropriate header and detail pane, wires up pop-over lifecycle
-     * listeners for unsaved-entry cleanup and interval revert, and schedules RTL
-     * localization after the pop-over is shown.
-     *
-     * @param popOver     the CalendarFX {@link PopOver} hosting this content
-     * @param dateControl the {@link DateControl} the entry belongs to
-     * @param entry       the calendar entry being viewed or edited
-     */
     public CustomEntryPopOverContentPane(PopOver popOver,
                                          DateControl dateControl,
                                          Entry<?> entry) {
@@ -200,15 +163,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
     }
 
 
-    /**
-     * Builds the read-only detail grid shown to students.
-     * Displays start/end time, classroom, teacher, and assigned groups.
-     * All values fall back to {@code "—"} when unavailable.
-     *
-     * @param entry          the calendar entry
-     * @param existingLesson the persisted lesson, or {@code null} for new entries
-     * @return a populated {@link GridPane}
-     */
     private GridPane buildStudentView(Entry<?> entry, Lesson existingLesson) {
         GridPane grid = new GridPane();
         grid.setHgap(8);
@@ -277,15 +231,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         return grid;
     }
 
-    /**
-     * Adds a key–value row to a grid pane. The key label is right-aligned in column 0;
-     * the value label fills column 1 with horizontal grow.
-     *
-     * @param grid      the target grid
-     * @param row       the grid row index
-     * @param labelText the key label text
-     * @param value     the value label node
-     */
     private void addRow(GridPane grid, int row, String labelText, Label value) {
         Label key = new Label(labelText);
         key.setStyle("-fx-text-fill:#666666; -fx-font-size:12px;");
@@ -298,13 +243,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         grid.add(value, 1, row);
     }
 
-    /**
-     * Creates a styled value {@link Label} with text wrapping enabled.
-     * Returns a label showing {@code "—"} when {@code text} is {@code null}.
-     *
-     * @param text the text to display
-     * @return the configured label
-     */
     private Label valueLabel(String text) {
         Label lbl = new Label(text != null ? text : "—");
         lbl.setStyle("-fx-font-size:13px;");
@@ -312,16 +250,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         return lbl;
     }
 
-    /**
-     * Locks the CalendarFX entry title text field to the calendar's name so it
-     * cannot be edited independently. Uses reflection to access the private
-     * {@code titleField} in {@link EntryHeaderView} and makes it read-only.
-     * Also hides the calendar-picker combo box for non-teachers.
-     *
-     * @param header  the CalendarFX header view
-     * @param entry   the entry whose title to sync
-     * @param teacher {@code true} if the current user is a teacher
-     */
     private void lockTitleToCalendarName(EntryHeaderView header, Entry<?> entry, boolean teacher) {
         if (entry.getCalendar() != null) {
             entry.setTitle(entry.getCalendar().getName());
@@ -356,15 +284,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
     }
 
 
-    /**
-     * Replaces the default CalendarFX {@link TimeField} widgets in the
-     * {@link EntryDetailsView} grid with custom HH:MM text-field pairs built by
-     * {@link #buildTimeInput(Entry, boolean)}. Targets grid cells (col 1, row 1) for
-     * start and (col 1, row 2) for end.
-     *
-     * @param details the CalendarFX details view whose time fields to replace
-     * @param entry   the entry whose interval the new inputs operate on
-     */
     private void replaceTimeFields(EntryDetailsView details, Entry<?> entry) {
         GridPane grid = details.getChildren().stream()
                 .filter(GridPane.class::isInstance)
@@ -378,22 +297,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         if (endBox   != null) { removeTimeField(endBox);   endBox.getChildren().add(buildTimeInput(entry, false)); }
     }
 
-    /**
-     * Appends the extra lesson fields (classroom, teacher, group, students) and the
-     * Save/Delete action bar to the {@link EntryDetailsView} grid.
-     * Shifts all existing grid rows down by {@code EXTRA_ROWS} to make space at the top.
-     * The Save button persists the lesson via {@link LessonService} on a background thread;
-     * the Delete button deletes it and removes the entry from the calendar.
-     *
-     * @param details           the CalendarFX details view to append to
-     * @param entry             the calendar entry being edited
-     * @param ctrl              the extra-details widget supplying classroom/group/user values
-     * @param popOver           the hosting pop-over (closed after a successful save)
-     * @param savedThisSession  single-element array flag: {@code true} after a successful save
-     * @param savingInProgress  single-element array flag: {@code true} while save is running
-     * @param snapshotInterval  single-element array holding the interval at pop-over open time
-     * @param snapshotCalendar  single-element array holding the calendar at pop-over open time
-     */
     private void appendExtraFields(EntryDetailsView details,
                                    Entry<?> entry,
                                    EventExtraDetailsController ctrl,
@@ -513,15 +416,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         grid.add(actionBar, 0, lastRow + 1);
     }
 
-    /**
-     * Adds a labeled row to the detail grid. The label is right-aligned with margin;
-     * the field node is placed in column 1 with horizontal grow.
-     *
-     * @param grid      the target grid
-     * @param row       the grid row index
-     * @param labelText the left-column label text
-     * @param field     the right-column control/node
-     */
     private void buildRow(GridPane grid, int row, String labelText, Node field) {
         Label label = new Label(labelText);
         GridPane.setHalignment(label, HPos.RIGHT);
@@ -533,14 +427,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         grid.add(field, 1, row);
     }
 
-    /**
-     * Finds the {@link HBox} at the given grid column and row, or {@code null} if absent.
-     *
-     * @param grid the grid to search
-     * @param col  the column index
-     * @param row  the row index
-     * @return the matching {@link HBox}, or {@code null}
-     */
     private HBox getGridCell(GridPane grid, int col, int row) {
         return grid.getChildren().stream()
                 .filter(HBox.class::isInstance).map(HBox.class::cast)
@@ -549,25 +435,10 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
                 .findFirst().orElse(null);
     }
 
-    /**
-     * Removes the first {@link TimeField} child from the given {@link HBox}.
-     *
-     * @param box the HBox containing a CalendarFX TimeField
-     */
     private void removeTimeField(HBox box) {
         box.getChildren().removeIf(TimeField.class::isInstance);
     }
 
-    /**
-     * Builds an HH:MM time input consisting of two numeric text fields and a colon separator.
-     * Commits the parsed time to the entry interval on focus-lost or Enter key press;
-     * reverts to the entry's current time on invalid input.
-     * Listens on the entry's interval property to keep the fields in sync with external changes.
-     *
-     * @param entry   the entry whose start or end time is being edited
-     * @param isStart {@code true} to control the start time; {@code false} for end time
-     * @return the constructed {@link HBox} time input widget
-     */
     private HBox buildTimeInput(Entry<?> entry, boolean isStart) {
         LocalTime initial = isStart ? entry.getStartTime() : entry.getEndTime();
         TextField hourField   = createNumericField(2, initial != null ? initial.getHour()   : 0);
@@ -609,14 +480,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         return box;
     }
 
-    /**
-     * Creates a fixed-width numeric text field with a digit-count formatter.
-     * The field is pre-filled with {@code initialValue} zero-padded to two digits.
-     *
-     * @param maxLen       the maximum number of digits allowed
-     * @param initialValue the initial integer value to display
-     * @return the configured {@link TextField}
-     */
     private TextField createNumericField(int maxLen, int initialValue) {
         TextField tf = new TextField(String.format("%02d", initialValue));
         tf.setPrefWidth(36); tf.setMaxWidth(36);
@@ -628,14 +491,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         return tf;
     }
 
-    /**
-     * Formats a date and time as {@code "dd.MM.yyyy  HH:mm"}.
-     * Returns {@code "—"} for any {@code null} component.
-     *
-     * @param date the local date, or {@code null}
-     * @param time the local time, or {@code null}
-     * @return the formatted string
-     */
     private String formatDateTime(LocalDate date, LocalTime time) {
         String d = date != null
                 ? String.format("%02d.%02d.%04d", date.getDayOfMonth(), date.getMonthValue(), date.getYear())
@@ -646,24 +501,10 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         return d + "  " + t;
     }
 
-    /**
-     * Clamps an integer value to the inclusive range [{@code min}, {@code max}].
-     *
-     * @param value the value to clamp
-     * @param min   the minimum allowed value
-     * @param max   the maximum allowed value
-     * @return the clamped value
-     */
     private int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
 
-    /**
-     * Applies RTL node orientation when the active locale is Arabic, then walks all
-     * descendant nodes to translate residual hard-coded English text using
-     * {@link #translate(String, ResourceBundle)}.
-     * Runs on the JavaFX thread via {@link Platform#runLater(Runnable)}.
-     */
     private void applyLocalizationAndRTL() {
 
         ResourceBundle bundle = localizationService.getBundle();
@@ -696,16 +537,6 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
         });
     }
 
-    /**
-     * Looks up a localized replacement for a known CalendarFX label string.
-     * Strips a trailing colon before the map lookup and restores it on the result
-     * if the original text ended with one.
-     * Returns {@code null} if the text is not in the known-label map.
-     *
-     * @param text   the raw label text from the CalendarFX node
-     * @param bundle the active locale's resource bundle
-     * @return the translated string (with colon if applicable), or {@code null} if not found
-     */
     private String translate(String text, ResourceBundle bundle) {
 
         String clean = text.replace(":", "").trim();

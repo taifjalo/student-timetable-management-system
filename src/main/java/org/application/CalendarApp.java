@@ -9,32 +9,13 @@ import javafx.stage.Stage;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-/**
- * JavaFX application entry point for Easytable.
- * Loads the login screen with the system default locale bundle and displays it maximized.
- */
 public class CalendarApp extends Application {
 
-    /**
-     * JavaFX lifecycle callback — builds the initial scene from {@code login.fxml}
-     * using the system default locale bundle, attaches the global stylesheet, and
-     * shows the primary stage maximized.
-     *
-     * @param primaryStage the primary stage provided by the JavaFX runtime
-     * @throws Exception if the FXML or resource loading fails
-     */
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Locale systemLocale = Locale.getDefault();
-        Locale startupLocale;
-        switch (systemLocale.getLanguage()) {
-            case "fi" -> startupLocale = new Locale("fi", "FI");
-            case "ar" -> startupLocale = new Locale("ar", "IQ");
-            case "ru" -> startupLocale = new Locale("ru", "RU");
-            default -> startupLocale = new Locale("en", "US");
-        }
 
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", startupLocale);
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", Locale.getDefault());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), bundle);
 
@@ -48,11 +29,6 @@ public class CalendarApp extends Application {
         primaryStage.show();
     }
 
-    /**
-     * Application main method — delegates to {@link Application#launch(String...)}.
-     *
-     * @param args command-line arguments (not used)
-     */
     public static void main(String[] args) {
         launch(args);
     }
