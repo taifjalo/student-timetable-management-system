@@ -194,3 +194,40 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 | **Pass Criteria** | `SessionManager` has no logged-in user, Login screen is displayed                                   |
 
 ---
+
+## 5. Usability Test Cases
+
+### TC-14 — UI Readability
+| Field | Detail                                                                 |
+|---|------------------------------------------------------------------------|
+| **Test Objective** | Verify the UI is readable and intuitive for a new user                 |
+| **Method** | Task-based observation with a user unfamiliar with the system          |
+| **Tasks** | 1. Log in. 2. Find tomorrow's lessons. 3. Send a message to a teacher. |
+| **Pass Criteria** | User completes all 3 tasks without assistance within 4 minutes         |
+
+---
+
+## 6. Performance Test Cases
+
+### TC-15 — Language Switch Speed
+| Field | Detail |
+|---|---|
+| **Test Objective** | Language switch should feel instant |
+| **Method** | Measure time from menu selection to UI update |
+| **Pass Criteria** | UI updates within 500ms of language selection |
+
+### TC-16 — Login Response Time
+| Field | Detail |
+|---|---|
+| **Test Objective** | Login should complete quickly |
+| **Method** | Measure time from button click to calendar view appearing |
+| **Pass Criteria** | Login completes within 3 seconds on a standard network connection |
+
+---
+
+## 7. Out of Scope
+
+* Load testing / stress testing
+* Security penetration testing
+* Mobile device testing (application is desktop-only)
+* Automated test execution (manual test design only for this sprint)
