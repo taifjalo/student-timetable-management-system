@@ -31,24 +31,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
-/**
- * Root controller for the main application scene ({@code main-app.fxml}).
- * Owns the {@link CalendarView}, the {@link CalendarSource} for courses, and
- * coordinates the {@link NavbarController} and {@link SourceTrayController}.
- *
- * <p>On initialization it:
- * <ol>
- *   <li>Loads the navbar FXML and injects it into the top of the border pane.</li>
- *   <li>Creates the {@link CalendarView} and configures entry interactions
- *       (teachers can create/edit; students are read-only).</li>
- *   <li>Calls {@link #loadDataFromDatabase(boolean)} to populate courses and
- *       lessons from the database and build the source tray.</li>
- *   <li>Starts a daemon thread that keeps the calendar's today/time current.</li>
- * </ol>
- *
- * <p>The {@link #refresh()} method re-fetches all data on a background thread
- * and is triggered by the navbar refresh button.
- */
 public class MainAppController {
 
     @FXML private BorderPane mainRoot;
@@ -62,10 +44,6 @@ public class MainAppController {
 
     ResourceBundle selectedBundle = localizationService.getBundle();
 
-    /**
-     * JavaFX initialize callback — sets up the full main-app scene including the
-     * navbar, calendar view, source tray, and initial database load.
-     */
     @FXML
     public void initialize() {
         try {
@@ -154,12 +132,6 @@ public class MainAppController {
         }
     }
 
-    /**
-     * Re-fetches all courses and lessons from the database on a background thread
-     * and rebuilds the calendar entries and source tray on the JavaFX thread.
-     * Called by the navbar refresh button; the spinner animation is stopped in
-     * {@code finally} regardless of outcome.
-     */
     public void refresh() {
         new Thread(() -> {
             try {
@@ -236,14 +208,6 @@ public class MainAppController {
     }
 
 
-    /**
-     * Loads courses and their lessons from the database into the calendar source.
-     * On the first load it also shows the source tray and sets the sidebar divider position.
-     * Students see only lessons assigned to their group or directly to them.
-     *
-     * @param firstLoad {@code true} on application startup — triggers source-tray setup
-     *                  and divider positioning on the JavaFX thread
-     */
     private void loadDataFromDatabase(boolean firstLoad) {
         CourseService courseService = new CourseService(new CourseDao());
         LessonService lessonService = new LessonService(new LessonDao());
@@ -319,13 +283,6 @@ public class MainAppController {
         }
     }
 
-    /**
-     * Returns the group code of the current student's assigned group, or {@code null}
-     * if the user is a teacher, has no group, or the lookup fails.
-     *
-     * @param isTeacher {@code true} if the current session user is a teacher
-     * @return the group code string, or {@code null}
-     */
     private String resolveStudentGroupCode(boolean isTeacher) {
         if (isTeacher) return null;
         org.entities.User currentUser = SessionManager.getInstance().getCurrentUser();
@@ -344,15 +301,6 @@ public class MainAppController {
         }
     }
 
-    /**
-     * Returns {@code true} if the given lesson should be shown to a specific student.
-     * A lesson is visible if the student is directly assigned to it OR their group is assigned.
-     *
-     * @param lesson           the lesson to check
-     * @param studentGroupCode the student's group code, or {@code null} if unassigned
-     * @param studentUserId    the student's DB user ID, or {@code null} if unknown
-     * @return {@code true} if the lesson is visible to this student
-     */
     private boolean lessonVisibleToStudent(Lesson lesson, String studentGroupCode, Long studentUserId) {
         // Check individual assignment first
         List<org.entities.User> assignedUsers = lesson.getAssignedUsers();
@@ -368,12 +316,6 @@ public class MainAppController {
         return assignedGroups.stream().anyMatch(g -> studentGroupCode.equals(g.getGroupCode()));
     }
 
-    /**
-     * Walks the CalendarFX node tree and replaces hard-coded English button/label
-     * text with the active locale's translations. Targets the "Today" button and
-     * the "All Day" label, matching against all four supported locale variants so
-     * the replacement is idempotent regardless of the previous locale.
-     */
     private void localizeCalendar() {
 
         // берём переводы один раз
@@ -408,11 +350,6 @@ public class MainAppController {
         });
     }
 
-    /**
-     * Schedules {@link #localizeCalendar()} to run 5 times at 50 ms intervals via a
-     * {@link Timeline}. Repeated attempts compensate for CalendarFX nodes that are
-     * created lazily after a page switch or skin change.
-     */
     private void localizeCalendarSafe() {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(50), e -> localizeCalendar())
@@ -421,14 +358,6 @@ public class MainAppController {
         timeline.play();
     }
 
-    /**
-     * Returns the set of translations for a bundle key across all four supported
-     * locales (en_US, ru_RU, fi_FI, ar_IQ). Used by {@link #localizeCalendar()} to
-     * recognize a label regardless of the locale it was rendered in.
-     *
-     * @param key the resource bundle key to look up
-     * @return a {@link Set} of all four translated strings
-     */
     private Set<String> getVariants(String key) {
         return Set.of(
                 ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("en","US")).getString(key),

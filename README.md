@@ -28,7 +28,7 @@ The application supports the following languages, selectable from the Settings s
 | Russian — Русский | `ru` | LTR |
 
 **How to switch language:**
-1. Navigate to **Log in** page
+1. Navigate to **Log in** page or Log in and navigate to **Settings** in the navbar
 2. Select your preferred language from the **Language** dropdown
 3. The UI updates instantly across all screens
 4. Selecting Arabic automatically switches the layout to **Right-to-Left**

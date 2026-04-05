@@ -18,14 +18,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Controller for the registration screen ({@code register.fxml}).
- *
- * <p>The form collects only a username and password. The remaining required
- * user fields (first name, surname, email, phone) are filled with placeholder
- * values derived from the username; they can be updated later in the settings
- * modal.
- */
 public class RegisterController {
 
     @FXML private TextField usernameField;
@@ -38,12 +30,6 @@ public class RegisterController {
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
-    /**
-     * Handles the "Register" button click.
-     * Validates input, registers the new user, and navigates to the login screen.
-     *
-     * @param event the action event from the button click
-     */
     @FXML
     private void handleRegister(ActionEvent event) {
         String username = usernameField.getText();
@@ -68,20 +54,17 @@ public class RegisterController {
 
         try {
             // Register with username as placeholder for required fields not on this form
-            authService.register(username, username, username, username + "@placeholder.com", "000" + username, password, "student");
+            authService.register(username, username, username, username + "@placeholder.com", "000000000", password, "student");
+            System.out.println("Registered: " + username);
 
             navigateToLogin(event);
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             messageLabel.setText(selectedBundle.getString("register.invalid.credentials.error") + e.getMessage());
         }
     }
 
-    /**
-     * Handles the "Go to login" link click, navigating back to the login screen.
-     *
-     * @param event the action event from the link click
-     */
     @FXML
     private void handleGoToLogin(ActionEvent event) {
         try {
@@ -92,12 +75,6 @@ public class RegisterController {
         }
     }
 
-    /**
-     * Loads and displays the login screen, replacing the current scene.
-     *
-     * @param event the originating action event (used to resolve the current stage)
-     * @throws IOException if {@code login.fxml} cannot be loaded
-     */
     private void navigateToLogin(ActionEvent event) throws IOException {
         URL loginFxml = getClass().getResource("/login.fxml");
         if (loginFxml == null) {

@@ -23,12 +23,6 @@ import org.service.UserService;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Controller for the group create/edit modal ({@code create-modal.fxml}).
- * Displays two lists side-by-side: all students on the right and current group
- * members on the left. Users can click to move students between the lists.
- * Supports both create and edit modes.
- */
 public class CreateGroupModalController {
 
     @FXML private Text modalTitleLabel;
@@ -50,52 +44,26 @@ public class CreateGroupModalController {
     private final UserService userService = new UserService(new UserDao());
     private final GroupService groupService = new GroupService(new GroupDao(), new NotificationService(new NotificationDao()));
 
-    /**
-     * Injects the observable groups list so the source tray updates live when a
-     * group is created or deleted.
-     *
-     * @param groupsList the live list backing the source tray groups section
-     */
     public void setGroupsList(ObservableList<StudentGroup> groupsList) {
         this.groupsList = groupsList;
     }
 
-    /**
-     * Sets the section name used in legacy title construction.
-     *
-     * @param sectionName the section name, or {@code "Item"} if {@code null}
-     */
     public void setSectionName(String sectionName) {
         this.sectionName = sectionName != null ? sectionName : "Item";
     }
 
-    /**
-     * Switches the modal to edit mode with the given pre-populated name.
-     *
-     * @param groupName the existing group name to pre-fill
-     * @param students  unused legacy parameter
-     */
     public void setProps(String groupName, List<String> students) {
         this.initialName = groupName != null ? groupName : "";
         this.isEditMode = true;
     }
 
-    /**
-     * Switches the modal to edit mode and binds it to an existing group.
-     * The group's current members are loaded asynchronously in {@link #applyProps()}.
-     *
-     * @param group the {@link StudentGroup} to edit
-     */
+    /** Called when opening in edit mode with an existing StudentGroup. */
     public void setGroup(StudentGroup group) {
         this.existingGroup = group;
         this.initialName = group.getFieldOfStudies();
         this.isEditMode = true;
     }
 
-    /**
-     * JavaFX initialize callback — sets up list cell factories, click handlers,
-     * the search listener, and starts an async load of all students.
-     */
     @FXML
     public void initialize() {
         groupStudentListView.setCellFactory(lv -> new ListCell<>() {
@@ -146,11 +114,6 @@ public class CreateGroupModalController {
         }, "load-students-thread").start();
     }
 
-    /**
-     * Filters the all-students list using an async name search.
-     *
-     * @param query the search string typed by the user
-     */
     private void filterStudents(String query) {
         new Thread(() -> {
             try {
@@ -163,11 +126,6 @@ public class CreateGroupModalController {
         }, "search-students-thread").start();
     }
 
-    /**
-     * Configures modal labels and buttons for create or edit mode, and
-     * asynchronously pre-populates the group member list in edit mode.
-     * Must be called after the FXML is loaded.
-     */
     public void applyProps() {
         if (isEditMode) {
 //            modalTitleLabel.setText("Edit " + sectionName);
@@ -201,10 +159,6 @@ public class CreateGroupModalController {
         groupNameField.setText(initialName);
     }
 
-    /**
-     * FXML action handler for the confirm button.
-     * Creates or updates the group with the current member list in a background thread.
-     */
     @FXML
     private void handleConfirm() {
         String name = groupNameField.getText();
@@ -235,11 +189,6 @@ public class CreateGroupModalController {
         }, "save-group-thread").start();
     }
 
-    /**
-     * FXML action handler for the delete button.
-     * Deletes the group from the database in a background thread and removes it
-     * from the observable groups list.
-     */
     @FXML
     private void handleDelete() {
         if (existingGroup == null) { closeModal(); return; }
@@ -258,17 +207,16 @@ public class CreateGroupModalController {
         }, "delete-group-thread").start();
     }
 
-    /**
-     * FXML action handler for the cancel button — closes the modal without saving.
-     */
     @FXML
     private void handleCancel() {
         closeModal();
     }
 
-    /** Closes the modal window. */
     private void closeModal() {
         Stage stage = (Stage) confirmButton.getScene().getWindow();
         stage.close();
     }
 }
+
+
+

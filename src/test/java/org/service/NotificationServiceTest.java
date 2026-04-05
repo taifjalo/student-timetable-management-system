@@ -59,8 +59,7 @@ class NotificationServiceTest {
         notificationService.notifyLessonAdded("Math", "A101", recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.newLesson"),
-            eq("Math|A101"),
+            eq("New lesson: Math in A101"),
             eq(recipients)
         );
     }
@@ -91,8 +90,7 @@ class NotificationServiceTest {
         notificationService.notifyLessonUpdated("Physics", "B202", recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.courseChanged"),
-            eq("Physics|B202"),
+            eq("Course Physics class changes to B202"),
             eq(recipients)
         );
     }
@@ -107,8 +105,7 @@ class NotificationServiceTest {
         notificationService.notifyLessonDeleted(37294L, recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.lessonCancelled"),
-            eq("37294"),
+            eq("Class 37294 was cancelled"),
             eq(recipients)
         );
     }
@@ -129,8 +126,7 @@ class NotificationServiceTest {
         notificationService.notifyStudentAddedToGroup("CS101", 5L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.groupAdded"),
-            eq("CS101"),
+            eq("You have been added to group CS101"),
             eq(List.of(5L))
         );
     }
@@ -151,8 +147,7 @@ class NotificationServiceTest {
         notificationService.notifyStudentRemovedFromGroup("CS101", 7L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.groupRemoved"),
-            eq("CS101"),
+            eq("You have been removed from group CS101"),
             eq(List.of(7L))
         );
     }
@@ -173,8 +168,7 @@ class NotificationServiceTest {
         notificationService.notifyNewMessage(1L, "John", 2L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.newMessage"),
-            eq("John"),
+            eq("You have a new message from John!"),
             eq(List.of(2L))
         );
     }

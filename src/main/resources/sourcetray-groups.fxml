@@ -33,7 +33,46 @@
                     </Button>
                 </children>
             </HBox>
-            <VBox fx:id="groupsListContainer" spacing="10.0" />
+            <VBox fx:id="groupsListContainer" spacing="10.0">
+                <children>
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/edit_dots_icon.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                            </Button>
+                        </children>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0">
+                        <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" style="-fx-background-color: none;">
+                                <graphic>
+                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/edit_dots_icon.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                            </Button>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
         </children>
    <padding>
       <Insets left="15.0" right="15.0" />
