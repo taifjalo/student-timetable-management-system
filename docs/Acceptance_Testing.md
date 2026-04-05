@@ -20,7 +20,7 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 ### 2.1 Authentication / Authorization
 - A user can register with a unique username, and password
 - A user can log in with correct credentials and is redirected to the main calendar view
-- A user cannot log in with incorrect credentials — an error message is displayed
+- A user cannot log in with incorrect credentials - an error message is displayed
 - Passwords are stored as bcrypt hashes, never in plain text
 
 ### 2.2 Timetable / Calendar View
@@ -60,3 +60,25 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 
 ---
 
+## 3. Test Coverage Matrix
+
+| User Story              | Test Type | Test Case ID | Coverd | 
+|-------------------------|---|--------------|-----|
+| Register Account        | Functional | TC-01        | Yes |
+| Login                   | Functional | TC-02, TC-03 | Yes |
+| View Timetable          | Functional | TC-04        | Yes|
+| Create Lesson (Teacher) | Functional | TC-05        | Yes |
+| Create Course           | Functional | TC-06        | Yes |
+| Create Group            | Functional | TC-07        | Yes    |
+| Send Message            | Functional | TC-08        | Yes |
+| Receive Notification    | Functional | TC-09        | Yes |
+| Change Password         | Functional | TC-10        | Yes |
+| Select Language         | Functional | TC-11        | Yes |
+| RTL Layout (Arabic)     | Functional | TC-12        | Yes |
+| Logout                  | Functional | TC-13        | Yes |
+| UI Readability          | Usability | TC-14        | Yes |
+| Language Switch Speed   | Performance | TC-15        | Yes |
+| Login Response Time     | Performance | TC-16        | Yes |
+
+
+---
