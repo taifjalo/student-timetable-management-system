@@ -24,6 +24,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 
+/**
+ * Controller for the login screen ({@code login.fxml}).
+ * Handles user authentication and language selection.
+ */
 public class LoginController {
 
     @FXML private TextField usernameField;
@@ -42,6 +46,13 @@ public class LoginController {
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
+    /**
+     * Handles the "Login" button click.
+     * Validates input, authenticates the user, stores the session, and
+     * navigates to the main app screen.
+     *
+     * @param event the action event from the button click
+     */
     @FXML
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
@@ -74,11 +85,21 @@ public class LoginController {
         }
     }
 
+    /**
+     * JavaFX initialize callback — syncs the language menu button label to the current locale.
+     */
     @FXML
     private void initialize() {
         applyLanguageMenuSelection();
     }
 
+    /**
+     * Handles language selection from the menu button.
+     * Switches the active locale and reloads the login screen in the new language.
+     *
+     * @param event the action event from the menu item click
+     * @throws IOException if the FXML reload fails
+     */
     @FXML
     private void handleChangeLocalization(ActionEvent event) throws IOException {
         MenuItem selectedItem = (MenuItem) event.getSource();
@@ -112,6 +133,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Syncs the language {@link MenuButton} label to whichever locale is currently active.
+     * Does nothing if the button is not yet initialized.
+     */
     private void applyLanguageMenuSelection() {
         if (languageMenuButton == null) {
             return;
@@ -127,6 +152,11 @@ public class LoginController {
         });
     }
 
+    /**
+     * Handles the "Go to register" link click, navigating to the registration screen.
+     *
+     * @param event the action event from the link click
+     */
     @FXML
     private void handleGoToRegister(ActionEvent event) {
         try {

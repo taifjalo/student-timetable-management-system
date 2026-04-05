@@ -27,7 +27,7 @@ class LessonDaoTest {
         course.setName("TestCourse-" + System.currentTimeMillis());
         course.setColorCode("#FF0000");
 
-        lessonDao.saveCourse(course);
+        new CourseDao().save(course);
         return course;
     }
 
