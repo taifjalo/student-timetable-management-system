@@ -27,6 +27,11 @@ import org.service.SessionManager;
 
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the top navigation bar ({@code timetable-management-navbar.fxml}).
+ * Manages the calendar-view toggle buttons, notification badge, refresh spinner,
+ * and navigation actions (profile, chat, register, login).
+ */
 public class NavbarController {
 
     private org.controlsfx.control.PopOver notificationsPopOver;
@@ -44,15 +49,27 @@ public class NavbarController {
 
     private Timeline spinTimeline;
 
+    /**
+     * JavaFX initialize callback — refreshes the unread notification badge on load.
+     */
     @FXML
     public void initialize() {
         refreshBadge();
     }
 
+    /**
+     * Injects the main app controller so the refresh button can trigger a full data reload.
+     *
+     * @param mainAppController the owning {@link MainAppController}
+     */
     public void setMainAppController(MainAppController mainAppController) {
         this.mainAppController = mainAppController;
     }
 
+    /**
+     * Starts an infinite 360-degree rotation animation on the refresh icon
+     * to signal that a background refresh is in progress.
+     */
     private void startSpin() {
         if (refreshIcon == null) return;
         refreshIcon.setRotate(0);
@@ -64,6 +81,10 @@ public class NavbarController {
         spinTimeline.play();
     }
 
+    /**
+     * Stops the refresh spinner animation and resets the icon rotation to 0°.
+     * Called by {@link MainAppController} once a background refresh completes.
+     */
     public void stopSpin() {
         if (spinTimeline != null) {
             spinTimeline.stop();
@@ -74,6 +95,11 @@ public class NavbarController {
         }
     }
 
+    /**
+     * Queries the unread notification count for the current user and updates the
+     * badge label. Hides the badge when the count is zero; caps the displayed value
+     * at {@code "99+"}.
+     */
     public void refreshBadge() {
         if (SessionManager.getInstance().getCurrentUser() == null) return;
         long count = notificationService.getUnreadCount(
@@ -86,6 +112,12 @@ public class NavbarController {
         }
     }
 
+    /**
+     * Wires the day/week/month/year toggle buttons to the given {@link CalendarView}
+     * and binds the search field to CalendarFX's built-in search.
+     *
+     * @param calendarView the main CalendarFX view to control
+     */
     public void setCalendarView(CalendarView calendarView) {
         fieldSearch.textProperty().addListener((obs, oldVal, newVal) ->
                 calendarView.getSearchField().setText(newVal));
@@ -96,6 +128,12 @@ public class NavbarController {
         calViewYear.setOnAction(e -> { calendarView.showYearPage(); calViewYear.setSelected(true); });
     }
 
+    /**
+     * FXML action handler for the refresh button.
+     * Starts the spinner animation and delegates to {@link MainAppController#refresh()}.
+     *
+     * @param event the action event
+     */
     @FXML
     private void handleRefresh(ActionEvent event) {
         if (mainAppController != null) {
@@ -104,6 +142,14 @@ public class NavbarController {
         }
     }
 
+    /**
+     * FXML action handler for the notification bell button.
+     * Toggles the notifications {@link org.controlsfx.control.PopOver}: hides it if already
+     * showing, otherwise loads and shows {@code notifications-popup.fxml} with the active
+     * locale bundle. Refreshes the badge when the popover is dismissed.
+     *
+     * @param event the action event
+     */
     @FXML
     private void handleAlertsClick(ActionEvent event) {
         if (notificationsPopOver != null && notificationsPopOver.isShowing()) {
@@ -133,6 +179,13 @@ public class NavbarController {
         }
     }
 
+    /**
+     * FXML action handler for the profile/avatar button.
+     * Opens the user settings modal ({@code user-settings-modal.fxml}) as a
+     * non-resizable application-modal dialog.
+     *
+     * @param event the action event
+     */
     @FXML
     private void handleProfileClick(ActionEvent event) {
         try {
@@ -157,6 +210,11 @@ public class NavbarController {
         }
     }
 
+    /**
+     * FXML action handler — navigates to the registration screen.
+     *
+     * @param event the action event
+     */
     @FXML
     private void handleGoToRegister(ActionEvent event) {
         try {
@@ -175,6 +233,11 @@ public class NavbarController {
         }
     }
 
+    /**
+     * FXML action handler — navigates to the login screen.
+     *
+     * @param event the action event
+     */
     @FXML
     private void handleGoToLogin(ActionEvent event) {
         try {
@@ -193,6 +256,11 @@ public class NavbarController {
         }
     }
 
+    /**
+     * FXML action handler for the chat button.
+     * Opens the chat window ({@code messages.fxml}) as a transparent, application-modal
+     * stage and injects the current user's ID into {@link ChatController}.
+     */
     @FXML
     private void openChat(){
         try {

@@ -7,14 +7,31 @@ import org.entities.Course;
 
 import java.util.List;
 
+/**
+ * Service that handles course management and maps courses to CalendarFX
+ * {@link Calendar} objects for display on the timetable.
+ */
 public class CourseService {
 
     private final CourseDao courseDao;
 
+    /**
+     * Creates a {@code CourseService} with the given DAO.
+     *
+     * @param courseDao the DAO used for course persistence
+     */
     public CourseService(CourseDao courseDao) {
         this.courseDao = courseDao;
     }
 
+    /**
+     * Creates and persists a new course.
+     *
+     * @param name      display name; must not be blank
+     * @param colorCode hex color string (e.g. {@code "#77C04B"}); must not be blank
+     * @return the saved {@link Course} with its generated ID set
+     * @throws IllegalArgumentException if name or colorCode is blank
+     */
     public Course createCourse(String name, String colorCode) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Course name is required");
@@ -26,6 +43,15 @@ public class CourseService {
         return courseDao.save(course);
     }
 
+    /**
+     * Updates the name and color of an existing course.
+     *
+     * @param id        the ID of the course to update
+     * @param name      new display name; must not be blank
+     * @param colorCode new hex color string
+     * @return the updated and saved {@link Course}
+     * @throws IllegalArgumentException if the course is not found or the name is blank
+     */
     public Course updateCourse(Long id, String name, String colorCode) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Course name is required");
@@ -39,6 +65,13 @@ public class CourseService {
         return courseDao.save(course);
     }
 
+    /**
+     * Deletes the course with the given ID.
+     *
+     * @param id the course's primary key
+     * @return the deleted {@link Course} as it was before deletion
+     * @throws IllegalArgumentException if no course with the given ID exists
+     */
     public Course deleteCourse(Long id) {
         Course course = courseDao.findById(id);
         if (course == null) {
@@ -48,15 +81,34 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * Returns all courses ordered alphabetically.
+     *
+     * @return list of all courses, possibly empty
+     */
     public List<Course> getAllCourses() {
         return courseDao.findAll();
     }
 
+    /**
+     * Returns courses visible to the given user.
+     * If {@code userId} is {@code null} (e.g. for a teacher), all courses are returned.
+     *
+     * @param userId the student's user ID, or {@code null} to get all courses
+     * @return list of courses the user can see
+     */
     public List<Course> getCoursesForUser(Long userId) {
         if (userId == null) return courseDao.findAll();
         return courseDao.findCoursesForUser(userId);
     }
 
+    /**
+     * Looks up a course by ID, throwing if it does not exist.
+     *
+     * @param id the course's primary key
+     * @return the {@link Course}
+     * @throws IllegalArgumentException if no course with the given ID exists
+     */
     public Course getCourseById(Long id) {
         Course course = courseDao.findById(id);
         if (course == null) {
@@ -65,6 +117,13 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * Creates a CalendarFX {@link Calendar} from a {@link Course}, applying
+     * the course color as the calendar style.
+     *
+     * @param course the course to convert
+     * @return a new {@link Calendar} with the course name and matching color style
+     */
     public Calendar toCalendar(Course course) {
         Calendar calendar = new Calendar(course.getName());
         calendar.setStyle(colorCodeToStyle(course.getColorCode()));
@@ -72,6 +131,13 @@ public class CourseService {
         return calendar;
     }
 
+    /**
+     * Maps a hex color code to the corresponding CalendarFX {@link Style} enum value.
+     * Unrecognized codes fall back to {@link Style#STYLE1}.
+     *
+     * @param colorCode hex color string (e.g. {@code "#77C04B"})
+     * @return the matching {@link Style}
+     */
     public static Style colorCodeToStyle(String colorCode) {
         if (colorCode == null) return Style.STYLE1;
         return switch (colorCode.toUpperCase()) {
@@ -86,6 +152,3 @@ public class CourseService {
         };
     }
 }
-
-
-

@@ -36,12 +36,12 @@ class NotificationDaoTest {
     void shouldSaveNotificationAndFindByUser() {
         User user = createAndSaveUser();
 
-        notificationDao.saveNotification("Test notification content", List.of(user.getId()));
+        notificationDao.saveNotification("notification.newLesson", "CS101|Room 202", List.of(user.getId()));
 
         List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
 
         assertFalse(results.isEmpty());
-        assertEquals("Test notification content", results.get(0).getNotification().getContent());
+        assertEquals("notification.newLesson", results.get(0).getNotification().getMessageKey());
     }
 
     @Test
@@ -50,13 +50,13 @@ class NotificationDaoTest {
         User user1 = createAndSaveUser();
         User user2 = createAndSaveUser();
 
-        notificationDao.saveNotification("Shared notification", List.of(user1.getId(), user2.getId()));
+        notificationDao.saveNotification("notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
 
         List<NotificationReceiver> results1 = notificationDao.findByUserId(user1.getId());
         List<NotificationReceiver> results2 = notificationDao.findByUserId(user2.getId());
 
-        assertTrue(results1.stream().anyMatch(nr -> nr.getNotification().getContent().equals("Shared notification")));
-        assertTrue(results2.stream().anyMatch(nr -> nr.getNotification().getContent().equals("Shared notification")));
+        assertTrue(results1.stream().anyMatch(nr -> "notification.newMessage".equals(nr.getNotification().getMessageKey())));
+        assertTrue(results2.stream().anyMatch(nr -> "notification.newMessage".equals(nr.getNotification().getMessageKey())));
     }
 
     @Test
@@ -64,7 +64,7 @@ class NotificationDaoTest {
     void shouldDefaultIsReadToFalse() {
         User user = createAndSaveUser();
 
-        notificationDao.saveNotification("Unread notification", List.of(user.getId()));
+        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
 
         List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
         NotificationReceiver latest = results.get(0);
@@ -77,7 +77,7 @@ class NotificationDaoTest {
     void shouldMarkSingleNotificationAsRead() {
         User user = createAndSaveUser();
 
-        Notification saved = notificationDao.saveNotification("Mark me read", List.of(user.getId()));
+        Notification saved = notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
 
         notificationDao.markAsRead(user.getId(), saved.getId());
 
@@ -95,8 +95,8 @@ class NotificationDaoTest {
     void shouldMarkAllNotificationsAsRead() {
         User user = createAndSaveUser();
 
-        notificationDao.saveNotification("First notification", List.of(user.getId()));
-        notificationDao.saveNotification("Second notification", List.of(user.getId()));
+        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
+        notificationDao.saveNotification("notification.groupRemoved", "SWD22S", List.of(user.getId()));
 
         notificationDao.markAllAsRead(user.getId());
 
@@ -109,8 +109,8 @@ class NotificationDaoTest {
     void shouldCountUnreadAndDecreaseAfterMarkAll() {
         User user = createAndSaveUser();
 
-        notificationDao.saveNotification("Unread 1", List.of(user.getId()));
-        notificationDao.saveNotification("Unread 2", List.of(user.getId()));
+        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
+        notificationDao.saveNotification("notification.groupRemoved", "SWD22S", List.of(user.getId()));
 
         long unreadBefore = notificationDao.countUnread(user.getId());
         assertTrue(unreadBefore >= 2);
