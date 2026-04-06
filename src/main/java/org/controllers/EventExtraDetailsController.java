@@ -265,7 +265,7 @@ public class EventExtraDetailsController {
         ContextMenu menu = new ContextMenu();
         for (StudentGroup g : availableGroups) {
             if (selectedGroups.stream().anyMatch(s -> s.getGroupCode().equals(g.getGroupCode()))) continue;
-            MenuItem item = new MenuItem(g.getFieldOfStudies() + " (" + g.getGroupCode() + ")");
+            MenuItem item = new MenuItem(g.getDisplayFieldOfStudies() + " (" + g.getGroupCode() + ")");
             item.setOnAction(e -> addGroupChip(g, addGroupBtn));
             menu.getItems().add(item);
         }
@@ -290,7 +290,7 @@ public class EventExtraDetailsController {
             return;
         }
         selectedGroups.add(group);
-        Button chip = new Button(group.getFieldOfStudies());
+        Button chip = new Button(group.getDisplayFieldOfStudies());
         chip.setStyle(
                 "-fx-background-radius: 12; -fx-border-radius: 12;" +
                 "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;" +

@@ -88,7 +88,7 @@ public class CreateGroupModalController {
      */
     public void setGroup(StudentGroup group) {
         this.existingGroup = group;
-        this.initialName = group.getFieldOfStudies();
+        this.initialName = group.getDisplayFieldOfStudies();
         this.isEditMode = true;
     }
 

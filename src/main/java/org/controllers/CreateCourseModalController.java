@@ -231,9 +231,9 @@ public class CreateCourseModalController {
                 // Re-fetch from DB so the UI reflects exactly what is stored
                 Course refreshed = courseService.getCourseById(dbCourseId);
                 System.out.println("Course updated and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 if (calendar != null) {
-                    calendar.setName(refreshed.getName());
+                    calendar.setName(refreshed.getDisplayName());
                     calendar.setStyle(CourseService.colorCodeToStyle(refreshed.getColorCode()));
                     calendar.setUserObject(refreshed);
                 }
@@ -242,7 +242,7 @@ public class CreateCourseModalController {
                 // Re-fetch from DB to get the final persisted state
                 Course refreshed = courseService.getCourseById(saved.getId());
                 System.out.println("Course created and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 Calendar newCal = courseService.toCalendar(refreshed);
                 if (calendarSource != null) {
                     calendarSource.getCalendars().add(newCal);

@@ -18,6 +18,9 @@ public class StudentGroup {
     @Column(name = "field_of_studies", nullable = false)
     private String fieldOfStudies;
 
+    @Transient
+    private String localizedFieldOfStudies;
+
     /** Required no-arg constructor for JPA. */
     public StudentGroup() {}
 
@@ -41,4 +44,22 @@ public class StudentGroup {
     public String getFieldOfStudies() { return fieldOfStudies; }
     /** Sets the display name / field of studies. */
     public void setFieldOfStudies(String fieldOfStudies) { this.fieldOfStudies = fieldOfStudies; }
+
+    public String getDisplayFieldOfStudies() {
+        if (localizedFieldOfStudies != null && !localizedFieldOfStudies.isBlank()) {
+            return localizedFieldOfStudies;
+        }
+        if (fieldOfStudies != null && !fieldOfStudies.isBlank()) {
+            return fieldOfStudies;
+        }
+        return "Unknown group";
+    }
+
+    public String getLocalizedFieldOfStudies(){
+        return localizedFieldOfStudies;
+    }
+
+    public void setLocalizedFieldOfStudies(String localizedFieldOfStudies){
+        this.localizedFieldOfStudies = localizedFieldOfStudies;
+    }
 }

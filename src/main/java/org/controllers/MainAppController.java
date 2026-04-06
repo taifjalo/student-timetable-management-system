@@ -188,7 +188,7 @@ public class MainAppController {
                                 : lessonService.getLessonsByCourseWithGroups(course.getId());
                         courseToLessons.put(course, lessons);
                     } catch (Exception ex) {
-                        System.err.println("Refresh: failed lessons for " + course.getName() + ": " + ex.getMessage());
+                        System.err.println("Refresh: failed lessons for " + course.getDisplayName() + ": " + ex.getMessage());
                         courseToLessons.put(course, new ArrayList<>());
                     }
                 }
@@ -206,7 +206,7 @@ public class MainAppController {
                                     continue;
                                 }
                                 Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
-                                        new Entry<>(course.getName());
+                                        new Entry<>(course.getDisplayName());
                                 entry.setInterval(new Interval(
                                         lesson.getStartAt().toLocalDate(),
                                         lesson.getStartAt().toLocalTime(),
@@ -263,12 +263,12 @@ public class MainAppController {
                     List<Lesson> lessons = isTeacher
                             ? lessonService.getLessonsByCourse(course.getId())
                             : lessonService.getLessonsByCourseWithGroups(course.getId());
-                    System.out.println("Loaded " + lessons.size() + " lessons for course: " + course.getName());
+                    System.out.println("Loaded " + lessons.size() + " lessons for course: " + course.getDisplayName());
                     for (Lesson lesson : lessons) {
                         if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                             continue;
                         }
-                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getName());
+                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getDisplayName());
                         entry.setInterval(new Interval(
                                 lesson.getStartAt().toLocalDate(),
                                 lesson.getStartAt().toLocalTime(),
@@ -279,7 +279,7 @@ public class MainAppController {
                         cal.addEntry(entry);
                     }
                 } catch (Exception ex) {
-                    System.out.println("Failed to load lessons for course " + course.getName() + ": " + ex.getMessage());
+                    System.out.println("Failed to load lessons for course " + course.getDisplayName() + ": " + ex.getMessage());
                 }
                 myCalendarSource.getCalendars().add(cal);
             }

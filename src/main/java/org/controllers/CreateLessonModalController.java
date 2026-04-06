@@ -132,7 +132,7 @@ public class CreateLessonModalController {
                 @SuppressWarnings("unchecked")
                 Entry<Object> genericEntry = (Entry<Object>) entry;
                 genericEntry.setUserObject(updated);
-                genericEntry.setTitle(updated.getCourse().getName() + " - " + updated.getClassroom());
+                genericEntry.setTitle(updated.getCourse().getDisplayName() + " - " + updated.getClassroom());
             } else {
                 Lesson saved = lessonService.addLesson(
                     startDt, endDt, selectedCourse.getId(), classroom, List.of()
@@ -140,7 +140,7 @@ public class CreateLessonModalController {
                 @SuppressWarnings("unchecked")
                 Entry<Object> genericEntry = (Entry<Object>) entry;
                 genericEntry.setUserObject(saved);
-                genericEntry.setTitle(saved.getCourse().getName() + " - " + saved.getClassroom());
+                genericEntry.setTitle(saved.getCourse().getDisplayName() + " - " + saved.getClassroom());
                 if (calendar != null) {
                     calendar.addEntry(entry);
                 }

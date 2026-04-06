@@ -125,7 +125,7 @@ public class CourseService {
      * @return a new {@link Calendar} with the course name and matching color style
      */
     public Calendar toCalendar(Course course) {
-        Calendar calendar = new Calendar(course.getName());
+        Calendar calendar = new Calendar(course.getDisplayName());
         calendar.setStyle(colorCodeToStyle(course.getColorCode()));
         calendar.setUserObject(course);
         return calendar;

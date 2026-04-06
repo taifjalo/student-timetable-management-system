@@ -259,7 +259,7 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
             List<StudentGroup> groups = existingLesson.getAssignedGroups();
             if (groups != null && !groups.isEmpty())
                 groupsText = groups.stream()
-                        .map(StudentGroup::getFieldOfStudies)
+                        .map(StudentGroup::getDisplayFieldOfStudies)
                         .collect(Collectors.joining(", "));
 
             List<User> users = existingLesson.getAssignedUsers();

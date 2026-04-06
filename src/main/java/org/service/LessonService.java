@@ -240,7 +240,7 @@ public class LessonService {
         Lesson lesson = addLesson(startAt, endAt, courseId, classroom);
         if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
             notificationService.notifyLessonAdded(
-                lesson.getCourse().getName(),
+                lesson.getCourse().getDisplayName(),
                 lesson.getClassroom(),
                 recipientIds
             );
@@ -263,7 +263,7 @@ public class LessonService {
         Lesson lesson = updateLesson(lessonId, startAt, endAt, classroom);
         if (notificationService != null && recipientIds != null && !recipientIds.isEmpty()) {
             notificationService.notifyLessonUpdated(
-                lesson.getCourse().getName(),
+                lesson.getCourse().getDisplayName(),
                 lesson.getClassroom(),
                 recipientIds
             );

@@ -39,7 +39,34 @@ public class GroupDao {
      */
     public StudentGroup findByCode(String groupCode) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.find(StudentGroup.class, groupCode);
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT g.group_code, g.field_of_studies, " +
+                                    "COALESCE(gt.field_of_studies, g.field_of_studies) " +
+                                    "FROM student_groups g " +
+                                    "LEFT JOIN group_translations gt " +
+                                    "ON gt.group_code = g.group_code AND gt.language_code = ? " +
+                                    "WHERE g.group_code = ?"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .setParameter(2, groupCode)
+                    .getResultList();
+
+            if (results.isEmpty()) return null;
+
+            Object[] row = results.get(0);
+
+            StudentGroup g = new StudentGroup();
+
+            String code = (String) row[0];
+            String original = (String) row[1];
+            String translated = (String) row[2];
+
+            g.setGroupCode(code);
+            g.setFieldOfStudies(original);
+            g.setLocalizedFieldOfStudies(translated);
+
+            return g;
         }
     }
 
@@ -50,13 +77,37 @@ public class GroupDao {
      */
     public List<StudentGroup> findAll() {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery(
-                    "SELECT g FROM StudentGroup g ORDER BY g.fieldOfStudies ASC",
-                    StudentGroup.class
-            ).getResultList();
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT g.group_code, g.field_of_studies, " +
+                                    "COALESCE(gt.field_of_studies, g.field_of_studies) " +
+                                    "FROM student_groups g " +
+                                    "LEFT JOIN group_translations gt " +
+                                    "ON gt.group_code = g.group_code AND gt.language_code = ? " +
+                                    "ORDER BY COALESCE(gt.field_of_studies, g.field_of_studies) ASC"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .getResultList();
+
+            List<StudentGroup> groups = new java.util.ArrayList<>();
+
+            for (Object[] row : results) {
+                StudentGroup g = new StudentGroup();
+
+                String code = (String) row[0];
+                String original = (String) row[1];
+                String translated = (String) row[2];
+
+                g.setGroupCode(code);
+                g.setFieldOfStudies(original);
+                g.setLocalizedFieldOfStudies(translated);
+
+                groups.add(g);
+            }
+
+            return groups;
         }
     }
-
     /**
      * Deletes the group with the given code. Does nothing if the group does not exist.
      *
@@ -157,12 +208,35 @@ public class GroupDao {
      */
     public StudentGroup findGroupByUserId(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            List<StudentGroup> results = em.createQuery(
-                    "SELECT sp.studentGroup FROM StudentProfile sp " +
-                    "WHERE sp.user.id = :userId AND sp.studentGroup IS NOT NULL",
-                    StudentGroup.class
-            ).setParameter("userId", userId).getResultList();
-            return results.isEmpty() ? null : results.get(0);
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT g.group_code, g.field_of_studies, " +
+                                    "COALESCE(gt.field_of_studies, g.field_of_studies) " +
+                                    "FROM student_profiles sp " +
+                                    "JOIN student_groups g ON sp.group_code = g.group_code " +
+                                    "LEFT JOIN group_translations gt " +
+                                    "ON gt.group_code = g.group_code AND gt.language_code = ? " +
+                                    "WHERE sp.user_id = ?"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .setParameter(2, userId)
+                    .getResultList();
+
+            if (results.isEmpty()) return null;
+
+            Object[] row = results.get(0);
+
+            StudentGroup g = new StudentGroup();
+
+            String code = (String) row[0];
+            String original = (String) row[1];
+            String translated = (String) row[2];
+
+            g.setGroupCode(code);
+            g.setFieldOfStudies(original);
+            g.setLocalizedFieldOfStudies(translated);
+
+            return g;
         }
     }
 
@@ -174,12 +248,39 @@ public class GroupDao {
      */
     public List<StudentGroup> findAllForUser(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery(
-                    "SELECT sp.studentGroup FROM StudentProfile sp " +
-                    "WHERE sp.user.id = :userId AND sp.studentGroup IS NOT NULL " +
-                    "ORDER BY sp.studentGroup.fieldOfStudies ASC",
-                    StudentGroup.class
-            ).setParameter("userId", userId).getResultList();
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT g.group_code, g.field_of_studies, " +
+                                    "COALESCE(gt.field_of_studies, g.field_of_studies) " +
+                                    "FROM student_profiles sp " +
+                                    "JOIN student_groups g ON sp.group_code = g.group_code " +
+                                    "LEFT JOIN group_translations gt " +
+                                    "ON gt.group_code = g.group_code AND gt.language_code = ? " +
+                                    "WHERE sp.user_id = ? " +
+                                    "ORDER BY COALESCE(gt.field_of_studies, g.field_of_studies) ASC"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .setParameter(2, userId)
+                    .getResultList();
+
+            List<StudentGroup> groups = new java.util.ArrayList<>();
+
+            for (Object[] row : results) {
+                StudentGroup g = new StudentGroup();
+
+                String code = (String) row[0];
+                String original = (String) row[1];
+                String translated = (String) row[2];
+
+                g.setGroupCode(code);
+                g.setFieldOfStudies(original);
+                g.setLocalizedFieldOfStudies(translated);
+
+                groups.add(g);
+            }
+
+            return groups;
         }
     }
+
 }

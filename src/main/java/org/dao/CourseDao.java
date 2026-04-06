@@ -36,7 +36,32 @@ public class CourseDao {
      */
     public Course findById(Long id) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.find(Course.class, id);
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT c.course_id, c.name, " +
+                                    "COALESCE(ct.name, c.name), " +
+                                    "c.color_code " +
+                                    "FROM courses c " +
+                                    "LEFT JOIN course_translations ct " +
+                                    "ON ct.course_id = c.course_id AND ct.language_code = ? " +
+                                    "WHERE c.course_id = ?"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .setParameter(2, id)
+                    .getResultList();
+
+            if (results.isEmpty()) return null;
+
+            Object[] row = results.get(0);
+
+            Course c = new Course();
+
+            c.setId(((Number) row[0]).longValue());
+            c.setName((String) row[1]);              // оригинал
+            c.setLocalizedName((String) row[2]);     // перевод
+            c.setColorCode((String) row[3]);
+
+            return c;
         }
     }
 
@@ -47,8 +72,38 @@ public class CourseDao {
      */
     public List<Course> findAll() {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("SELECT c FROM Course c ORDER BY c.name ASC", Course.class)
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT c.course_id, c.name, " +
+                                    "COALESCE(ct.name, c.name), " +
+                                    "c.color_code " +
+                                    "FROM courses c " +
+                                    "LEFT JOIN course_translations ct " +
+                                    "ON ct.course_id = c.course_id AND ct.language_code = ? " +
+                                    "ORDER BY COALESCE(ct.name, c.name) ASC"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
                     .getResultList();
+
+            List<Course> courses = new java.util.ArrayList<>();
+
+            for (Object[] row : results) {
+                Course c = new Course();
+
+                Long id = ((Number) row[0]).longValue();
+                String original = (String) row[1];
+                String translated = (String) row[2];
+                String color = (String) row[3];
+
+                c.setId(id);
+                c.setName(original);             // оригинал
+                c.setLocalizedName(translated);  // перевод
+                c.setColorCode(color);
+
+                courses.add(c);
+            }
+
+            return courses;
         }
     }
 
@@ -63,18 +118,46 @@ public class CourseDao {
      */
     public List<Course> findCoursesForUser(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery(
-                    "SELECT DISTINCT l.course FROM Lesson l " +
-                    "WHERE EXISTS (" +
-                    "  SELECT sp FROM StudentProfile sp " +
-                    "  WHERE sp.user.id = :userId " +
-                    "  AND sp.studentGroup MEMBER OF l.assignedGroups" +
-                    ") OR EXISTS (" +
-                    "  SELECT u FROM l.assignedUsers u WHERE u.id = :userId" +
-                    ") " +
-                    "ORDER BY l.course.name ASC",
-                    Course.class
-            ).setParameter("userId", userId).getResultList();
+
+            List<Object[]> results = em.createNativeQuery(
+                            "SELECT DISTINCT c.course_id, c.name, " +
+                                    "COALESCE(ct.name, c.name), " +
+                                    "c.color_code " +
+                                    "FROM lessons l " +
+                                    "JOIN courses c ON l.course_id = c.course_id " +
+                                    "LEFT JOIN course_translations ct " +
+                                    "ON ct.course_id = c.course_id AND ct.language_code = ? " +
+                                    "WHERE EXISTS (" +
+                                    "  SELECT 1 FROM student_profiles sp " +
+                                    "  WHERE sp.user_id = ? " +
+                                    "  AND sp.group_code IN (" +
+                                    "    SELECT ag.group_code FROM assigned_groups ag WHERE ag.lesson_id = l.lesson_id" +
+                                    "  )" +
+                                    ") OR EXISTS (" +
+                                    "  SELECT 1 FROM assigned_users au " +
+                                    "  WHERE au.lesson_id = l.lesson_id AND au.user_id = ?" +
+                                    ") " +
+                                    "ORDER BY COALESCE(ct.name, c.name) ASC"
+                    )
+                    .setParameter(1, java.util.Locale.getDefault().getLanguage())
+                    .setParameter(2, userId)
+                    .setParameter(3, userId)
+                    .getResultList();
+
+            List<Course> courses = new java.util.ArrayList<>();
+
+            for (Object[] row : results) {
+                Course c = new Course();
+
+                c.setId(((Number) row[0]).longValue());
+                c.setName((String) row[1]);          // оригинал
+                c.setLocalizedName((String) row[2]); // перевод
+                c.setColorCode((String) row[3]);
+
+                courses.add(c);
+            }
+
+            return courses;
         }
     }
 

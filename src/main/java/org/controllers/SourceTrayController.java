@@ -385,7 +385,7 @@ public class SourceTrayController {
      */
     private HBox createGroupRow(StudentGroup group, String sectionType) {
 
-        Text groupNameText = new Text(group.getFieldOfStudies());
+        Text groupNameText = new Text(group.getDisplayFieldOfStudies());
         groupNameText.setStrokeWidth(0.0);
 
         Region spacer = new Region();

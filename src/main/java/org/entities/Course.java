@@ -23,6 +23,9 @@ public class Course {
     @Column(name = "color_code", nullable = false)
     private String colorCode;
 
+    @Transient
+    private String localizedName;
+
     /** Required no-arg constructor for JPA. */
     public Course() {}
 
@@ -54,4 +57,22 @@ public class Course {
 
     /** Sets the hex color code. */
     public void setColorCode(String colorCode) { this.colorCode = colorCode; }
+
+    public void setLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
+    }
+
+    public String getLocalizedName() {
+        return localizedName;
+    }
+
+    public String getDisplayName() {
+        if (localizedName != null && !localizedName.isBlank()) {
+            return localizedName;
+        }
+        if (name != null && !name.isBlank()) {
+            return name;
+        }
+        return "Unnamed course";
+    }
 }
