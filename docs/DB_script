@@ -76,6 +76,14 @@ CREATE TABLE notifications (
                 content TEXT
 );
 
+CREATE TABLE notification_translations (
+                notification_id INT NOT NULL,
+                language_code VARCHAR(10) NOT NULL,
+                content TEXT NOT NULL,
+                primary key (notification_id, language_code),
+                foreign key (notification_id) references notifications(notification_id) ON DELETE CASCADE
+);
+
 CREATE TABLE notification_receivers (
                 user_id INT NOT NULL,
                 notification_id INT NOT NULL,
