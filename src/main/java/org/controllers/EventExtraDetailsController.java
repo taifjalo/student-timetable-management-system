@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import org.application.EntryPopOverContentPane;
 import org.dao.GroupDao;
 import org.dao.UserDao;
 import org.entities.Lesson;
@@ -31,7 +32,7 @@ import java.util.ResourceBundle;
  * (type-ahead search with chip UI).
  *
  * <p>This class is not an FXML controller — it is instantiated directly by
- * {@link org.application.CustomEntryPopOverContentPane} and its nodes are
+ * {@link EntryPopOverContentPane} and its nodes are
  * inserted into the pop-over's detail grid.
  *
  * <p>Available groups are loaded asynchronously on construction. The selected

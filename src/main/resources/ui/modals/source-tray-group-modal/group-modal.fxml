@@ -46,7 +46,7 @@
                         </HBox>
                         <VBox alignment="TOP_CENTER" style="-fx-background-color: white; -fx-border-color: grey; -fx-border-width: 1; -fx-border-radius: 5;">
                      <children>
-                                <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%chat.search.prompt" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../style.css">
+                                <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%chat.search.prompt" style="-fx-border-width: 1;" styleClass="searchField" stylesheets="@../../../style.css">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>

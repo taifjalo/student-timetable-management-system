@@ -208,7 +208,7 @@
                         <exclude>org/controllers/UserSettingsController.class</exclude>
                         <!-- JavaFX application entry point -->
                         <exclude>org/application/CalendarApp.class</exclude>
-                        <exclude>org/application/CustomEntryPopOverContentPane.class</exclude>
+                        <exclude>org/application/EntryPopOverContentPane.class</exclude>
                         <!-- Database connection bootstrap -->
                         <exclude>org/datasource/TimetableConnection.class</exclude>
                     </excludes>

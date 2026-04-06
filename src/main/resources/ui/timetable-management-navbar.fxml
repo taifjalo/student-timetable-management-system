@@ -27,7 +27,7 @@
       </center>
       <right>
          <HBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
-            <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%navbar.search.prompt" styleClass="searchField" stylesheets="@style.css">
+            <CustomTextField fx:id="fieldSearch" prefHeight="26.0" prefWidth="195.0" promptText="%navbar.search.prompt" styleClass="searchField" stylesheets="@../style.css">
               <!-- <left>
                   <Label styleClass="searchBoxLabel">
                      <graphic>
@@ -44,7 +44,7 @@
             <graphic>
                <ImageView fx:id="refreshIcon" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                     <Image url="@images/refresh_icon.png" />
+                     <Image url="@../images/refresh_icon.png" />
                   </image>
                </ImageView>
             </graphic>

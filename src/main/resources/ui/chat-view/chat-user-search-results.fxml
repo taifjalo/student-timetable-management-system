@@ -10,7 +10,7 @@
    <children>
       <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/profile_picture_good_quality.png" />
+            <Image url="@../../images/profile_picture_good_quality.png" />
          </image></ImageView>
       <Label fx:id="teacherName" text="Teacher name">
          <HBox.margin>

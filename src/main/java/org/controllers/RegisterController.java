@@ -99,7 +99,7 @@ public class RegisterController {
      * @throws IOException if {@code login.fxml} cannot be loaded
      */
     private void navigateToLogin(ActionEvent event) throws IOException {
-        URL loginFxml = getClass().getResource("/login.fxml");
+        URL loginFxml = getClass().getResource("/ui/auth/login.fxml");
         if (loginFxml == null) {
             throw new IllegalArgumentException("login.fxml not found");
         }

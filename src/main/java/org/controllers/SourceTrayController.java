@@ -79,6 +79,7 @@ public class SourceTrayController {
                 : (SessionManager.getInstance().getCurrentUser() != null
                         ? SessionManager.getInstance().getCurrentUser().getId() : null);
         List<StudentGroup> groups;
+
         try {
             groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
         } catch (Exception e) {
@@ -87,6 +88,7 @@ public class SourceTrayController {
         }
 
         this.groupsList = FXCollections.observableArrayList(groups);
+
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
                 .filter(ScrollPane.class::isInstance)
                 .map(ScrollPane.class::cast)
@@ -116,7 +118,7 @@ public class SourceTrayController {
      * @return the root {@link Node} for the section, or {@code null} on load failure
      */
     private Node createSourceSectionNode(CalendarSource source) {
-        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/ui/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
         Node sourceSection;
         try {
@@ -165,7 +167,7 @@ public class SourceTrayController {
      * @return the root {@link Node} for the section, or {@code null} on load failure
      */
     private Node createGroupsSectionNode(String sectionTitle, ObservableList<StudentGroup> items) {
-        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/sourcetray-groups.fxml"));
+        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/ui/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
         Node sourceSection;
         try {
@@ -187,7 +189,6 @@ public class SourceTrayController {
             addButton.setManaged(SessionManager.getInstance().isTeacher());
         }
 
-//        sectionTitleText.setText(sectionTitle);
         sectionTitleText.setText(selectedBundle.getString("sourcetray.groups.section.title"));
 
 
@@ -245,7 +246,7 @@ public class SourceTrayController {
      */
     private void openGroupModal(Calendar calendar, String sectionType, ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/modals/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
             Parent root = loader.load();
             localizationService.swapSides(root);
             CreateCourseModalController modalController = loader.getController();
@@ -260,7 +261,7 @@ public class SourceTrayController {
     }
 
     /**
-     * Opens the group create/edit modal ({@code create-modal.fxml}).
+     * Opens the group create/edit modal ({@code group-modal.fxml}).
      *
      * @param group       the group to edit, or {@code null} to create a new group
      * @param sectionType the section type constant ({@value #SECTION_TYPE_GROUP})
@@ -268,9 +269,9 @@ public class SourceTrayController {
      */
     private void openGroupModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
-            java.net.URL fxmlUrl = getClass().getResource("/source-tray-create-modal/create-modal.fxml");
+            java.net.URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
             if (fxmlUrl == null) {
-                System.err.println("[SourceTrayController] create-modal.fxml not found on classpath");
+                System.err.println("[SourceTrayController] group-modal.fxml not found on classpath");
                 return;
             }
             FXMLLoader loader = new FXMLLoader(fxmlUrl, localizationService.getBundle());

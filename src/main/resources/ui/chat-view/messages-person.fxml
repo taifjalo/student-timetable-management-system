@@ -10,7 +10,7 @@
    <children>
       <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/profile_picture_good_quality.png" />
+            <Image url="@../../images/profile_picture_good_quality.png" />
          </image>
          <HBox.margin>
             <Insets bottom="35.0" left="38.0" top="35.0" />
@@ -26,7 +26,7 @@
       </Label>
       <ImageView fx:id="isReadDot" fitHeight="19.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/message-pin.png" />
+            <Image url="@../../images/message-pin.png" />
          </image>
          <HBox.margin>
             <Insets bottom="58.0" left="80.0" top="58.0" />

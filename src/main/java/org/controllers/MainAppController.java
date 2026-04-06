@@ -15,7 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
-import org.application.CustomEntryPopOverContentPane;
+import org.application.EntryPopOverContentPane;
 import org.dao.CourseDao;
 import org.dao.GroupDao;
 import org.dao.LessonDao;
@@ -70,7 +70,7 @@ public class MainAppController {
     public void initialize() {
         try {
 
-            FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/timetable-management-navbar.fxml"), localizationService.getBundle());
+            FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/ui/timetable-management-navbar.fxml"), localizationService.getBundle());
             localizationService.swapSides(mainRoot);
             BorderPane navbar = navbarLoader.load();
             navbarController = navbarLoader.getController();
@@ -102,7 +102,7 @@ public class MainAppController {
             calendarView.showWeekPage();
 
             calendarView.setEntryDetailsPopOverContentCallback(param ->
-                    new CustomEntryPopOverContentPane(
+                    new EntryPopOverContentPane(
                             param.getPopOver(),
                             param.getDateControl(),
                             param.getEntry()));
@@ -205,7 +205,7 @@ public class MainAppController {
                                 if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                                     continue;
                                 }
-                                Entry<CustomEntryPopOverContentPane.SavedLesson> entry =
+                                Entry<EntryPopOverContentPane.SavedLesson> entry =
                                         new Entry<>(course.getDisplayName());
                                 entry.setInterval(new Interval(
                                         lesson.getStartAt().toLocalDate(),
@@ -214,7 +214,7 @@ public class MainAppController {
                                         lesson.getEndAt().toLocalTime()
                                 ));
                                 entry.setUserObject(
-                                        new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
+                                        new EntryPopOverContentPane.SavedLesson(lesson.getId()));
                                 cal.addEntry(entry);
                             }
                             myCalendarSource.getCalendars().add(cal);
@@ -268,14 +268,14 @@ public class MainAppController {
                         if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                             continue;
                         }
-                        Entry<CustomEntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getDisplayName());
+                        Entry<EntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getDisplayName());
                         entry.setInterval(new Interval(
                                 lesson.getStartAt().toLocalDate(),
                                 lesson.getStartAt().toLocalTime(),
                                 lesson.getEndAt().toLocalDate(),
                                 lesson.getEndAt().toLocalTime()
                         ));
-                        entry.setUserObject(new CustomEntryPopOverContentPane.SavedLesson(lesson.getId()));
+                        entry.setUserObject(new EntryPopOverContentPane.SavedLesson(lesson.getId()));
                         cal.addEntry(entry);
                     }
                 } catch (Exception ex) {

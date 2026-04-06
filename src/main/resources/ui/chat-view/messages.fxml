@@ -35,7 +35,7 @@
                      <children>
                         <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/profile_picture_good_quality.png" />
+                              <Image url="@../../images/profile_picture_good_quality.png" />
                            </image>
                            <HBox.margin>
                               <Insets bottom="13.0" left="27.0" top="18.0" />
@@ -101,7 +101,7 @@
             <Insets left="16.0" top="9.0" />
          </HBox.margin>
          <image>
-            <Image url="@../images/exit.png" />
+            <Image url="@../../images/exit.png" />
          </image>
       </ImageView>
    </children>

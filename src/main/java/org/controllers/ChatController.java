@@ -275,7 +275,7 @@ public class ChatController {
                 } else {
                     try {
 
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages-person.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/chat-view/messages-person.fxml"));
                         Parent root = loader.load();
                         ChatPreviewController cpController = loader.getController();
                         cpController.setChatController(ChatController.this);
@@ -304,10 +304,10 @@ public class ChatController {
 
                         FXMLLoader loader;
                         if (message.getSenderUser().getId().equals(userId)) {
-                            loader = new FXMLLoader(getClass().getResource("/chat-view/sent-message.fxml"));
+                            loader = new FXMLLoader(getClass().getResource("/ui/chat-view/sent-message.fxml"));
                         }
                         else {
-                            loader = new FXMLLoader(getClass().getResource("/chat-view/received-message.fxml"));
+                            loader = new FXMLLoader(getClass().getResource("/ui/chat-view/received-message.fxml"));
                         }
                         Parent root = loader.load();
                         MessageController mController = loader.getController();
@@ -365,13 +365,13 @@ public class ChatController {
         List<User> users = userDao.findUserByNameSurname(words[0], words[1]);
         if (!users.isEmpty()) {
             try {
-                FXMLLoader containerLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-searching-container.fxml"));
+                FXMLLoader containerLoader = new FXMLLoader(getClass().getResource("/ui/chat-view/chat-searching-container.fxml"));
                 Parent root = containerLoader.load();
                 ChatSearchingContainerController chatSearchingContainerController = containerLoader.getController();
                 chatSearchingContainerController.setChatController(this);
                 List<HBox> userItems = new ArrayList<>();
                 for (User user: users){
-                    FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/chat-view/chat-user-search-results.fxml"));
+                    FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/ui/chat-view/chat-user-search-results.fxml"));
                     HBox child = userLoader.load();
                     ChatUserSearchResultController cUSRController =userLoader.getController();
                     cUSRController.setUser(user);

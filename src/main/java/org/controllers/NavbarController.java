@@ -160,7 +160,7 @@ public class NavbarController {
             // Bundle must be passed here — notifications-popup.fxml uses %key syntax for localized
             // strings. If loaded without a bundle, JavaFX throws MissingResourceException at runtime.
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/notifications-popup/notifications-popup.fxml"),
+                    getClass().getResource("/ui/notifications-popup.fxml"),
                     new LocalizationService().getBundle());
             Node content = loader.load();
 
@@ -190,7 +190,7 @@ public class NavbarController {
     private void handleProfileClick(ActionEvent event) {
         try {
             ResourceBundle bundle = new LocalizationService().getBundle();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/user-settings-modal.fxml"), bundle);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/user-settings-modal.fxml"), bundle);
             Parent root = loader.load();
             localizationService.swapSides(root);
 
@@ -211,52 +211,6 @@ public class NavbarController {
     }
 
     /**
-     * FXML action handler — navigates to the registration screen.
-     *
-     * @param event the action event
-     */
-    @FXML
-    private void handleGoToRegister(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/register.fxml"), localizationService.getBundle());
-            Parent root = loader.load();
-            localizationService.swapSides(root);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * FXML action handler — navigates to the login screen.
-     *
-     * @param event the action event
-     */
-    @FXML
-    private void handleGoToLogin(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), localizationService.getBundle());
-            Parent root = loader.load();
-            localizationService.swapSides(root);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * FXML action handler for the chat button.
      * Opens the chat window ({@code messages.fxml}) as a transparent, application-modal
      * stage and injects the current user's ID into {@link ChatController}.
@@ -268,7 +222,7 @@ public class NavbarController {
             User currentUser = sessionManager.getCurrentUser();
 
             ResourceBundle bundle = localizationService.getBundle();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat-view/messages.fxml"), bundle);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/chat-view/messages.fxml"), bundle);
             Parent root = loader.load();
             localizationService.swapSides(root);
 
@@ -277,7 +231,7 @@ public class NavbarController {
             Scene scene = new Scene(root);
             scene.setFill(Color.TRANSPARENT);
             scene.getStylesheets().add(
-                    getClass().getResource("/chat-view/message.css").toExternalForm()
+                    getClass().getResource("/ui/chat-view/message.css").toExternalForm()
             );
             scene.setFill(null);
             Stage stage = new Stage();
