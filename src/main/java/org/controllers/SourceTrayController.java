@@ -6,7 +6,6 @@ import com.calendarfx.view.CalendarView;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,12 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -29,6 +23,7 @@ import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.application.SourceTrayRowFactory;
 import org.dao.GroupDao;
 import org.entities.StudentGroup;
 import org.service.GroupService;
@@ -47,7 +42,7 @@ import org.service.SessionManager;
  * </ul>
  * Both sections are loaded from {@code sourcetray-groups.fxml} using this controller
  * as their FXML controller, allowing the FXML action handler
- * ({@link #handleOpenCreateGroupModal(ActionEvent)}) to serve both add-buttons.
+ * ({@link #handleOpenSidebarModal(ActionEvent)}) to serve both add-buttons.
  */
 public class SourceTrayController {
 
@@ -57,6 +52,7 @@ public class SourceTrayController {
     private ObservableList<StudentGroup> groupsList;
 
     private final LocalizationService localizationService = new LocalizationService();
+    private final SourceTrayRowFactory sourceTrayRowFactory = new SourceTrayRowFactory();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
 
@@ -143,7 +139,11 @@ public class SourceTrayController {
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
             for (Calendar calendar : source.getCalendars()) {
-                groupsListContainer.getChildren().add(createCalendarRow(calendar, SECTION_TYPE_COURSE));
+                groupsListContainer.getChildren().add(sourceTrayRowFactory.createCalendarRow(
+                        calendar,
+                        SessionManager.getInstance().isTeacher(),
+                        e -> openModal(calendar, SECTION_TYPE_COURSE, e)
+                ));
             }
         };
 
@@ -195,7 +195,11 @@ public class SourceTrayController {
         // Render initial rows
         groupsListContainer.getChildren().clear();
         for (StudentGroup group : items) {
-            groupsListContainer.getChildren().add(createGroupRow(group, SECTION_TYPE_GROUP));
+            groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+                    group,
+                    SessionManager.getInstance().isTeacher(),
+                    e -> openModal(group, SECTION_TYPE_GROUP, e)
+            ));
         }
 
         // Listen for new groups added/removed so the tray updates live
@@ -203,14 +207,22 @@ public class SourceTrayController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (StudentGroup added : change.getAddedSubList()) {
-                        groupsListContainer.getChildren().add(createGroupRow(added, SECTION_TYPE_GROUP));
+                        groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+                                added,
+                                SessionManager.getInstance().isTeacher(),
+                                e -> openModal(added, SECTION_TYPE_GROUP, e)
+                        ));
                     }
                 }
                 if (change.wasRemoved()) {
                     // Rebuild on removal — simplest safe approach
                     groupsListContainer.getChildren().clear();
                     for (StudentGroup group : items) {
-                        groupsListContainer.getChildren().add(createGroupRow(group, SECTION_TYPE_GROUP));
+                        groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+                                group,
+                                SessionManager.getInstance().isTeacher(),
+                                e -> openModal(group, SECTION_TYPE_GROUP, e)
+                        ));
                     }
                 }
             }
@@ -222,18 +234,18 @@ public class SourceTrayController {
     /**
      * FXML action handler for both "+" add-buttons in the source tray.
      * Reads the button's {@code userData} to decide whether to open the course modal
-     * ({@link #openGroupModal(Calendar, String, ActionEvent)}) or the group modal
-     * ({@link #openGroupModal(StudentGroup, String, ActionEvent)}).
+     * ({@link #openModal(Calendar, String, ActionEvent)}) or the group modal
+     * ({@link #openModal(StudentGroup, String, ActionEvent)}).
      *
      * @param event the action event from the clicked add-button
      */
-    public void handleOpenCreateGroupModal(ActionEvent event) {
+    public void handleOpenSidebarModal(ActionEvent event) {
         Button source = (Button) event.getSource();
         String sectionType = source.getUserData() != null ? source.getUserData().toString() : SECTION_TYPE_GROUP;
         if (SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType)) {
-            openGroupModal((Calendar) null, SECTION_TYPE_COURSE, event);
+            openModal((Calendar) null, SECTION_TYPE_COURSE, event);
         } else {
-            openGroupModal((StudentGroup) null, SECTION_TYPE_GROUP, event);
+            openModal((StudentGroup) null, SECTION_TYPE_GROUP, event);
         }
     }
 
@@ -244,7 +256,7 @@ public class SourceTrayController {
      * @param sectionType the section type constant ({@value #SECTION_TYPE_COURSE})
      * @param event       the originating action event (used to resolve the owner window)
      */
-    private void openGroupModal(Calendar calendar, String sectionType, ActionEvent event) {
+    private void openModal(Calendar calendar, String sectionType, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/modals/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
             Parent root = loader.load();
@@ -267,7 +279,7 @@ public class SourceTrayController {
      * @param sectionType the section type constant ({@value #SECTION_TYPE_GROUP})
      * @param event       the originating action event (used to resolve the owner window)
      */
-    private void openGroupModal(StudentGroup group, String sectionType, ActionEvent event) {
+    private void openModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
             java.net.URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
             if (fxmlUrl == null) {
@@ -330,108 +342,5 @@ public class SourceTrayController {
         return isEditMode ? "modal.edit.group.title" : "modal.create.group.title";
     }
 
-    /**
-     * Builds a single row in the courses section: a colored dot, the calendar name,
-     * a spacer, and an edit-icon button (teacher-only). The dot and name are kept
-     * in sync via property listeners.
-     *
-     * @param calendar    the CalendarFX calendar to represent
-     * @param sectionType the section type constant (passed to the edit modal)
-     * @return the constructed {@link HBox} row node
-     */
-    private HBox createCalendarRow(Calendar calendar, String sectionType) {
-        Region colorDot = new Region();
-        colorDot.setMinSize(12, 12);
-        colorDot.setMaxSize(12, 12);
-        colorDot.setStyle("-fx-background-color: " + styleToHex(calendar.getStyle()) + ";");
-        HBox.setMargin(colorDot, new javafx.geometry.Insets(0, 6, 0, 0));
-
-        Text nameText = new Text(calendar.getName());
-        nameText.setStrokeWidth(0.0);
-        calendar.nameProperty().addListener((obs, oldName, newName) -> nameText.setText(newName));
-
-        calendar.styleProperty().addListener((obs, oldStyle, newStyle) ->
-                colorDot.setStyle("-fx-background-color: " + styleToHex(newStyle) + ";"));
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-        ImageView editIcon = new ImageView(new Image(getClass().getResource("/images/edit_dots_icon.png").toExternalForm()));
-        editIcon.setFitWidth(15.0);
-        editIcon.setFitHeight(15.0);
-        editIcon.setPickOnBounds(true);
-        editIcon.setPreserveRatio(true);
-
-        Button actionButton = new Button();
-        actionButton.setMnemonicParsing(false);
-        actionButton.setGraphic(editIcon);
-        actionButton.setCursor(Cursor.HAND);
-        actionButton.setStyle("-fx-background-color: transparent;");
-        actionButton.setOnAction(e -> openGroupModal(calendar, sectionType, e));
-        actionButton.setVisible(SessionManager.getInstance().isTeacher());
-        actionButton.setManaged(SessionManager.getInstance().isTeacher());
-
-        HBox row = new HBox(colorDot, nameText, spacer, actionButton);
-        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        return row;
-    }
-
-    /**
-     * Builds a single row in the groups section: the group name, a spacer, and an
-     * edit-icon button (teacher-only).
-     *
-     * @param group       the group to represent
-     * @param sectionType the section type constant (passed to the edit modal)
-     * @return the constructed {@link HBox} row node
-     */
-    private HBox createGroupRow(StudentGroup group, String sectionType) {
-
-        Text groupNameText = new Text(group.getDisplayFieldOfStudies());
-        groupNameText.setStrokeWidth(0.0);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-        ImageView editIcon = new ImageView(new Image(getClass().getResource("/images/edit_dots_icon.png").toExternalForm()));
-        editIcon.setFitWidth(15.0);
-        editIcon.setFitHeight(15.0);
-        editIcon.setPickOnBounds(true);
-        editIcon.setPreserveRatio(true);
-
-        Button actionButton = new Button();
-        actionButton.setMnemonicParsing(false);
-        actionButton.setGraphic(editIcon);
-        actionButton.setCursor(Cursor.HAND);
-        actionButton.setStyle("-fx-background-color: transparent;");
-        actionButton.setOnAction(e -> openGroupModal(group, sectionType, e));
-        actionButton.setVisible(SessionManager.getInstance().isTeacher());
-        actionButton.setManaged(SessionManager.getInstance().isTeacher());
-
-        HBox row = new HBox(groupNameText, spacer, actionButton);
-        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        return row;
-    }
-
-
-    /**
-     * Maps a CalendarFX style name string (e.g. {@code "style1"}) to its corresponding
-     * hex color string. Case-insensitive.
-     *
-     * @param style the CalendarFX style name
-     * @return hex color string, or {@code "#888888"} for unknown styles
-     */
-    private static String styleToHex(String style) {
-        if (style == null) return "#888888";
-        switch (style.toLowerCase()) {
-            case "style1": return "#77C04B";
-            case "style2": return "#418FCB";
-            case "style3": return "#F7D15B";
-            case "style4": return "#9D5B9F";
-            case "style5": return "#D0525F";
-            case "style6": return "#F9844B";
-            case "style7": return "#AE663E";
-            default:       return "#888888";
-        }
-    }
 }
 

@@ -16,7 +16,7 @@
                   <Font size="12.0" />
                </font></Label>
                     <Region HBox.hgrow="ALWAYS" />
-                    <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleOpenCreateGroupModal">
+                    <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleOpenSidebarModal">
                         <graphic>
                             <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
