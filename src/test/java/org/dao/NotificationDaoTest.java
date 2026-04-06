@@ -36,12 +36,12 @@ class NotificationDaoTest {
     void shouldSaveNotificationAndFindByUser() {
         User user = createAndSaveUser();
 
-        notificationDao.saveNotification("notification.newLesson", "CS101|Room 202", List.of(user.getId()));
+        Notification saved = notificationDao.saveNotification("notification.newLesson", "CS101|Room 202", List.of(user.getId()));
 
         List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
 
         assertFalse(results.isEmpty());
-        assertEquals("notification.newLesson", results.get(0).getNotification().getMessageKey());
+        assertEquals(saved.getId(), results.get(0).getNotification().getId());
     }
 
     @Test
@@ -50,13 +50,13 @@ class NotificationDaoTest {
         User user1 = createAndSaveUser();
         User user2 = createAndSaveUser();
 
-        notificationDao.saveNotification("notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
+        Notification saved = notificationDao.saveNotification("notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
 
         List<NotificationReceiver> results1 = notificationDao.findByUserId(user1.getId());
         List<NotificationReceiver> results2 = notificationDao.findByUserId(user2.getId());
 
-        assertTrue(results1.stream().anyMatch(nr -> "notification.newMessage".equals(nr.getNotification().getMessageKey())));
-        assertTrue(results2.stream().anyMatch(nr -> "notification.newMessage".equals(nr.getNotification().getMessageKey())));
+        assertTrue(results1.stream().anyMatch(nr -> saved.getId().equals(nr.getNotification().getId())));
+        assertTrue(results2.stream().anyMatch(nr -> saved.getId().equals(nr.getNotification().getId())));
     }
 
     @Test

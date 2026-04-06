@@ -137,10 +137,8 @@ public class CreateGroupModalController {
         new Thread(() -> {
             try {
                 List<User> all = userService.getAllStudents();
-                System.out.println("Loaded " + all.size() + " students from DB");
                 Platform.runLater(() -> studentListView.getItems().setAll(all));
             } catch (Exception e) {
-                System.out.println("Failed to load students: " + e.getMessage());
                 e.printStackTrace();
             }
         }, "load-students-thread").start();
@@ -157,7 +155,6 @@ public class CreateGroupModalController {
                 List<User> results = userService.searchStudents(query);
                 Platform.runLater(() -> studentListView.getItems().setAll(results));
             } catch (Exception e) {
-                System.out.println("Search failed: " + e.getMessage());
                 e.printStackTrace();
             }
         }, "search-students-thread").start();
@@ -170,12 +167,8 @@ public class CreateGroupModalController {
      */
     public void applyProps() {
         if (isEditMode) {
-//            modalTitleLabel.setText("Edit " + sectionName);
             modalTitleLabel.setText(bundle.getString("modal.edit.group.title"));
-
-//            confirmButton.setText("Save");
             confirmButton.setText(bundle.getString("modal.course.save.button"));
-
             deleteButton.setVisible(true);
 
             if (existingGroup != null) {
@@ -184,16 +177,12 @@ public class CreateGroupModalController {
                         List<User> current = groupService.getStudentsInGroup(existingGroup.getGroupCode());
                         Platform.runLater(() -> groupStudentListView.getItems().setAll(current));
                     } catch (Exception e) {
-                        System.out.println("Failed to load group students: " + e.getMessage());
                         e.printStackTrace();
                     }
                 }, "load-group-students-thread").start();
             }
         } else {
-//            modalTitleLabel.setText("Create " + sectionName);
             modalTitleLabel.setText(bundle.getString("modal.create.group.title"));
-
-//            confirmButton.setText("Add");
             confirmButton.setText(bundle.getString("modal.group.add.button"));
 
             deleteButton.setVisible(false);
@@ -209,13 +198,10 @@ public class CreateGroupModalController {
     private void handleConfirm() {
         String name = groupNameField.getText();
         if (name == null || name.isBlank()) {
-            System.out.println("Validation failed: name is empty");
             return;
         }
 
         List<User> students = new java.util.ArrayList<>(groupStudentListView.getItems());
-        System.out.println("Attempting to " + (isEditMode ? "update" : "create")
-                + " group: " + name + " with " + students.size() + " students");
 
         new Thread(() -> {
             try {
@@ -229,7 +215,6 @@ public class CreateGroupModalController {
                 }
                 Platform.runLater(this::closeModal);
             } catch (Exception e) {
-                System.out.println("Failed to save group: " + e.getMessage());
                 e.printStackTrace();
             }
         }, "save-group-thread").start();
@@ -243,7 +228,6 @@ public class CreateGroupModalController {
     @FXML
     private void handleDelete() {
         if (existingGroup == null) { closeModal(); return; }
-        System.out.println("Deleting group: " + existingGroup.getGroupCode());
         new Thread(() -> {
             try {
                 groupService.deleteGroup(existingGroup.getGroupCode());
@@ -252,7 +236,6 @@ public class CreateGroupModalController {
                 }
                 Platform.runLater(this::closeModal);
             } catch (Exception e) {
-                System.out.println("Failed to delete group: " + e.getMessage());
                 e.printStackTrace();
             }
         }, "delete-group-thread").start();

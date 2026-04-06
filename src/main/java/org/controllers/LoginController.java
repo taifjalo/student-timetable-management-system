@@ -66,7 +66,6 @@ public class LoginController {
         try {
             User user = authService.login(username, password);
             SessionManager.getInstance().login(user);
-            System.out.println("Logged in as: " + user.getUsername());
 
             // Switch to the main calendar app scene
             ResourceBundle bundle = localizationService.getBundle();
@@ -80,7 +79,6 @@ public class LoginController {
             stage.show();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             messageLabel.setText(selectedBundle.getString("login.invalid.credentials.error") + e.getMessage());
         }
     }

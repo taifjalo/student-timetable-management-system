@@ -466,7 +466,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             var groups = ctrl.getSelectedGroups();
             var users  = ctrl.getSelectedUsers();
             saveBtn.setDisable(true);
-            saveBtn.setText("Saving…");
+            saveBtn.setText(selectedBundle.getString("event.saving.button"));
             savingInProgress[0] = true;
 
             new Thread(() -> {
@@ -495,7 +495,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                     javafx.application.Platform.runLater(() -> {
                         savingInProgress[0] = false;
                         saveBtn.setDisable(false);
-                        saveBtn.setText("Save");
+                        saveBtn.setText(selectedBundle.getString("event.save.button"));
                     });
                 }
             }, "save-lesson-thread").start();

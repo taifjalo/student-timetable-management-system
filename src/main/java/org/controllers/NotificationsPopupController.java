@@ -25,12 +25,8 @@ import java.util.ResourceBundle;
  * Renders each notification as a styled row with a relative timestamp and a
  * "mark as read" action. Supports right-to-left layout for Arabic.
  *
- * <p>Notifications are displayed in two modes:
- * <ul>
- *   <li><b>Localized</b> — the i18n bundle key and pipe-separated params are
- *       resolved via {@link #localizeNotification} into the active locale's text.</li>
- *   <li><b>Legacy</b> — the raw {@code content} string is displayed as-is.</li>
- * </ul>
+ * <p>Notification text is pre-rendered for the recipient's locale by the DAO at
+ * save time and is read directly from the DTO without any further translation step.
  */
 public class NotificationsPopupController {
 
@@ -67,7 +63,7 @@ public class NotificationsPopupController {
 
         for (NotificationDto dto : notifications) {
             NotificationRow row = new NotificationRow(
-                    localizeNotification(dto, bundle),
+                    dto.getContent(),
                     formatTime(dto.getSentAt()),
                     !dto.isRead(),
                     () -> notificationService.markAsRead(userId, dto.getNotificationId()),
@@ -198,26 +194,4 @@ public class NotificationsPopupController {
 
     }
 
-    /**
-     * Resolves the display text for a notification.
-     * For localized notifications (where {@code messageKey} is set), the bundle
-     * string is looked up and formatted with the pipe-split params.
-     * Falls back to {@code content} if the key is absent or the bundle lookup fails.
-     *
-     * @param dto    the notification data transfer object
-     * @param bundle the active locale's resource bundle
-     * @return the display string to show in the notification row
-     */
-    private String localizeNotification(NotificationDto dto, ResourceBundle bundle) {
-        if (dto.getMessageKey() != null) {
-            String[] params = dto.getMessageParams() != null
-                    ? dto.getMessageParams().split("\\|") : new String[0];
-            try {
-                return String.format(bundle.getString(dto.getMessageKey()), (Object[]) params);
-            } catch (Exception e) {
-                return dto.getContent(); // key missing from bundle — safe fallback
-            }
-        }
-        return dto.getContent(); // old rows without key
-    }
 }

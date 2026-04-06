@@ -97,8 +97,18 @@ public class UserSettingsController {
         User user = SessionManager.getInstance().getCurrentUser();
         if (user == null) return;
 
+        String newUsername = usernameField.getText().trim();
 
-        user.setUsername(usernameField.getText().trim());
+        // Check for duplicate username only when it has changed
+        if (!newUsername.equals(user.getUsername())) {
+            User existing = userDao.findByUsername(newUsername);
+            if (existing != null) {
+                messageLabel.setText(selectedBundle.getString("settings.modal.save.error.message") + " Username already exists");
+                return;
+            }
+        }
+
+        user.setUsername(newUsername);
         user.setFirstName(firstNameField.getText().trim());
         user.setSureName(lastNameField.getText().trim());
         user.setEmail(emailField.getText().trim());
@@ -110,10 +120,8 @@ public class UserSettingsController {
             // Refresh header
             displayNameText.setText(updated.getFirstName());
             messageLabel.setText(selectedBundle.getString("setting.modal.save.success.message"));
-            System.out.println("Profile saved for: " + updated.getUsername());
         } catch (Exception e) {
             messageLabel.setText(selectedBundle.getString("settings.modal.save.error.message") + e.getMessage());
-            System.out.println("Save failed: " + e.getMessage());
         }
     }
 
@@ -152,7 +160,7 @@ public class UserSettingsController {
                 currentStage.close();
             }
         } catch (IOException e) {
-            messageLabel.setText("Failed to apply language change.");
+            messageLabel.setText(selectedBundle.getString("settings.modal.language.error"));
             e.printStackTrace();
         }
     }
@@ -215,7 +223,6 @@ public class UserSettingsController {
             newPasswordAgainField.clear();
             passwordMessageLabel.setStyle("-fx-text-fill: #00956D;");
             passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.success.message"));
-            System.out.println("Password changed for: " + updated.getUsername());
         } catch (Exception e) {
             passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.error.message") + e.getMessage());
         }

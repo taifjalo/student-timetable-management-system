@@ -213,25 +213,15 @@ public class CreateCourseModalController {
     private void handleConfirm() {
         String name = groupNameField.getText();
         if (name == null || name.isBlank()) {
-            System.out.println("Validation failed: name is empty");
             return;
         }
 
         String colorCode = styleToHex(selectedStyle);
-        System.out.println("Attempting to " + (isEditMode ? "update" : "create") + " course:");
-        System.out.println("  name       = " + name);
-        System.out.println("  colorCode  = " + colorCode);
-        System.out.println("  isEditMode = " + isEditMode);
-        System.out.println("  dbCourseId = " + dbCourseId);
 
         try {
             if (isEditMode && dbCourseId != null) {
-                // Save to DB
                 courseService.updateCourse(dbCourseId, name, colorCode);
-                // Re-fetch from DB so the UI reflects exactly what is stored
                 Course refreshed = courseService.getCourseById(dbCourseId);
-                System.out.println("Course updated and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 if (calendar != null) {
                     calendar.setName(refreshed.getDisplayName());
                     calendar.setStyle(CourseService.colorCodeToStyle(refreshed.getColorCode()));
@@ -239,22 +229,15 @@ public class CreateCourseModalController {
                 }
             } else {
                 Course saved = courseService.createCourse(name, colorCode);
-                // Re-fetch from DB to get the final persisted state
                 Course refreshed = courseService.getCourseById(saved.getId());
-                System.out.println("Course created and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 Calendar newCal = courseService.toCalendar(refreshed);
                 if (calendarSource != null) {
                     calendarSource.getCalendars().add(newCal);
-                    System.out.println("Calendar added to source tray");
-                } else {
-                    System.out.println("calendarSource not set, tray won't update");
                 }
             }
 
             closeModal();
         } catch (Exception e) {
-            System.out.println("DB operation failed: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -265,22 +248,15 @@ public class CreateCourseModalController {
      */
     @FXML
     private void handleDelete() {
-        System.out.println("Attempting to delete course. dbCourseId=" + dbCourseId);
         try {
             if (dbCourseId != null) {
                 courseService.deleteCourse(dbCourseId);
-                System.out.println("Course deleted successfully. id=" + dbCourseId);
-                // Remove the calendar row from the source tray
                 if (calendarSource != null && calendar != null) {
                     calendarSource.getCalendars().remove(calendar);
-                    System.out.println("Calendar removed from source tray");
                 }
-            } else {
-                System.out.println("No dbCourseId set, skipping DB delete");
             }
             closeModal();
         } catch (Exception e) {
-            System.out.println("Delete failed: " + e.getMessage());
             e.printStackTrace();
         }
     }

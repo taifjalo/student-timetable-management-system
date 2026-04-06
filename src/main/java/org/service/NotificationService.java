@@ -4,6 +4,8 @@ import dto.NotificationDto;
 import org.dao.NotificationDao;
 import org.entities.NotificationReceiver;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,19 +122,18 @@ public class NotificationService {
 
     /**
      * Returns notifications for the given user as DTOs, ready for display in the UI.
+     * The content is already resolved to the JVM default locale by the DAO.
      *
      * @param userId the user's ID
      * @return list of {@link NotificationDto} objects ordered newest-first, possibly empty
      */
     public List<NotificationDto> getNotificationDtosForUser(Long userId) {
-        return notificationDao.findByUserId(userId).stream()
-                .map(nr -> new NotificationDto(
-                        nr.getNotification().getId(),
-                        nr.getNotification().getMessageKey(),
-                        nr.getNotification().getMessageParams(),
-                        nr.getNotification().getContent(),
-                        nr.getNotification().getSentAt(),
-                        nr.isRead()
+        return notificationDao.findTranslatedForUser(userId).stream()
+                .map(row -> new NotificationDto(
+                        ((Number) row[0]).longValue(),
+                        (String) row[1],
+                        row[2] instanceof Timestamp ts ? ts.toLocalDateTime() : (LocalDateTime) row[2],
+                        ((Number) row[3]).intValue() != 0
                 ))
                 .collect(Collectors.toList());
     }
