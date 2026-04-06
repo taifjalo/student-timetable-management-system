@@ -39,6 +39,13 @@ Translation files are located at `src/main/resources/i18n/MessagesBundle//`:
 - `MessagesBundle_ar_IQ.properties`
 - `MessagesBundle_ru_RU.properties`
 
+## DB Localization method
+
+For our localization method we chose translation table. The database content is localized using a separate table for all languages.
+
+The tables we use are course_translations and group_translations.
+
+
 
 ## ER diagram
 ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Timetable%20ER-schema.png)
