@@ -20,7 +20,7 @@
                         <graphic>
                             <ImageView fitHeight="10.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
-                                    <Image url="@images/add_icon.png" />
+                                    <Image url="@../images/add_icon.png" />
                                 </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />

@@ -145,7 +145,7 @@ public class UserSettingsController {
         Stage mainStage = currentStage.getOwner() instanceof Stage owner ? owner : currentStage;
 
         try {
-            localizationService.reloadScene(mainStage, "/main-app.fxml");
+            localizationService.reloadScene(mainStage, "/ui/main-app.fxml");
 
             // Close settings modal after the main app has been recreated in the new locale.
             if (currentStage != mainStage) {
@@ -237,7 +237,7 @@ public class UserSettingsController {
                 currentStage.close();
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), localizationService.getBundle());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/auth/login.fxml"), localizationService.getBundle());
             Parent root = loader.load();
             localizationService.swapSides(root);
 

@@ -70,7 +70,7 @@ public class LoginController {
 
             // Switch to the main calendar app scene
             ResourceBundle bundle = localizationService.getBundle();
-            Parent root = FXMLLoader.load(getClass().getResource("/main-app.fxml"), bundle);
+            Parent root = FXMLLoader.load(getClass().getResource("/ui/main-app.fxml"), bundle);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             localizationService.swapSides(root);
@@ -119,7 +119,7 @@ public class LoginController {
         // Reload the Scene when the Lang changes
         Stage stage = (Stage) languageMenuButton.getScene().getWindow();
         ResourceBundle bundle = localizationService.getBundle();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"), bundle);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/auth/login.fxml"), bundle);
         Parent root = loader.load();
 
         // To RTL or LTL
@@ -160,7 +160,7 @@ public class LoginController {
     @FXML
     private void handleGoToRegister(ActionEvent event) {
         try {
-            URL registerFxml = getClass().getResource("/register.fxml");
+            URL registerFxml = getClass().getResource("/ui/auth/register.fxml");
             if (registerFxml == null) {
                 throw new IllegalArgumentException("register.fxml not found");
             }

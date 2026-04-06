@@ -10,8 +10,6 @@ import com.calendarfx.view.popover.EntryHeaderView;
 import com.calendarfx.view.popover.PopOverContentPane;
 import com.calendarfx.view.popover.PopOverTitledPane;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
@@ -61,7 +59,7 @@ import java.util.stream.Collectors;
  * <p>After the pop-over is shown, {@link #applyLocalizationAndRTL()} is called to
  * translate any residual English CalendarFX labels and apply RTL orientation for Arabic.
  */
-public class CustomEntryPopOverContentPane extends PopOverContentPane {
+public class EntryPopOverContentPane extends PopOverContentPane {
 
     /**
      * Lightweight value holder that identifies a persisted lesson by its database ID.
@@ -85,9 +83,9 @@ public class CustomEntryPopOverContentPane extends PopOverContentPane {
      * @param dateControl the {@link DateControl} the entry belongs to
      * @param entry       the calendar entry being viewed or edited
      */
-    public CustomEntryPopOverContentPane(PopOver popOver,
-                                         DateControl dateControl,
-                                         Entry<?> entry) {
+    public EntryPopOverContentPane(PopOver popOver,
+                                   DateControl dateControl,
+                                   Entry<?> entry) {
 
         final boolean teacher = SessionManager.getInstance().isTeacher();
 

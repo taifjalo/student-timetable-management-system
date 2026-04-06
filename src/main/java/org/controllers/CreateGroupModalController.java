@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the group create/edit modal ({@code create-modal.fxml}).
+ * Controller for the group create/edit modal ({@code group-modal.fxml}).
  * Displays two lists side-by-side: all students on the right and current group
  * members on the left. Users can click to move students between the lists.
  * Supports both create and edit modes.
