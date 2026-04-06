@@ -22,7 +22,13 @@ public class CourseDao {
     public Course save(Course course) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
-            Course saved = em.merge(course);
+            Course saved;
+            if (course.getId() == null) {
+                em.persist(course);
+                saved = course;
+            } else {
+                saved = em.merge(course);
+            }
             em.getTransaction().commit();
             return saved;
         }
