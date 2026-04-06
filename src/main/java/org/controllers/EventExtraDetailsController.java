@@ -71,7 +71,7 @@ public class EventExtraDetailsController {
      */
     public EventExtraDetailsController(Entry<?> entry, Lesson existingLesson) {
         classroomField = new TextField();
-        classroomField.setPromptText("e.g. A201");
+        classroomField.setPromptText(selectedBundle.getString("event.classroom.prompt"));
         if (existingLesson != null && existingLesson.getClassroom() != null) {
             classroomField.setText(existingLesson.getClassroom());
         }
@@ -260,7 +260,6 @@ public class EventExtraDetailsController {
      */
     private void showGroupPicker(Button addGroupBtn) {
         if (availableGroups.isEmpty()) {
-            System.out.println("No groups available yet.");
             return;
         }
         ContextMenu menu = new ContextMenu();
@@ -271,7 +270,7 @@ public class EventExtraDetailsController {
             menu.getItems().add(item);
         }
         if (menu.getItems().isEmpty()) {
-            MenuItem none = new MenuItem("All groups already added");
+            MenuItem none = new MenuItem(selectedBundle.getString("event.all.groups.added"));
             none.setDisable(true);
             menu.getItems().add(none);
         }

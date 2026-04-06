@@ -172,7 +172,7 @@ public class ChatController {
      *
      * @param is {@code true} to show, {@code false} to hide
      */
-    public void rightSideVisibility(Boolean is){
+    public void rightSideVisibility(boolean is){
         chatRightSide.setVisible(is);
         chatRightSide.setManaged(is);
     }

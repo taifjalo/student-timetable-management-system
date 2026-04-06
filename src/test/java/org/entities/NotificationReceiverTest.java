@@ -31,7 +31,7 @@ class NotificationReceiverTest {
         User user = new User();
         user.setId(1L);
 
-        Notification notif = new Notification(LocalDateTime.now(), "content");
+        Notification notif = new Notification(LocalDateTime.now());
         notif.setId(2L);
 
         NotificationReceiver.NotificationReceiverId id =

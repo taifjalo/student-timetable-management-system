@@ -76,7 +76,6 @@ public class MainAppController {
             navbarController = navbarLoader.getController();
             mainRoot.setTop(navbar);
 
-            System.out.println(Locale.getDefault());
             calendarView = new CalendarView();
             mainRoot.setCenter(calendarView);
 
@@ -149,7 +148,6 @@ public class MainAppController {
 
 
         } catch (Exception e) {
-            System.out.println("Failed to initialize: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -256,14 +254,12 @@ public class MainAppController {
 
         try {
             List<Course> dbCourses = courseService.getCoursesForUser(studentUserId);
-            System.out.println("Loaded " + dbCourses.size() + " courses from DB");
             for (Course course : dbCourses) {
                 Calendar cal = courseService.toCalendar(course);
                 try {
                     List<Lesson> lessons = isTeacher
                             ? lessonService.getLessonsByCourse(course.getId())
                             : lessonService.getLessonsByCourseWithGroups(course.getId());
-                    System.out.println("Loaded " + lessons.size() + " lessons for course: " + course.getDisplayName());
                     for (Lesson lesson : lessons) {
                         if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                             continue;
@@ -279,12 +275,11 @@ public class MainAppController {
                         cal.addEntry(entry);
                     }
                 } catch (Exception ex) {
-                    System.out.println("Failed to load lessons for course " + course.getDisplayName() + ": " + ex.getMessage());
+                    // continue loading other courses
                 }
                 myCalendarSource.getCalendars().add(cal);
             }
         } catch (Exception e) {
-            System.out.println("Failed to load courses: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -332,11 +327,6 @@ public class MainAppController {
         if (currentUser == null) return null;
         try {
             StudentGroup g = new GroupDao().findGroupByUserId(currentUser.getId());
-            if (g != null) {
-                System.out.println("Student '" + currentUser.getUsername() + "' is in group: " + g.getGroupCode());
-            } else {
-                System.out.println("Student '" + currentUser.getUsername() + "' has no group assigned in student_profiles.");
-            }
             return g != null ? g.getGroupCode() : null;
         } catch (Exception ex) {
             System.err.println("Failed to resolve student group: " + ex.getMessage());

@@ -2,9 +2,6 @@ package org.service;
 
 import dto.NotificationDto;
 import org.dao.NotificationDao;
-import org.entities.Notification;
-import org.entities.NotificationReceiver;
-import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -29,25 +27,6 @@ class NotificationServiceTest {
 
     @InjectMocks
     NotificationService notificationService;
-
-    // Helpers
-
-    private NotificationReceiver buildReceiver(Long notifId, String content, LocalDateTime sentAt, boolean read) {
-        User user = new User();
-        user.setId(1L);
-
-        Notification notif = new Notification(sentAt, content);
-        notif.setId(notifId);
-
-        NotificationReceiver nr = new NotificationReceiver();
-        nr.setNotification(notif);
-        nr.setUser(user);
-        nr.setRead(read);
-        NotificationReceiver.NotificationReceiverId nrid =
-            new NotificationReceiver.NotificationReceiverId(user.getId(), notifId);
-        nr.setId(nrid);
-        return nr;
-    }
 
     // notifyLessonAdded
 
@@ -201,9 +180,9 @@ class NotificationServiceTest {
     @DisplayName("Get DTOs: Should return mapped DTOs with correct content, sentAt, and isRead")
     void shouldReturnMappedDtos() {
         LocalDateTime sentAt = LocalDateTime.of(2026, 3, 8, 10, 30);
-        NotificationReceiver receiver = buildReceiver(42L, "Test content", sentAt, false);
+        Object[] row = {42L, "Test content", Timestamp.valueOf(sentAt), 0};
 
-        when(notificationDao.findByUserId(1L)).thenReturn(List.of(receiver));
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(Collections.singletonList(row));
 
         List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(1L);
 
@@ -218,7 +197,7 @@ class NotificationServiceTest {
     @Test
     @DisplayName("Get DTOs: Should return empty list when user has no notifications")
     void shouldReturnEmptyDtoListWhenNoNotifications() {
-        when(notificationDao.findByUserId(99L)).thenReturn(Collections.emptyList());
+        when(notificationDao.findTranslatedForUser(99L)).thenReturn(Collections.emptyList());
 
         List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(99L);
 
