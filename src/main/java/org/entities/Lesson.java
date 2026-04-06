@@ -5,6 +5,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JPA entity representing a single scheduled lesson on the timetable.
+ * Maps to the {@code lessons} table.
+ * A lesson belongs to one {@link Course} and can be assigned to multiple
+ * {@link StudentGroup}s and individual {@link User}s via join tables.
+ */
 @Entity
 @Table(name = "lessons")
 public class Lesson {
@@ -43,8 +49,17 @@ public class Lesson {
     )
     private List<User> assignedUsers = new ArrayList<>();
 
+    /** Required no-arg constructor for JPA. */
     public Lesson() {}
 
+    /**
+     * Creates a new lesson without any group or user assignments.
+     *
+     * @param startAt   lesson start date-time
+     * @param endAt     lesson end date-time
+     * @param course    the course this lesson belongs to
+     * @param classroom room identifier (e.g. {@code "A101"})
+     */
     public Lesson(LocalDateTime startAt, LocalDateTime endAt, Course course, String classroom) {
         this.startAt = startAt;
         this.endAt = endAt;
@@ -52,24 +67,38 @@ public class Lesson {
         this.classroom = classroom;
     }
 
+    /** Returns the surrogate primary key. */
     public Long getId() { return id; }
+    /** Sets the surrogate primary key (used by JPA; do not call manually). */
     public void setId(Long id) { this.id = id; }
 
+    /** Returns the lesson start date-time. */
     public LocalDateTime getStartAt() { return startAt; }
+    /** Sets the lesson start date-time. */
     public void setStartAt(LocalDateTime startAt) { this.startAt = startAt; }
 
+    /** Returns the lesson end date-time. */
     public LocalDateTime getEndAt() { return endAt; }
+    /** Sets the lesson end date-time. */
     public void setEndAt(LocalDateTime endAt) { this.endAt = endAt; }
 
+    /** Returns the course this lesson belongs to. */
     public Course getCourse() { return course; }
+    /** Sets the course this lesson belongs to. */
     public void setCourse(Course course) { this.course = course; }
 
+    /** Returns the classroom identifier (e.g. {@code "A101"}). */
     public String getClassroom() { return classroom; }
+    /** Sets the classroom identifier. */
     public void setClassroom(String classroom) { this.classroom = classroom; }
 
+    /** Returns the student groups assigned to this lesson. */
     public List<StudentGroup> getAssignedGroups() { return assignedGroups; }
+    /** Sets the student groups assigned to this lesson. */
     public void setAssignedGroups(List<StudentGroup> assignedGroups) { this.assignedGroups = assignedGroups; }
 
+    /** Returns the individual users (students) directly assigned to this lesson. */
     public List<User> getAssignedUsers() { return assignedUsers; }
+    /** Sets the individual users directly assigned to this lesson. */
     public void setAssignedUsers(List<User> assignedUsers) { this.assignedUsers = assignedUsers; }
 }

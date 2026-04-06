@@ -19,6 +19,12 @@ import org.service.LocalizationService;
 
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the course create/edit modal ({@code course-modal.fxml}).
+ * Allows a teacher to create a new course or edit/delete an existing one.
+ * Each course has a display name and a color that maps to a CalendarFX
+ * {@link Style} for calendar rendering.
+ */
 public class CreateCourseModalController {
 
     @FXML private Text modalTitleLabel;
@@ -36,6 +42,12 @@ public class CreateCourseModalController {
 
     private final CourseService courseService = new CourseService(new CourseDao());
 
+    /**
+     * Sets the {@link CalendarSource} so that newly created calendars can be
+     * added to the source tray immediately after saving.
+     *
+     * @param calendarSource the source tray's calendar source
+     */
     public void setCalendarSource(CalendarSource calendarSource) {
         this.calendarSource = calendarSource;
     }
@@ -50,10 +62,24 @@ public class CreateCourseModalController {
         "#D0525F", "#F9844B", "#AE663E"
     };
 
+    /**
+     * Sets the modal to create mode with the given initial name.
+     * Deprecated in favour of {@link #setCalendar(Calendar)} for edit mode;
+     * kept for backwards-compatible call sites.
+     *
+     * @param courseName initial name value (currently unused)
+     */
     public void setProps(String courseName) {
         this.isEditMode = false;
     }
 
+    /**
+     * Binds the modal to an existing calendar entry and switches to edit mode.
+     * Extracts the DB course ID from the calendar's user object if available.
+     *
+     * @param calendar the CalendarFX calendar representing the course to edit,
+     *                 or {@code null} to stay in create mode
+     */
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
         this.isEditMode = calendar != null;
@@ -71,11 +97,17 @@ public class CreateCourseModalController {
         }
     }
 
+    /**
+     * JavaFX initialize callback — builds the localized color picker menu.
+     */
     @FXML
     public void initialize() {
         buildColorMenu();
     }
 
+    /**
+     * Rebuilds the color picker {@link MenuButton} items using localized color names.
+     */
     private void buildColorMenu() {
         String[] styleNames = getStyleNames();
         colorPicker.getItems().clear();
@@ -102,6 +134,13 @@ public class CreateCourseModalController {
         }
     }
 
+    /**
+     * Applies the chosen style to the color picker button graphic.
+     *
+     * @param style the CalendarFX style constant
+     * @param color the hex color string for the dot
+     * @param name  the localized color name label
+     */
     private void selectStyle(Style style, String color, String name) {
         selectedStyle = style;
         Region dot = new Region();
@@ -115,6 +154,10 @@ public class CreateCourseModalController {
         colorPicker.setText("");
     }
 
+    /**
+     * Configures the modal UI for the current mode (create or edit) using
+     * the active locale's bundle. Must be called after the FXML is loaded.
+     */
     public void applyProps() {
         ResourceBundle bundle = localizationService.getBundle();
         String[] styleNames = getStyleNames();
@@ -144,6 +187,11 @@ public class CreateCourseModalController {
         }
     }
 
+    /**
+     * Returns the localized color name array in the same order as {@link #STYLES}.
+     *
+     * @return array of seven localized color name strings
+     */
     private String[] getStyleNames() {
         ResourceBundle bundle = localizationService.getBundle();
         return new String[] {
@@ -157,6 +205,10 @@ public class CreateCourseModalController {
         };
     }
 
+    /**
+     * FXML action handler for the confirm button.
+     * Creates or updates the course in the database and updates the source tray calendar.
+     */
     @FXML
     private void handleConfirm() {
         String name = groupNameField.getText();
@@ -179,9 +231,9 @@ public class CreateCourseModalController {
                 // Re-fetch from DB so the UI reflects exactly what is stored
                 Course refreshed = courseService.getCourseById(dbCourseId);
                 System.out.println("Course updated and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 if (calendar != null) {
-                    calendar.setName(refreshed.getName());
+                    calendar.setName(refreshed.getDisplayName());
                     calendar.setStyle(CourseService.colorCodeToStyle(refreshed.getColorCode()));
                     calendar.setUserObject(refreshed);
                 }
@@ -190,7 +242,7 @@ public class CreateCourseModalController {
                 // Re-fetch from DB to get the final persisted state
                 Course refreshed = courseService.getCourseById(saved.getId());
                 System.out.println("Course created and re-fetched from DB. id=" + refreshed.getId()
-                        + " name=" + refreshed.getName() + " color=" + refreshed.getColorCode());
+                        + " name=" + refreshed.getDisplayName() + " color=" + refreshed.getColorCode());
                 Calendar newCal = courseService.toCalendar(refreshed);
                 if (calendarSource != null) {
                     calendarSource.getCalendars().add(newCal);
@@ -207,6 +259,10 @@ public class CreateCourseModalController {
         }
     }
 
+    /**
+     * FXML action handler for the delete button.
+     * Removes the course from the database and from the source tray.
+     */
     @FXML
     private void handleDelete() {
         System.out.println("Attempting to delete course. dbCourseId=" + dbCourseId);
@@ -229,11 +285,18 @@ public class CreateCourseModalController {
         }
     }
 
+    /** Closes the modal window. */
     private void closeModal() {
         Stage stage = (Stage) confirmButton.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Maps a CalendarFX {@link Style} to its corresponding hex color string.
+     *
+     * @param style the CalendarFX style constant
+     * @return hex color string, or {@code "#888888"} for unknown styles
+     */
     private String styleToHex(Style style) {
         if (style == null) return "#888888";
         return switch (style) {

@@ -24,6 +24,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Programmatically constructed widget that provides the extra lesson fields shown
+ * inside the CalendarFX entry pop-over for teachers: classroom, teacher name,
+ * assigned groups (chip UI with a context-menu picker), and assigned students
+ * (type-ahead search with chip UI).
+ *
+ * <p>This class is not an FXML controller — it is instantiated directly by
+ * {@link org.application.CustomEntryPopOverContentPane} and its nodes are
+ * inserted into the pop-over's detail grid.
+ *
+ * <p>Available groups are loaded asynchronously on construction. The selected
+ * groups and users are exposed via {@link #getSelectedGroups()} and
+ * {@link #getSelectedUsers()} so the save handler can persist them.
+ *
+ * <p>When {@link #setReadOnly(boolean)} is called the interactive controls
+ * (text field, buttons) are replaced with read-only labels, making the widget
+ * suitable for the student view.
+ */
 public class EventExtraDetailsController {
 
     private final TextField classroomField;
@@ -41,6 +59,15 @@ public class EventExtraDetailsController {
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
+    /**
+     * Constructs the extra-details widget.
+     * Pre-fills classroom and existing group/user chips from {@code existingLesson}
+     * when editing an existing lesson, or leaves fields blank for a new entry.
+     * Starts a background thread to load all available groups.
+     *
+     * @param entry          the CalendarFX entry this pop-over is attached to
+     * @param existingLesson the persisted lesson for edit mode, or {@code null} for create mode
+     */
     public EventExtraDetailsController(Entry<?> entry, Lesson existingLesson) {
         classroomField = new TextField();
         classroomField.setPromptText("e.g. A201");
@@ -137,15 +164,36 @@ public class EventExtraDetailsController {
         }
     }
 
+    /** @return the classroom text-field node to insert into the grid */
     public Node getClassIdNode() { return classroomField; }
+
+    /** @return the teacher name label node to insert into the grid */
     public Node getTeacherNode() { return teacherLabel; }
+
+    /** @return the group chip row node to insert into the grid */
     public Node getGroupRowNode() { return groupRow; }
+
+    /** @return the student chip / search row node to insert into the grid */
     public Node getStudentsNode() { return studentsRow; }
 
+    /** @return the trimmed classroom text entered by the teacher */
     public String getClassroom() { return classroomField.getText().trim(); }
+
+    /** @return a copy of the currently selected groups list */
     public List<StudentGroup> getSelectedGroups() { return new ArrayList<>(selectedGroups); }
+
+    /** @return a copy of the currently selected users list */
     public List<User> getSelectedUsers() { return new ArrayList<>(selectedUsers); }
 
+    /**
+     * Converts all interactive controls to read-only labels when {@code readOnly} is
+     * {@code true}. Replaces the classroom text field with a label, converts group
+     * chips to styled non-clickable labels (removing the "Add group" button), and
+     * converts user chips to styled non-clickable labels (removing the search field).
+     * A dash ({@code "—"}) is shown when no value is set.
+     *
+     * @param readOnly {@code true} to make the widget read-only; {@code false} is a no-op
+     */
     public void setReadOnly(boolean readOnly) {
         if (!readOnly) return;
 
@@ -203,6 +251,12 @@ public class EventExtraDetailsController {
         }
     }
 
+    /**
+     * Shows a {@link ContextMenu} beneath the add-group button listing all groups
+     * not yet selected. Skips groups already in {@link #selectedGroups}.
+     *
+     * @param addGroupBtn the button to anchor the context menu to
+     */
     private void showGroupPicker(Button addGroupBtn) {
         if (availableGroups.isEmpty()) {
             System.out.println("No groups available yet.");
@@ -211,7 +265,7 @@ public class EventExtraDetailsController {
         ContextMenu menu = new ContextMenu();
         for (StudentGroup g : availableGroups) {
             if (selectedGroups.stream().anyMatch(s -> s.getGroupCode().equals(g.getGroupCode()))) continue;
-            MenuItem item = new MenuItem(g.getFieldOfStudies() + " (" + g.getGroupCode() + ")");
+            MenuItem item = new MenuItem(g.getDisplayFieldOfStudies() + " (" + g.getGroupCode() + ")");
             item.setOnAction(e -> addGroupChip(g, addGroupBtn));
             menu.getItems().add(item);
         }
@@ -223,12 +277,20 @@ public class EventExtraDetailsController {
         menu.show(addGroupBtn, javafx.geometry.Side.BOTTOM, 0, 0);
     }
 
+    /**
+     * Adds a removable group chip button to the group row for the given group.
+     * Does nothing if the group is already selected. The chip is inserted before
+     * the add-group button.
+     *
+     * @param group      the group to add
+     * @param addGroupBtn the add-group button used to determine insertion position
+     */
     private void addGroupChip(StudentGroup group, Button addGroupBtn) {
         if (selectedGroups.stream().anyMatch(g -> g.getGroupCode().equals(group.getGroupCode()))) {
             return;
         }
         selectedGroups.add(group);
-        Button chip = new Button(group.getFieldOfStudies());
+        Button chip = new Button(group.getDisplayFieldOfStudies());
         chip.setStyle(
                 "-fx-background-radius: 12; -fx-border-radius: 12;" +
                 "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;" +
@@ -241,6 +303,15 @@ public class EventExtraDetailsController {
         groupRow.getChildren().add(idx, chip);
     }
 
+    /**
+     * Adds a removable user chip button to the students row for the given user.
+     * Does nothing if the user is already selected. The chip is inserted before
+     * the search field. Shows an {@code exit.png} icon as the chip's graphic if
+     * the image can be loaded.
+     *
+     * @param user            the user to add
+     * @param userSearchField the search field used to determine insertion position
+     */
     private void addUserChip(User user, TextField userSearchField) {
         if (selectedUsers.stream().anyMatch(u -> Objects.equals(u.getId(), user.getId()))) {
             return;
