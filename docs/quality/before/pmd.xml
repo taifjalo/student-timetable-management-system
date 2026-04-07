@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.17.0" timestamp="2026-04-07T18:00:14.504">
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\dto\ChatPreview.java">
+<violation beginline="4" endline="4" begincolumn="1" endcolumn="31" rule="UnnecessaryImport" ruleset="Code Style" package="dto" class="ChatPreview" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'jakarta.persistence.Id'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\application\EntryPopOverContentPane.java">
+<violation beginline="109" endline="109" begincolumn="13" endcolumn="37" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="EntryPopOverContentPane" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.scene.layout': 'HBox' is already in scope because it is imported in this file
+</violation>
+<violation beginline="109" endline="109" begincolumn="58" endcolumn="82" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="EntryPopOverContentPane" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.scene.layout': 'HBox' is already in scope because it is imported in this file
+</violation>
+<violation beginline="189" endline="189" begincolumn="17" endcolumn="44" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="EntryPopOverContentPane" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.application': 'Platform' is already in scope because it is imported in this file
+</violation>
+<violation beginline="247" endline="247" begincolumn="16" endcolumn="28" rule="UnusedLocalVariable" ruleset="Best Practices" package="org.application" class="EntryPopOverContentPane" method="buildStudentView" variable="studentsText" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedlocalvariable" priority="3">
+Avoid unused local variables such as 'studentsText'.
+</violation>
+<violation beginline="253" endline="253" begincolumn="13" endcolumn="30" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="buildStudentView" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'org.entities': 'User' is already in scope because it is imported in this file
+</violation>
+<violation beginline="344" endline="344" begincolumn="21" endcolumn="48" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="lockTitleToCalendarName" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.application': 'Platform' is already in scope because it is imported in this file
+</violation>
+<violation beginline="484" endline="484" begincolumn="21" endcolumn="48" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="appendExtraFields" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.application': 'Platform' is already in scope because it is imported in this file
+</violation>
+<violation beginline="495" endline="495" begincolumn="21" endcolumn="48" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="appendExtraFields" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.application': 'Platform' is already in scope because it is imported in this file
+</violation>
+<violation beginline="545" endline="545" begincolumn="30" endcolumn="89" rule="UselessParentheses" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="getGridCell" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `Objects.requireNonNullElse(GridPane.getColumnIn...`.
+</violation>
+<violation beginline="546" endline="546" begincolumn="30" endcolumn="86" rule="UselessParentheses" ruleset="Code Style" package="org.application" class="EntryPopOverContentPane" method="getGridCell" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `Objects.requireNonNullElse(GridPane.getRowIndex...`.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatController.java">
+<violation beginline="331" endline="331" begincolumn="18" endcolumn="27" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="ChatController" method="closeChat" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'closeChat()'.
+</violation>
+<violation beginline="345" endline="345" begincolumn="18" endcolumn="29" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="ChatController" method="sendMessage" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'sendMessage()'.
+</violation>
+<violation beginline="361" endline="361" begincolumn="18" endcolumn="33" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="ChatController" method="searchChatUsers" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'searchChatUsers()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatSearchingContainerController.java">
+<violation beginline="17" endline="17" begincolumn="28" endcolumn="42" rule="UnusedPrivateField" ruleset="Best Practices" package="org.controllers" class="ChatSearchingContainerController" variable="chatController" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'chatController'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateCourseModalController.java">
+<violation beginline="213" endline="213" begincolumn="18" endcolumn="31" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateCourseModalController" method="handleConfirm" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleConfirm()'.
+</violation>
+<violation beginline="250" endline="250" begincolumn="18" endcolumn="30" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateCourseModalController" method="handleDelete" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleDelete()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateGroupModalController.java">
+<violation beginline="44" endline="44" begincolumn="20" endcolumn="31" rule="UnusedPrivateField" ruleset="Best Practices" package="org.controllers" class="CreateGroupModalController" variable="sectionName" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'sectionName'.
+</violation>
+<violation beginline="198" endline="198" begincolumn="18" endcolumn="31" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateGroupModalController" method="handleConfirm" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleConfirm()'.
+</violation>
+<violation beginline="229" endline="229" begincolumn="18" endcolumn="30" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateGroupModalController" method="handleDelete" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleDelete()'.
+</violation>
+<violation beginline="248" endline="248" begincolumn="18" endcolumn="30" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateGroupModalController" method="handleCancel" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleCancel()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateLessonModalController.java">
+<violation beginline="4" endline="4" begincolumn="1" endcolumn="44" rule="UnnecessaryImport" ruleset="Code Style" package="org.controllers" class="CreateLessonModalController" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'com.calendarfx.model.CalendarSource'
+</violation>
+<violation beginline="110" endline="110" begincolumn="18" endcolumn="31" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateLessonModalController" method="handleConfirm" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleConfirm()'.
+</violation>
+<violation beginline="160" endline="160" begincolumn="18" endcolumn="30" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="CreateLessonModalController" method="handleDelete" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleDelete()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\LoginController.java">
+<violation beginline="57" endline="57" begincolumn="18" endcolumn="29" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="LoginController" method="handleLogin" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleLogin(ActionEvent)'.
+</violation>
+<violation beginline="90" endline="90" begincolumn="18" endcolumn="28" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="LoginController" method="initialize" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'initialize()'.
+</violation>
+<violation beginline="102" endline="102" begincolumn="18" endcolumn="42" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="LoginController" method="handleChangeLocalization" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleChangeLocalization(ActionEvent)'.
+</violation>
+<violation beginline="159" endline="159" begincolumn="18" endcolumn="36" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="LoginController" method="handleGoToRegister" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleGoToRegister(ActionEvent)'.
+</violation>
+<violation beginline="166" endline="166" begincolumn="28" endcolumn="34" rule="UnusedLocalVariable" ruleset="Best Practices" package="org.controllers" class="LoginController" method="handleGoToRegister" variable="bundle" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedlocalvariable" priority="3">
+Avoid unused local variables such as 'bundle'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\MainAppController.java">
+<violation beginline="170" endline="171" begincolumn="27" endcolumn="96" rule="UselessParentheses" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" variable="studentUserId" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `SessionManager.getInstance().getCurrentUser() !...`.
+</violation>
+<violation beginline="181" endline="181" begincolumn="17" endcolumn="62" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'Map' is already in scope because it is imported in this file
+</violation>
+<violation beginline="181" endline="181" begincolumn="39" endcolumn="62" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'List' is already in scope because it is imported in this file
+</violation>
+<violation beginline="181" endline="181" begincolumn="85" endcolumn="110" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'LinkedHashMap' is already in scope because it is imported in this file
+</violation>
+<violation beginline="194" endline="194" begincolumn="23" endcolumn="68" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'Map' is already in scope because it is imported in this file
+</violation>
+<violation beginline="194" endline="194" begincolumn="45" endcolumn="68" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'List' is already in scope because it is imported in this file
+</violation>
+<violation beginline="199" endline="199" begincolumn="30" endcolumn="43" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'Map' is already in scope because it is imported in this file
+</violation>
+<violation beginline="199" endline="199" begincolumn="58" endcolumn="81" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="MainAppController" method="refresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'java.util': 'List' is already in scope because it is imported in this file
+</violation>
+<violation beginline="253" endline="253" begincolumn="55" endcolumn="173" rule="UselessParentheses" ruleset="Code Style" package="org.controllers" class="MainAppController" method="loadDataFromDatabase" variable="studentUserId" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `SessionManager.getInstance().getCurrentUser() !...`.
+</violation>
+<violation beginline="277" endline="279" begincolumn="19" endcolumn="18" rule="EmptyCatchBlock" ruleset="Error Prone" package="org.controllers" class="MainAppController" method="loadDataFromDatabase" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#emptycatchblock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\NavbarController.java">
+<violation beginline="138" endline="138" begincolumn="18" endcolumn="31" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="NavbarController" method="handleRefresh" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleRefresh(ActionEvent)'.
+</violation>
+<violation beginline="138" endline="138" begincolumn="44" endcolumn="49" rule="UnusedFormalParameter" ruleset="Best Practices" package="org.controllers" class="NavbarController" method="handleRefresh" variable="event" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'event'.
+</violation>
+<violation beginline="154" endline="154" begincolumn="18" endcolumn="35" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="NavbarController" method="handleAlertsClick" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleAlertsClick(ActionEvent)'.
+</violation>
+<violation beginline="190" endline="190" begincolumn="18" endcolumn="36" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="NavbarController" method="handleProfileClick" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleProfileClick(ActionEvent)'.
+</violation>
+<violation beginline="219" endline="219" begincolumn="18" endcolumn="26" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="NavbarController" method="openChat" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'openChat()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\NotificationsPopupController.java">
+<violation beginline="84" endline="84" begincolumn="18" endcolumn="35" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="NotificationsPopupController" method="handleMarkAllRead" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleMarkAllRead(MouseEvent)'.
+</violation>
+<violation beginline="84" endline="84" begincolumn="47" endcolumn="52" rule="UnusedFormalParameter" ruleset="Best Practices" package="org.controllers" class="NotificationsPopupController" method="handleMarkAllRead" variable="event" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'event'.
+</violation>
+<violation beginline="167" endline="167" begincolumn="21" endcolumn="104" rule="UselessParentheses" ruleset="Code Style" package="org.controllers" class="NotificationRow" method="NotificationRow" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `this.unread ? "-fx-background-color: #D8F0E8;" ...`.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\RegisterController.java">
+<violation beginline="48" endline="48" begincolumn="18" endcolumn="32" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="RegisterController" method="handleRegister" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleRegister(ActionEvent)'.
+</violation>
+<violation beginline="86" endline="86" begincolumn="18" endcolumn="33" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="RegisterController" method="handleGoToLogin" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleGoToLogin(ActionEvent)'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java">
+<violation beginline="79" endline="80" begincolumn="19" endcolumn="88" rule="UselessParentheses" ruleset="Code Style" package="org.controllers" class="SourceTrayController" method="addSourceSectionsToSourceTray" variable="userId" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Useless parentheses around `SessionManager.getInstance().getCurrentUser() !...`.
+</violation>
+<violation beginline="169" endline="169" begincolumn="49" endcolumn="61" rule="UnusedFormalParameter" ruleset="Best Practices" package="org.controllers" class="SourceTrayController" method="createGroupsSectionNode" variable="sectionTitle" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'sectionTitle'.
+</violation>
+<violation beginline="202" endline="202" begincolumn="28" endcolumn="79" rule="UnnecessaryFullyQualifiedName" ruleset="Code Style" package="org.controllers" class="SourceTrayController" method="createGroupsSectionNode" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryfullyqualifiedname" priority="4">
+Unnecessary qualifier 'javafx.collections': 'ListChangeListener' is already in scope because it is imported in this file
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\UserSettingsController.java">
+<violation beginline="96" endline="96" begincolumn="18" endcolumn="28" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="UserSettingsController" method="handleSave" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleSave()'.
+</violation>
+<violation beginline="135" endline="135" begincolumn="18" endcolumn="42" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="UserSettingsController" method="handleChangeLocalization" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleChangeLocalization(ActionEvent)'.
+</violation>
+<violation beginline="192" endline="192" begincolumn="18" endcolumn="38" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="UserSettingsController" method="handleChangePassword" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleChangePassword()'.
+</violation>
+<violation beginline="236" endline="236" begincolumn="18" endcolumn="30" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.controllers" class="UserSettingsController" method="handleLogout" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'handleLogout()'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\LessonDao.java">
+<violation beginline="80" endline="80" begincolumn="13" endcolumn="46" rule="UselessPureMethodCall" ruleset="Error Prone" package="org.dao" class="LessonDao" method="findById" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_errorprone.html#uselesspuremethodcall" priority="3">
+Do not call pure method size if the result is not used.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\LocalizationService.java">
+<violation beginline="3" endline="3" begincolumn="1" endcolumn="41" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="LocalizationService" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'javafx.animation.PauseTransition'
+</violation>
+<violation beginline="4" endline="4" begincolumn="1" endcolumn="36" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="LocalizationService" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'javafx.application.Platform'
+</violation>
+<violation beginline="10" endline="10" begincolumn="1" endcolumn="29" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="LocalizationService" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'javafx.util.Duration'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\application\CalendarAppTest.java">
+<violation beginline="5" endline="5" begincolumn="1" endcolumn="50" rule="UnnecessaryImport" ruleset="Code Style" package="org.application" class="CalendarAppTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'org.junit.jupiter.api.Assertions.*'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\application\CustomEntryPopOverContentPaneTest.java">
+<violation beginline="3" endline="3" begincolumn="1" endcolumn="50" rule="UnnecessaryImport" ruleset="Code Style" package="org.application" class="CustomEntryPopOverContentPaneTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'org.junit.jupiter.api.Assertions.*'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\ChatControllerTest.java">
+<violation beginline="3" endline="3" begincolumn="1" endcolumn="50" rule="UnnecessaryImport" ruleset="Code Style" package="org.controllers" class="ChatControllerTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'org.junit.jupiter.api.Assertions.*'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\CreateLessonModalControllerTest.java">
+<violation beginline="3" endline="3" begincolumn="1" endcolumn="41" rule="UnnecessaryImport" ruleset="Code Style" package="org.controllers" class="CreateLessonModalControllerTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'org.junit.jupiter.api.BeforeEach'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\GroupDaoTest.java">
+<violation beginline="92" endline="92" begincolumn="22" endcolumn="27" rule="UnusedLocalVariable" ruleset="Best Practices" package="org.dao" class="GroupDaoTest" method="shouldDeleteGroup" variable="group" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedlocalvariable" priority="3">
+Avoid unused local variables such as 'group'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\datasource\TimetableConnectionTest.java">
+<violation beginline="5" endline="5" begincolumn="1" endcolumn="50" rule="UnnecessaryImport" ruleset="Code Style" package="org.datasource" class="TimetableConnectionTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'org.junit.jupiter.api.Assertions.*'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\StudentProfileTest.java">
+<violation beginline="5" endline="5" begincolumn="1" endcolumn="50" rule="UnnecessaryImport" ruleset="Code Style" package="org.entities" class="StudentProfileTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'org.junit.jupiter.api.Assertions.*'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\ChatServiceTest.java">
+<violation beginline="14" endline="14" begincolumn="1" endcolumn="25" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="ChatServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'java.util.Arrays'
+</violation>
+<violation beginline="18" endline="18" begincolumn="1" endcolumn="59" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="ChatServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused static import 'net.fortuna.ical4j.model.LocationType.other'
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\CourseServiceTest.java">
+<violation beginline="5" endline="5" begincolumn="1" endcolumn="26" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="CourseServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'org.dao.LessonDao'
+</violation>
+<violation beginline="7" endline="7" begincolumn="1" endcolumn="28" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="CourseServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'org.entities.Lesson'
+</violation>
+<violation beginline="17" endline="17" begincolumn="1" endcolumn="32" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="CourseServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'java.time.LocalDateTime'
+</violation>
+<violation beginline="35" endline="35" begincolumn="18" endcolumn="28" rule="UnusedPrivateMethod" ruleset="Best Practices" package="org.service" class="CourseServiceTest" method="createUser" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'createUser(Long, String, String, String, String, String, String)'.
+</violation>
+<violation beginline="35" endline="35" begincolumn="134" endcolumn="139" rule="UnusedFormalParameter" ruleset="Best Practices" package="org.service" class="CourseServiceTest" method="createUser" variable="email" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'email'.
+</violation>
+</file>
+<file name="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\GroupServiceTest.java">
+<violation beginline="13" endline="13" begincolumn="1" endcolumn="28" rule="UnnecessaryImport" ruleset="Code Style" package="org.service" class="GroupServiceTest" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.17.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'java.util.ArrayList'
+</violation>
+</file>
+</pmd>

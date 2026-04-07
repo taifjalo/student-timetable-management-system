@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         pmdVersion="7.17.0"
+         timestamp="2026-04-07T18:00:15.0090902+03:00"
+         version="1.0.0"
+         xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\dto\ChatPreview.java"
+         totalNumberOfTokens="123"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\dto\NotificationDto.java"
+         totalNumberOfTokens="94"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\application\CalendarApp.java"
+         totalNumberOfTokens="187"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\application\EntryPopOverContentPane.java"
+         totalNumberOfTokens="3777"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatController.java"
+         totalNumberOfTokens="1409"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatPreviewController.java"
+         totalNumberOfTokens="122"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatSearchingContainerController.java"
+         totalNumberOfTokens="85"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\ChatUserSearchResultController.java"
+         totalNumberOfTokens="131"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateCourseModalController.java"
+         totalNumberOfTokens="1104"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateGroupModalController.java"
+         totalNumberOfTokens="1028"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\CreateLessonModalController.java"
+         totalNumberOfTokens="786"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\EventExtraDetailsController.java"
+         totalNumberOfTokens="1800"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\LoginController.java"
+         totalNumberOfTokens="731"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\MainAppController.java"
+         totalNumberOfTokens="2023"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\MessageController.java"
+         totalNumberOfTokens="61"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\NavbarController.java"
+         totalNumberOfTokens="942"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\NotificationsPopupController.java"
+         totalNumberOfTokens="791"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\RegisterController.java"
+         totalNumberOfTokens="400"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java"
+         totalNumberOfTokens="2016"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\UserSettingsController.java"
+         totalNumberOfTokens="1237"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\CourseDao.java"
+         totalNumberOfTokens="700"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\GroupDao.java"
+         totalNumberOfTokens="1024"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\LessonDao.java"
+         totalNumberOfTokens="824"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\MessageDao.java"
+         totalNumberOfTokens="335"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\NotificationDao.java"
+         totalNumberOfTokens="654"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\UserDao.java"
+         totalNumberOfTokens="340"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\datasource\TimetableConnection.java"
+         totalNumberOfTokens="57"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\Course.java"
+         totalNumberOfTokens="230"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\Lesson.java"
+         totalNumberOfTokens="393"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\Message.java"
+         totalNumberOfTokens="308"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\Notification.java"
+         totalNumberOfTokens="114"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\NotificationReceiver.java"
+         totalNumberOfTokens="376"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\StudentGroup.java"
+         totalNumberOfTokens="188"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\StudentProfile.java"
+         totalNumberOfTokens="231"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\entities\User.java"
+         totalNumberOfTokens="315"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\AuthService.java"
+         totalNumberOfTokens="213"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\ChatService.java"
+         totalNumberOfTokens="342"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\CourseService.java"
+         totalNumberOfTokens="415"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\GroupService.java"
+         totalNumberOfTokens="436"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\LessonService.java"
+         totalNumberOfTokens="844"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\LocalizationService.java"
+         totalNumberOfTokens="325"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\NotificationService.java"
+         totalNumberOfTokens="437"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\SessionManager.java"
+         totalNumberOfTokens="110"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\service\UserService.java"
+         totalNumberOfTokens="81"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\dto\ChatPreviewTest.java"
+         totalNumberOfTokens="186"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\dto\NotificationDtoTest.java"
+         totalNumberOfTokens="134"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\application\CalendarAppTest.java"
+         totalNumberOfTokens="20"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\application\CustomEntryPopOverContentPaneTest.java"
+         totalNumberOfTokens="4"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\ChatControllerTest.java"
+         totalNumberOfTokens="4"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\CreateCourseModalControllerTest.java"
+         totalNumberOfTokens="166"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\CreateLessonModalControllerTest.java"
+         totalNumberOfTokens="98"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\NotificationsPopupControllerTest.java"
+         totalNumberOfTokens="287"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\SourceTrayControllerTest.java"
+         totalNumberOfTokens="431"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\controllers\UserSettingsControllerTest.java"
+         totalNumberOfTokens="244"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\CourseDaoTest.java"
+         totalNumberOfTokens="283"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\GroupDaoTest.java"
+         totalNumberOfTokens="501"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\LessonDaoTest.java"
+         totalNumberOfTokens="426"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\MessageDaoTest.java"
+         totalNumberOfTokens="225"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\NotificationDaoTest.java"
+         totalNumberOfTokens="802"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\UserDaoTest.java"
+         totalNumberOfTokens="171"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\datasource\TimetableConnectionTest.java"
+         totalNumberOfTokens="28"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\CourseTest.java"
+         totalNumberOfTokens="123"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\LessonTest.java"
+         totalNumberOfTokens="386"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\MessageTest.java"
+         totalNumberOfTokens="368"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\NotificationReceiverTest.java"
+         totalNumberOfTokens="324"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\NotificationTest.java"
+         totalNumberOfTokens="129"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\StudentGroupTest.java"
+         totalNumberOfTokens="99"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\StudentProfileTest.java"
+         totalNumberOfTokens="76"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\entities\UserTest.java"
+         totalNumberOfTokens="152"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\AuthServiceTest.java"
+         totalNumberOfTokens="670"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\ChatServiceTest.java"
+         totalNumberOfTokens="772"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\CourseServiceTest.java"
+         totalNumberOfTokens="892"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\GroupServiceTest.java"
+         totalNumberOfTokens="544"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\LessonServiceTest.java"
+         totalNumberOfTokens="3308"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\NotificationServiceTest.java"
+         totalNumberOfTokens="822"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\SessionManagerTest.java"
+         totalNumberOfTokens="634"/>
+   <file path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\UserServiceTest.java"
+         totalNumberOfTokens="535"/>
+   <duplication lines="20" tokens="173">
+      <file begintoken="20600"
+            column="29"
+            endcolumn="50"
+            endline="49"
+            endtoken="20772"
+            line="30"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\LessonDao.java"/>
+      <file begintoken="21154"
+            column="31"
+            endcolumn="50"
+            endline="202"
+            endtoken="21326"
+            line="183"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\dao\LessonDao.java"/>
+      <codefragment><![CDATA[    public Lesson saveLesson(Lesson lesson) {
+        try (EntityManager em = TimetableConnection.createEntityManager()) {
+            em.getTransaction().begin();
+
+            Course managedCourse = em.find(Course.class, lesson.getCourse().getId());
+            lesson.setCourse(managedCourse);
+
+            List<StudentGroup> managedGroups = new ArrayList<>();
+            for (StudentGroup g : lesson.getAssignedGroups()) {
+                StudentGroup managed = em.find(StudentGroup.class, g.getGroupCode());
+                if (managed != null) managedGroups.add(managed);
+            }
+            lesson.setAssignedGroups(managedGroups);
+
+            List<User> managedUsers = new ArrayList<>();
+            for (User u : lesson.getAssignedUsers()) {
+                User managed = em.find(User.class, u.getId());
+                if (managed != null) managedUsers.add(managed);
+            }
+            lesson.setAssignedUsers(managedUsers);
+]]></codefragment>
+   </duplication>
+   <duplication lines="19" tokens="120">
+      <file begintoken="15944"
+            column="63"
+            endcolumn="35"
+            endline="138"
+            endtoken="16063"
+            line="120"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java"/>
+      <file begintoken="16215"
+            column="97"
+            endcolumn="35"
+            endline="187"
+            endtoken="16334"
+            line="169"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java"/>
+      <codefragment><![CDATA[    private Node createSourceSectionNode(CalendarSource source) {
+        FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/ui/sourcetray-groups.fxml"));
+        groupsLoader.setController(this);
+        Node sourceSection;
+        try {
+            sourceSection = groupsLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Label sectionTitleText = (Label) groupsLoader.getNamespace().get("sectionTitleText");
+        VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
+        Button addButton = (Button) groupsLoader.getNamespace().get("addButton");
+
+        if (sectionTitleText == null || groupsListContainer == null) return null;
+
+        if (addButton != null) {
+            addButton.setUserData(SECTION_TYPE_COURSE);
+]]></codefragment>
+   </duplication>
+   <duplication lines="17" tokens="112">
+      <file begintoken="17182"
+            column="89"
+            endcolumn="54"
+            endline="370"
+            endtoken="17293"
+            line="354"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java"/>
+      <file begintoken="17386"
+            column="41"
+            endcolumn="54"
+            endline="406"
+            endtoken="17497"
+            line="390"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\SourceTrayController.java"/>
+      <codefragment><![CDATA[                colorDot.setStyle("-fx-background-color: " + styleToHex(newStyle) + ";"));
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        ImageView editIcon = new ImageView(new Image(getClass().getResource("/images/edit_dots_icon.png").toExternalForm()));
+        editIcon.setFitWidth(15.0);
+        editIcon.setFitHeight(15.0);
+        editIcon.setPickOnBounds(true);
+        editIcon.setPreserveRatio(true);
+
+        Button actionButton = new Button();
+        actionButton.setMnemonicParsing(false);
+        actionButton.setGraphic(editIcon);
+        actionButton.setCursor(Cursor.HAND);
+        actionButton.setStyle("-fx-background-color: transparent;");
+        actionButton.setOnAction(e -> openGroupModal(calendar, sectionType, e));
+]]></codefragment>
+   </duplication>
+   <duplication lines="16" tokens="110">
+      <file begintoken="12199"
+            column="62"
+            endcolumn="30"
+            endline="217"
+            endtoken="12308"
+            line="202"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\MainAppController.java"/>
+      <file begintoken="12558"
+            column="49"
+            endcolumn="22"
+            endline="276"
+            endtoken="12667"
+            line="263"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\main\java\org\controllers\MainAppController.java"/>
+      <codefragment><![CDATA[                            for (Lesson lesson : e.getValue()) {
+                                if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
+                                    continue;
+                                }
+                                Entry<EntryPopOverContentPane.SavedLesson> entry =
+                                        new Entry<>(course.getDisplayName());
+                                entry.setInterval(new Interval(
+                                        lesson.getStartAt().toLocalDate(),
+                                        lesson.getStartAt().toLocalTime(),
+                                        lesson.getEndAt().toLocalDate(),
+                                        lesson.getEndAt().toLocalTime()
+                                ));
+                                entry.setUserObject(
+                                        new EntryPopOverContentPane.SavedLesson(lesson.getId()));
+                                cal.addEntry(entry);
+                            }
+]]></codefragment>
+   </duplication>
+   <duplication lines="20" tokens="105">
+      <file begintoken="31014"
+            column="5"
+            endcolumn="18"
+            endline="46"
+            endtoken="31118"
+            line="27"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\MessageDaoTest.java"/>
+      <file begintoken="31232"
+            column="5"
+            endcolumn="18"
+            endline="35"
+            endtoken="31336"
+            line="20"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\dao\NotificationDaoTest.java"/>
+      <codefragment><![CDATA[    @DisplayName("Helper Method: First Create the user")
+    private User createAndSaveUser() {
+
+        // Arrange New User
+        User user = new User();
+        user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
+        user.setPasswordHash("hashed");
+        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
+        user.setFirstName("Mock");
+        user.setSureName("User");
+        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
+        user.setRole("student");
+
+        // Save the User:
+        userDao.save(user);
+        return user;
+    }
+
+    @Test
+    @DisplayName("Integration Test: Should Save And Retrieve Message Integration")
+]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="103">
+      <file begintoken="38300"
+            column="40"
+            endcolumn="69"
+            endline="271"
+            endtoken="38402"
+            line="263"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\LessonServiceTest.java"/>
+      <file begintoken="38807"
+            column="50"
+            endcolumn="69"
+            endline="335"
+            endtoken="38909"
+            line="327"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\LessonServiceTest.java"/>
+      <file begintoken="38957"
+            column="62"
+            endcolumn="69"
+            endline="352"
+            endtoken="39059"
+            line="344"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\LessonServiceTest.java"/>
+      <file begintoken="39092"
+            column="61"
+            endcolumn="69"
+            endline="369"
+            endtoken="39194"
+            line="361"
+            path="C:\Users\miska\Desktop\student-timetable-management-system\src\test\java\org\service\LessonServiceTest.java"/>
+      <codefragment><![CDATA[    void shouldUpdateLessonSuccessfully() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        Lesson lesson = createLesson(1L, LocalDateTime.of(2026, 3, 10, 9, 0),
+                LocalDateTime.of(2026, 3, 10, 10, 30), course, "A101");
+
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+
+        LocalDateTime newStart = LocalDateTime.of(2026, 3, 10, 10, 0);
+        LocalDateTime newEnd = LocalDateTime.of(2026, 3, 10, 11, 30);
+]]></codefragment>
+   </duplication>
+</pmd-cpd>
