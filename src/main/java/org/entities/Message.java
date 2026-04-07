@@ -119,7 +119,7 @@ public class Message implements Comparable<Message> {
 
     /**
      * Compares messages chronologically by {@code sentAt}.
-     * Used by {@link java.util.SortedList} in the chat view to keep messages in order.
+     * Used by {@code SortedList} in the chat view to keep messages in order.
      */
     @Override
     public int compareTo(Message other) {

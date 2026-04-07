@@ -85,12 +85,20 @@ public class StudentProfile {
         this.studyStartDate = studyStartDate;
     }
 
-    /** Returns the expected study end date. */
+    /**
+     * Returns the expected study end date.
+     *
+     * @return the study end date, or {@code null} if not set
+     */
     public LocalDate getStudyEndDate() {
         return studyEndDate;
     }
 
-    /** Sets the expected study end date. */
+    /**
+     * Sets the expected study end date.
+     *
+     * @param studyEndDate the study end date to set
+     */
     public void setStudyEndDate(LocalDate studyEndDate) {
         this.studyEndDate = studyEndDate;
     }
