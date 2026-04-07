@@ -14,8 +14,6 @@ import java.util.List;
  */
 public class ChatSearchingContainerController {
 
-    private ChatController chatController;
-
     @FXML
     private VBox chatSearchingContainer;
 
@@ -38,12 +36,4 @@ public class ChatSearchingContainerController {
         stage.close();
     }
 
-    /**
-     * Injects the parent {@link ChatController} so result rows can open conversations.
-     *
-     * @param chatController the owning chat controller
-     */
-    public void setChatController(ChatController chatController) {
-        this.chatController = chatController;
-    }
 }

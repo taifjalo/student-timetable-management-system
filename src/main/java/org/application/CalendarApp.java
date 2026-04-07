@@ -26,10 +26,10 @@ public class CalendarApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Locale systemLocale = Locale.getDefault();
         Locale startupLocale = switch (systemLocale.getLanguage()) {
-            case "fi" -> new Locale("fi", "FI");
-            case "ar" -> new Locale("ar", "IQ");
-            case "ru" -> new Locale("ru", "RU");
-            default -> new Locale("en", "US");
+            case "fi" -> Locale.of("fi", "FI");
+            case "ar" -> Locale.of("ar", "IQ");
+            case "ru" -> Locale.of("ru", "RU");
+            default -> Locale.of("en", "US");
         };
 
         ResourceBundle bundle = ResourceBundle.getBundle("i18n/MessagesBundle", startupLocale);

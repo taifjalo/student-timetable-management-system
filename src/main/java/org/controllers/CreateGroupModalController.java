@@ -41,7 +41,6 @@ public class CreateGroupModalController {
 
     private String initialName = "";
     private boolean isEditMode = false;
-    private String sectionName = "Item";
     private StudentGroup existingGroup = null;
     private ObservableList<StudentGroup> groupsList = null;
 
@@ -59,15 +58,6 @@ public class CreateGroupModalController {
      */
     public void setGroupsList(ObservableList<StudentGroup> groupsList) {
         this.groupsList = groupsList;
-    }
-
-    /**
-     * Sets the section name used in legacy title construction.
-     *
-     * @param sectionName the section name, or {@code "Item"} if {@code null}
-     */
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName != null ? sectionName : "Item";
     }
 
     /**

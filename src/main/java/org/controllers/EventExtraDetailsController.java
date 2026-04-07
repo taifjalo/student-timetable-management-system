@@ -106,7 +106,7 @@ public class EventExtraDetailsController {
                 List<StudentGroup> groups = groupService.getAllGroups();
                 Platform.runLater(() -> availableGroups.addAll(groups));
             } catch (Exception ex) {
-                System.err.println("Failed to load groups: " + ex.getMessage());
+                System.out.println("Failed to load groups: " + ex.getMessage());
             }
         }, "load-groups-for-lesson").start();
 
@@ -150,7 +150,7 @@ public class EventExtraDetailsController {
                         }
                     });
                 } catch (Exception ex) {
-                    System.err.println("Failed to search users: " + ex.getMessage());
+                    System.out.println("Failed to search users: " + ex.getMessage());
                 }
             }, "search-users-for-lesson").start();
         });

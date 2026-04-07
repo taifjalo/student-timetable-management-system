@@ -148,7 +148,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             try {
                 existingLesson = new LessonDao().findById(sl.lessonId());
             } catch (Exception ex) {
-                System.err.println("Could not load existing lesson: " + ex.getMessage());
+                System.out.println("Could not load existing lesson: " + ex.getMessage());
             }
         }
 
@@ -343,7 +343,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             titleField.setStyle("-fx-cursor: default; -fx-background-color: transparent;"
                                 + " -fx-border-color: transparent;");
         } catch (ReflectiveOperationException e) {
-            System.err.println("lockTitleToCalendarName reflection failed: " + e.getMessage());
+            System.out.println("lockTitleToCalendarName reflection failed: " + e.getMessage());
         }
 
         if (!teacher) {
@@ -459,7 +459,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                     try {
                         new LessonService(new LessonDao()).deleteLesson(sl.lessonId());
                     } catch (Exception ex) {
-                        System.err.println("Delete failed: " + ex.getMessage());
+                        System.out.println("Delete failed: " + ex.getMessage());
                     }
                 }, "delete-lesson-thread").start();
             }
@@ -470,9 +470,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         saveBtn.setStyle("-fx-background-color: #00956D; -fx-text-fill: white;"
                          + " -fx-cursor: hand; -fx-background-radius: 6;");
         saveBtn.setOnAction(e -> {
-            Calendar cal = entry.getCalendar();
+            Calendar<?> cal = entry.getCalendar();
             if (cal == null) {
-                System.err.println("Entry has no calendar — cannot save.");
+                System.out.println("Entry has no calendar — cannot save.");
                 return;
             }
 
@@ -485,11 +485,11 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                             .filter(c2 -> c2.getName().equals(cal.getName()))
                             .findFirst().orElse(null);
                 } catch (Exception ex) {
-                    System.err.println("Name-based course lookup failed: " + ex.getMessage());
+                    System.out.println("Name-based course lookup failed: " + ex.getMessage());
                 }
             }
             if (course == null) {
-                System.err.println("Could not resolve Course — cannot save.");
+                System.out.println("Could not resolve Course — cannot save.");
                 return;
             }
 
@@ -522,7 +522,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                         popOver.hide(javafx.util.Duration.ZERO);
                     });
                 } catch (Exception ex) {
-                    System.err.println("Save failed: " + ex.getMessage());
+                    System.out.println("Save failed: " + ex.getMessage());
                     ex.printStackTrace();
                     javafx.application.Platform.runLater(() -> {
                         savingInProgress[0] = false;
@@ -715,29 +715,23 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             this.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         }
 
-        Platform.runLater(() -> {
-
+        Platform.runLater(() ->
             this.lookupAll("*").forEach(node -> {
-
                 if (isRTL) {
                     node.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                 }
-
-
                 if (node instanceof Labeled labeled) {
-
                     String text = labeled.getText();
                     if (text == null || text.isBlank()) {
                         return;
                     }
-
                     String localized = translate(text, bundle);
                     if (localized != null) {
                         labeled.setText(localized);
                     }
                 }
-            });
-        });
+            })
+        );
     }
 
     /**
