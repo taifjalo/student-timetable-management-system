@@ -4,12 +4,17 @@ import com.calendarfx.model.Entry;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import org.application.EntryPopOverContentPane;
 import org.dao.GroupDao;
 import org.dao.UserDao;
 import org.entities.Lesson;
@@ -166,25 +171,39 @@ public class EventExtraDetailsController {
     }
 
     /** @return the classroom text-field node to insert into the grid */
-    public Node getClassIdNode() { return classroomField; }
+    public Node getClassIdNode() {
+        return classroomField;
+    }
 
     /** @return the teacher name label node to insert into the grid */
-    public Node getTeacherNode() { return teacherLabel; }
+    public Node getTeacherNode() {
+        return teacherLabel;
+    }
 
     /** @return the group chip row node to insert into the grid */
-    public Node getGroupRowNode() { return groupRow; }
+    public Node getGroupRowNode() {
+        return groupRow;
+    }
 
     /** @return the student chip / search row node to insert into the grid */
-    public Node getStudentsNode() { return studentsRow; }
+    public Node getStudentsNode() {
+        return studentsRow;
+    }
 
     /** @return the trimmed classroom text entered by the teacher */
-    public String getClassroom() { return classroomField.getText().trim(); }
+    public String getClassroom() {
+        return classroomField.getText().trim();
+    }
 
     /** @return a copy of the currently selected groups list */
-    public List<StudentGroup> getSelectedGroups() { return new ArrayList<>(selectedGroups); }
+    public List<StudentGroup> getSelectedGroups() {
+        return new ArrayList<>(selectedGroups);
+    }
 
     /** @return a copy of the currently selected users list */
-    public List<User> getSelectedUsers() { return new ArrayList<>(selectedUsers); }
+    public List<User> getSelectedUsers() {
+        return new ArrayList<>(selectedUsers);
+    }
 
     /**
      * Converts all interactive controls to read-only labels when {@code readOnly} is
@@ -196,20 +215,22 @@ public class EventExtraDetailsController {
      * @param readOnly {@code true} to make the widget read-only; {@code false} is a no-op
      */
     public void setReadOnly(boolean readOnly) {
-        if (!readOnly) return;
+        if (!readOnly) {
+            return;
+        }
 
         String classroomText = classroomField.getText().trim();
         Label classroomLabel = new Label(classroomText.isEmpty() ? "—" : classroomText);
         classroomLabel.setStyle("-fx-padding: 2 0 2 0;");
         // Replace the TextField in its parent with the label
-        if (classroomField.getParent() instanceof javafx.scene.layout.GridPane gp) {
-            int col = javafx.scene.layout.GridPane.getColumnIndex(classroomField) == null
-                    ? 0 : javafx.scene.layout.GridPane.getColumnIndex(classroomField);
-            int row = javafx.scene.layout.GridPane.getRowIndex(classroomField) == null
-                    ? 0 : javafx.scene.layout.GridPane.getRowIndex(classroomField);
+        if (classroomField.getParent() instanceof GridPane gp) {
+            int col = GridPane.getColumnIndex(classroomField) == null
+                    ? 0 : GridPane.getColumnIndex(classroomField);
+            int row = GridPane.getRowIndex(classroomField) == null
+                    ? 0 : GridPane.getRowIndex(classroomField);
             gp.getChildren().remove(classroomField);
-            javafx.scene.layout.GridPane.setColumnIndex(classroomLabel, col);
-            javafx.scene.layout.GridPane.setRowIndex(classroomLabel, row);
+            GridPane.setColumnIndex(classroomLabel, col);
+            GridPane.setRowIndex(classroomLabel, row);
             gp.getChildren().add(classroomLabel);
         }
 
@@ -219,13 +240,15 @@ public class EventExtraDetailsController {
             if (n instanceof Button btn) {
                 String text = btn.getText();
                 // Skip the "Add group" button entirely
-                if (text != null && text.startsWith("+")) continue;
+                if (text != null && text.startsWith("+")) {
+                    continue;
+                }
                 // Convert group chips to plain styled labels
                 Label groupLabel = new Label(text);
                 groupLabel.setStyle(
-                        "-fx-background-radius: 12; -fx-border-radius: 12;" +
-                        "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;" +
-                        "-fx-padding: 2 8 2 8;");
+                        "-fx-background-radius: 12; -fx-border-radius: 12;"
+                        + "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;"
+                        + "-fx-padding: 2 8 2 8;");
                 groupRow.getChildren().add(groupLabel);
             }
         }
@@ -237,13 +260,15 @@ public class EventExtraDetailsController {
         List<Node> studentNodes = new ArrayList<>(studentsRow.getChildren());
         studentsRow.getChildren().clear();
         for (Node n : studentNodes) {
-            if (n instanceof TextField) continue; // remove search field
+            if (n instanceof TextField) {
+                continue; // remove search field
+            }
             if (n instanceof Button btn) {
                 Label userLabel = new Label(btn.getText());
                 userLabel.setStyle(
-                        "-fx-background-radius: 12; -fx-border-radius: 12;" +
-                        "-fx-border-color: #aaa; -fx-background-color: #f0f0f0;" +
-                        "-fx-padding: 2 8 2 8;");
+                        "-fx-background-radius: 12; -fx-border-radius: 12;"
+                        + "-fx-border-color: #aaa; -fx-background-color: #f0f0f0;"
+                        + "-fx-padding: 2 8 2 8;");
                 studentsRow.getChildren().add(userLabel);
             }
         }
@@ -264,7 +289,9 @@ public class EventExtraDetailsController {
         }
         ContextMenu menu = new ContextMenu();
         for (StudentGroup g : availableGroups) {
-            if (selectedGroups.stream().anyMatch(s -> s.getGroupCode().equals(g.getGroupCode()))) continue;
+            if (selectedGroups.stream().anyMatch(s -> s.getGroupCode().equals(g.getGroupCode()))) {
+                continue;
+            }
             MenuItem item = new MenuItem(g.getDisplayFieldOfStudies() + " (" + g.getGroupCode() + ")");
             item.setOnAction(e -> addGroupChip(g, addGroupBtn));
             menu.getItems().add(item);
@@ -292,9 +319,9 @@ public class EventExtraDetailsController {
         selectedGroups.add(group);
         Button chip = new Button(group.getDisplayFieldOfStudies());
         chip.setStyle(
-                "-fx-background-radius: 12; -fx-border-radius: 12;" +
-                "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;" +
-                "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
+                "-fx-background-radius: 12; -fx-border-radius: 12;"
+                + "-fx-border-color: #aaa; -fx-background-color: #e8f4fd;"
+                + "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
         chip.setOnAction(e -> {
             selectedGroups.removeIf(g -> Objects.equals(g.getGroupCode(), group.getGroupCode()));
             groupRow.getChildren().remove(chip);
@@ -325,7 +352,9 @@ public class EventExtraDetailsController {
                     Objects.requireNonNull(getClass().getResource("/images/exit.png")).toExternalForm(),
                     14, 14, true, true);
             xIcon = new ImageView(img);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // image load failure handled by null check below
+        }
 
         String fullName = user.getFirstName() + " " + user.getSureName();
         Button chip = new Button(fullName);
@@ -336,9 +365,9 @@ public class EventExtraDetailsController {
             chip.setText(fullName + "  ×");
         }
         chip.setStyle(
-                "-fx-background-radius: 12; -fx-border-radius: 12;" +
-                "-fx-border-color: #aaa; -fx-background-color: #f0f0f0;" +
-                "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
+                "-fx-background-radius: 12; -fx-border-radius: 12;"
+                + "-fx-border-color: #aaa; -fx-background-color: #f0f0f0;"
+                + "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
         chip.setOnAction(e -> {
             selectedUsers.removeIf(u -> Objects.equals(u.getId(), user.getId()));
             studentsRow.getChildren().remove(chip);

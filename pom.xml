@@ -11,6 +11,8 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.organization>miska-voutilainen</sonar.organization>
+        <sonar.projectKey>org.example:student-timetable-management-system</sonar.projectKey>
     </properties>
 
     <dependencies>
@@ -259,6 +261,88 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Checkstyle (Sun style) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
+                    <outputFileFormat>xml</outputFileFormat>
+                    <failsOnError>false</failsOnError>
+                    <failOnViolation>false</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- SpotBugs (successor to FindBugs) -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.9.8.3</version>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>spotbugs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>${project.build.directory}</xmlOutputDirectory>
+                    <failOnError>false</failOnError>
+                    <includeTests>true</includeTests>
+                    <excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
+
+            <!-- PMD + CPD (copy-paste detector) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.28.0</version>
+                <executions>
+                    <execution>
+                        <id>pmd-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>pmd</goal>
+                            <goal>cpd</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <targetJdk>21</targetJdk>
+                    <includeTests>true</includeTests>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <format>xml</format>
+                </configuration>
+            </plugin>
+
+            <!-- SonarQube/SonarCloud scanner -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.0.0.4121</version>
             </plugin>
 
         </plugins>

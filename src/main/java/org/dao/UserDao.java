@@ -32,7 +32,9 @@ public class UserDao {
                 em.persist(user);
                 tx.commit();
             } catch (Exception e) {
-                if (tx.isActive()) tx.rollback();
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
                 throw e;
             }
         }
@@ -65,7 +67,10 @@ public class UserDao {
      */
     public List<User> findUserByNameSurname(String name1, String name2) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("SELECT u FROM User u WHERE (u.firstName =:name1 and u.sureName = :name2) OR (u.firstName =:name2 and u.sureName = :name1)", User.class)
+            String q = "SELECT u FROM User u WHERE "
+                    + "(u.firstName =:name1 and u.sureName = :name2) "
+                    + "OR (u.firstName =:name2 and u.sureName = :name1)";
+            return em.createQuery(q, User.class)
                     .setParameter("name1", name1)
                     .setParameter("name2", name2)
                     .getResultList();
@@ -95,12 +100,12 @@ public class UserDao {
      */
     public List<User> searchByName(String query) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            String pattern = "%" + query.toLowerCase() + "%";
+            String pattern = "%" + query.toLowerCase(java.util.Locale.ROOT) + "%";
             return em.createQuery(
-                    "SELECT u FROM User u WHERE LOWER(u.firstName) LIKE :q " +
-                    "OR LOWER(u.sureName) LIKE :q " +
-                    "OR LOWER(CONCAT(u.firstName, ' ', u.sureName)) LIKE :q " +
-                    "ORDER BY u.firstName ASC, u.sureName ASC",
+                    "SELECT u FROM User u WHERE LOWER(u.firstName) LIKE :q "
+                    + "OR LOWER(u.sureName) LIKE :q "
+                    + "OR LOWER(CONCAT(u.firstName, ' ', u.sureName)) LIKE :q "
+                    + "ORDER BY u.firstName ASC, u.sureName ASC",
                     User.class
             ).setParameter("q", pattern).getResultList();
         }

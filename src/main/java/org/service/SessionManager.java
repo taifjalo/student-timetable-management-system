@@ -9,12 +9,13 @@ import org.entities.User;
  *
  * <p>Not thread-safe — intended for use on the JavaFX application thread only.
  */
-public class SessionManager {
+public final class SessionManager {
 
     private static SessionManager instance;
     private User currentUser;
 
-    private SessionManager() {}
+    private SessionManager() {
+    }
 
     /**
      * Returns the single application-wide instance, creating it on first call.

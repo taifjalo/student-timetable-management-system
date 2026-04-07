@@ -9,8 +9,10 @@ class CreateCourseModalControllerTest {
 
     @DisplayName("Helper Method: Mirrors Create Course Modal Controller.styleToHex() logic")
     private String courseModalStyleToHex(String style) {
-        if (style == null) return "#888888";
-        return switch (style.toUpperCase()) {
+        if (style == null) {
+            return "#888888";
+        }
+        return switch (style.toUpperCase(java.util.Locale.ROOT)) {
             case "STYLE1" -> "#77C04B";
             case "STYLE2" -> "#418FCB";
             case "STYLE3" -> "#F7D15B";

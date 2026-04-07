@@ -24,8 +24,8 @@ public class ChatSearchingContainerController {
      *
      * @param items the HBox rows, one per matching user
      */
-    public void addItems(List<HBox> items){
-        for (HBox item: items){
+    public void addItems(List<HBox> items) {
+        for (HBox item : items) {
             chatSearchingContainer.getChildren().add(item);
         }
     }
@@ -33,7 +33,7 @@ public class ChatSearchingContainerController {
     /**
      * Closes the search results popup window.
      */
-    public void closeModal(){
+    public void closeModal() {
         Stage stage = (Stage) chatSearchingContainer.getScene().getWindow();
         stage.close();
     }

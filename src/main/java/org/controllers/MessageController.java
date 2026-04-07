@@ -26,7 +26,7 @@ public class MessageController {
      *
      * @param text the message body to display
      */
-    public void setText(String text){
+    public void setText(String text) {
         messageBubble.setText(text);
     }
 
@@ -35,7 +35,7 @@ public class MessageController {
      *
      * @param time the timestamp the message was sent
      */
-    public void setTime (LocalDateTime time){
+    public void setTime(LocalDateTime time) {
         String textTime = time.format(formatter);
         timeLabel.setText(textTime);
     }

@@ -1,6 +1,11 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -26,7 +31,8 @@ public class Notification {
     private LocalDateTime sentAt;
 
     /** Required no-arg constructor for JPA. */
-    public Notification() {}
+    public Notification() {
+    }
 
     /**
      * Creates a notification with the given timestamp.
@@ -38,12 +44,22 @@ public class Notification {
     }
 
     /** Returns the surrogate primary key. */
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
+
     /** Sets the surrogate primary key (used by JPA; do not call manually). */
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /** Returns the timestamp this notification was sent. */
-    public LocalDateTime getSentAt() { return sentAt; }
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
     /** Sets the sent timestamp. */
-    public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
+    public void setSentAt(LocalDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
 }

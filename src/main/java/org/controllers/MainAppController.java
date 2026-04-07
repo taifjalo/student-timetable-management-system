@@ -14,8 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.geometry.NodeOrientation;
 import javafx.util.Duration;
 import org.application.EntryPopOverContentPane;
+import org.entities.User;
 import org.dao.CourseDao;
 import org.dao.GroupDao;
 import org.dao.LessonDao;
@@ -29,7 +32,13 @@ import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Root controller for the main application scene ({@code main-app.fxml}).
@@ -70,13 +79,18 @@ public class MainAppController {
     public void initialize() {
         try {
 
-            FXMLLoader navbarLoader = new FXMLLoader(getClass().getResource("/ui/timetable-management-navbar.fxml"), localizationService.getBundle());
+            FXMLLoader navbarLoader = new FXMLLoader(
+                    getClass().getResource("/ui/timetable-management-navbar.fxml"),
+                    localizationService.getBundle());
             localizationService.swapSides(mainRoot);
             BorderPane navbar = navbarLoader.load();
             navbarController = navbarLoader.getController();
             mainRoot.setTop(navbar);
 
             calendarView = new CalendarView();
+            // CalendarFX does not support RTL layout — pin it to LTR regardless
+            // of the active locale so Arabic doesn't break the calendar rendering.
+            calendarView.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             mainRoot.setCenter(calendarView);
 
             calendarView.selectedPageProperty().addListener((obs, o, n) ->
@@ -108,7 +122,9 @@ public class MainAppController {
 
             calendarView.setEntryEditPolicy(param -> {
                 // Students cannot interact with entries at all
-                if (!SessionManager.getInstance().isTeacher()) return false;
+                if (!SessionManager.getInstance().isTeacher()) {
+                    return false;
+                }
                 // Teachers: no drag-to-move or drag-to-resize
                 return switch (param.getEditOperation()) {
                     case MOVE, CHANGE_START, CHANGE_END -> false;
@@ -143,8 +159,16 @@ public class MainAppController {
 
             sourceTrayController = new SourceTrayController();
 
-            // Load initial data
-            loadDataFromDatabase(true);
+            // Show source tray with skeleton immediately, then kick off the DB load.
+            // Platform.runLater defers until after the scene is fully laid out so
+            // the CSS lookup inside showSkeleton() resolves correctly.
+            Platform.runLater(() -> {
+                calendarView.setShowSourceTray(true);
+                calendarView.applyCss();
+                calendarView.layout();
+                sourceTrayController.showSkeleton(calendarView);
+                loadDataFromDatabase(true);
+            });
 
 
         } catch (Exception e) {
@@ -178,7 +202,7 @@ public class MainAppController {
                     dbCourses = new ArrayList<>();
                 }
 
-                java.util.Map<Course, java.util.List<Lesson>> courseToLessons = new java.util.LinkedHashMap<>();
+                Map<Course, List<Lesson>> courseToLessons = new LinkedHashMap<>();
                 for (Course course : dbCourses) {
                     try {
                         List<Lesson> lessons = isTeacher
@@ -186,19 +210,20 @@ public class MainAppController {
                                 : lessonService.getLessonsByCourseWithGroups(course.getId());
                         courseToLessons.put(course, lessons);
                     } catch (Exception ex) {
-                        System.err.println("Refresh: failed lessons for " + course.getDisplayName() + ": " + ex.getMessage());
+                        System.err.println("Refresh: failed lessons for "
+                                + course.getDisplayName() + ": " + ex.getMessage());
                         courseToLessons.put(course, new ArrayList<>());
                     }
                 }
 
-                final java.util.Map<Course, java.util.List<Lesson>> finalMap = courseToLessons;
+                final Map<Course, List<Lesson>> finalMap = courseToLessons;
 
                 Platform.runLater(() -> {
                     try {
                         myCalendarSource.getCalendars().clear();
-                        for (java.util.Map.Entry<Course, java.util.List<Lesson>> e : finalMap.entrySet()) {
+                        for (Map.Entry<Course, List<Lesson>> e : finalMap.entrySet()) {
                             Course course  = e.getKey();
-                            Calendar cal   = courseService.toCalendar(course);
+                            Calendar<Course> cal   = courseService.toCalendar(course);
                             for (Lesson lesson : e.getValue()) {
                                 if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
                                     continue;
@@ -243,75 +268,98 @@ public class MainAppController {
      *                  and divider positioning on the JavaFX thread
      */
     private void loadDataFromDatabase(boolean firstLoad) {
-        CourseService courseService = new CourseService(new CourseDao());
-        LessonService lessonService = new LessonService(new LessonDao());
-
-        myCalendarSource.getCalendars().clear();
-
         final boolean isTeacher = SessionManager.getInstance().isTeacher();
         final String studentGroupCode = resolveStudentGroupCode(isTeacher);
-        final Long studentUserId = isTeacher ? null : (SessionManager.getInstance().getCurrentUser() != null ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        final Long studentUserId = isTeacher ? null
+                : (SessionManager.getInstance().getCurrentUser() != null
+                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
 
-        try {
-            List<Course> dbCourses = courseService.getCoursesForUser(studentUserId);
-            for (Course course : dbCourses) {
-                Calendar cal = courseService.toCalendar(course);
+        // Show the spinner immediately so the user knows a load is in progress.
+        navbarController.startSpin();
+
+        new Thread(() -> {
+            try {
+                CourseService courseService = new CourseService(new CourseDao());
+                LessonService lessonService = new LessonService(new LessonDao());
+
+                List<Course> dbCourses;
                 try {
-                    List<Lesson> lessons = isTeacher
-                            ? lessonService.getLessonsByCourse(course.getId())
-                            : lessonService.getLessonsByCourseWithGroups(course.getId());
-                    for (Lesson lesson : lessons) {
-                        if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
-                            continue;
+                    dbCourses = courseService.getCoursesForUser(studentUserId);
+                } catch (Exception e) {
+                    System.err.println("loadData: failed to load courses: " + e.getMessage());
+                    dbCourses = new ArrayList<>();
+                }
+
+                Map<Course, List<Lesson>> courseToLessons = new LinkedHashMap<>();
+                for (Course course : dbCourses) {
+                    try {
+                        List<Lesson> lessons = isTeacher
+                                ? lessonService.getLessonsByCourse(course.getId())
+                                : lessonService.getLessonsByCourseWithGroups(course.getId());
+                        courseToLessons.put(course, lessons);
+                    } catch (Exception ex) {
+                        courseToLessons.put(course, new ArrayList<>());
+                    }
+                }
+
+                final Map<Course, List<Lesson>> finalMap = courseToLessons;
+                final CourseService finalCourseService = courseService;
+
+                Platform.runLater(() -> {
+                    try {
+                        myCalendarSource.getCalendars().clear();
+                        for (Map.Entry<Course, List<Lesson>> e : finalMap.entrySet()) {
+                            Course course = e.getKey();
+                            Calendar<Course> cal = finalCourseService.toCalendar(course);
+                            for (Lesson lesson : e.getValue()) {
+                                if (!isTeacher && !lessonVisibleToStudent(
+                                        lesson, studentGroupCode, studentUserId)) {
+                                    continue;
+                                }
+                                Entry<EntryPopOverContentPane.SavedLesson> entry =
+                                        new Entry<>(course.getDisplayName());
+                                entry.setInterval(new Interval(
+                                        lesson.getStartAt().toLocalDate(),
+                                        lesson.getStartAt().toLocalTime(),
+                                        lesson.getEndAt().toLocalDate(),
+                                        lesson.getEndAt().toLocalTime()
+                                ));
+                                entry.setUserObject(
+                                        new EntryPopOverContentPane.SavedLesson(lesson.getId()));
+                                cal.addEntry(entry);
+                            }
+                            myCalendarSource.getCalendars().add(cal);
                         }
-                        Entry<EntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getDisplayName());
-                        entry.setInterval(new Interval(
-                                lesson.getStartAt().toLocalDate(),
-                                lesson.getStartAt().toLocalTime(),
-                                lesson.getEndAt().toLocalDate(),
-                                lesson.getEndAt().toLocalTime()
-                        ));
-                        entry.setUserObject(new EntryPopOverContentPane.SavedLesson(lesson.getId()));
-                        cal.addEntry(entry);
+
+                        sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
+                        navbarController.refreshBadge();
+
+                        if (firstLoad) {
+                            SplitPane sp = calendarView.lookupAll(".split-pane").stream()
+                                    .filter(n -> n instanceof SplitPane)
+                                    .map(n -> (SplitPane) n)
+                                    .filter(p -> p.getItems().size() >= 2)
+                                    .findFirst()
+                                    .orElse(null);
+
+                            if (sp != null && sp.getWidth() > 0) {
+                                double sidebarWidth = 300;
+                                sp.setDividerPositions(sidebarWidth / sp.getWidth());
+                                if (sp.getItems().get(0) instanceof Region r) {
+                                    r.setMinWidth(300);
+                                }
+                            }
+                        }
+                    } finally {
+                        navbarController.stopSpin();
                     }
-                } catch (Exception ex) {
-                    // continue loading other courses
-                }
-                myCalendarSource.getCalendars().add(cal);
+                });
+            } catch (Exception e) {
+                System.err.println("loadDataFromDatabase failed: " + e.getMessage());
+                e.printStackTrace();
+                Platform.runLater(() -> navbarController.stopSpin());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (firstLoad) {
-            Platform.runLater(() -> {
-                calendarView.setShowSourceTray(true);
-                calendarView.applyCss();
-                calendarView.layout();
-                sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
-
-                SplitPane sp = calendarView.lookupAll(".split-pane").stream()
-                        .filter(n -> n instanceof SplitPane)
-                        .map(n -> (SplitPane) n)
-                        .filter(p -> p.getItems().size() >= 2)
-                        .findFirst()
-                        .orElse(null);
-
-                if (sp != null && sp.getWidth() > 0) {
-                    double sidebarWidth = 300;
-                    sp.setDividerPositions(sidebarWidth / sp.getWidth());
-                    if (sp.getItems().get(0) instanceof javafx.scene.layout.Region r) {
-                        r.setMinWidth(300);
-                    }
-                }
-            });
-        } else {
-            sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
-        }
-
-        if (!firstLoad) {
-            navbarController.refreshBadge();
-        }
+        }, "load-data-thread").start();
     }
 
     /**
@@ -322,9 +370,13 @@ public class MainAppController {
      * @return the group code string, or {@code null}
      */
     private String resolveStudentGroupCode(boolean isTeacher) {
-        if (isTeacher) return null;
-        org.entities.User currentUser = SessionManager.getInstance().getCurrentUser();
-        if (currentUser == null) return null;
+        if (isTeacher) {
+            return null;
+        }
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            return null;
+        }
         try {
             StudentGroup g = new GroupDao().findGroupByUserId(currentUser.getId());
             return g != null ? g.getGroupCode() : null;
@@ -345,16 +397,22 @@ public class MainAppController {
      */
     private boolean lessonVisibleToStudent(Lesson lesson, String studentGroupCode, Long studentUserId) {
         // Check individual assignment first
-        List<org.entities.User> assignedUsers = lesson.getAssignedUsers();
-        if (assignedUsers != null && studentUserId != null) {
+        List<User> assignedUsers = lesson.getAssignedUsers();
+        if (studentUserId != null) {
             boolean directlyAssigned = assignedUsers.stream()
                     .anyMatch(u -> studentUserId.equals(u.getId()));
-            if (directlyAssigned) return true;
+            if (directlyAssigned) {
+                return true;
+            }
         }
         // Check group assignment
-        if (studentGroupCode == null) return false;
+        if (studentGroupCode == null) {
+            return false;
+        }
         List<StudentGroup> assignedGroups = lesson.getAssignedGroups();
-        if (assignedGroups == null || assignedGroups.isEmpty()) return false;
+        if (assignedGroups.isEmpty()) {
+            return false;
+        }
         return assignedGroups.stream().anyMatch(g -> studentGroupCode.equals(g.getGroupCode()));
     }
 
@@ -375,7 +433,9 @@ public class MainAppController {
             if (node instanceof Button b) {
 
                 String text = b.getText();
-                if (text == null) return;
+                if (text == null) {
+                    return;
+                }
 
                 if (todayVariants.contains(text) || text.equals(todayLocalized)) {
                     b.setText(todayLocalized);
@@ -389,7 +449,9 @@ public class MainAppController {
             if (node instanceof Label l) {
 
                 String text = l.getText();
-                if (text == null) return;
+                if (text == null) {
+                    return;
+                }
 
                 if (allDayVariants.contains(text)) {
                     l.setText(allDayLocalized);
@@ -407,7 +469,7 @@ public class MainAppController {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(50), e -> localizeCalendar())
         );
-        timeline.setCycleCount(5); // 5 попыток
+        timeline.setCycleCount(5); // 5 attempts
         timeline.play();
     }
 
@@ -421,7 +483,7 @@ public class MainAppController {
      */
     private Set<String> getVariants(String key) {
         return Set.of(
-                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("en","US")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("en", "US")).getString(key),
                 ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ru", "RU")).getString(key),
                 ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("fi", "FI")).getString(key),
                 ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ar", "IQ")).getString(key)

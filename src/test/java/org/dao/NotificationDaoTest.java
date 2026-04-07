@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Integration Test: This class needs only Tests are applied with Integration to DB, without JUnit 5 & Mock logic Tests")
+@DisplayName("Integration Test: Applied with DB integration, without JUnit 5 mock logic")
 class NotificationDaoTest {
 
     private final NotificationDao notificationDao = new NotificationDao();
@@ -36,7 +36,8 @@ class NotificationDaoTest {
     void shouldSaveNotificationAndFindByUser() {
         User user = createAndSaveUser();
 
-        Notification saved = notificationDao.saveNotification("notification.newLesson", "CS101|Room 202", List.of(user.getId()));
+        Notification saved = notificationDao.saveNotification(
+                "notification.newLesson", "CS101|Room 202", List.of(user.getId()));
 
         List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
 
@@ -50,7 +51,8 @@ class NotificationDaoTest {
         User user1 = createAndSaveUser();
         User user2 = createAndSaveUser();
 
-        Notification saved = notificationDao.saveNotification("notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
+        Notification saved = notificationDao.saveNotification(
+                "notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
 
         List<NotificationReceiver> results1 = notificationDao.findByUserId(user1.getId());
         List<NotificationReceiver> results2 = notificationDao.findByUserId(user2.getId());
@@ -77,7 +79,8 @@ class NotificationDaoTest {
     void shouldMarkSingleNotificationAsRead() {
         User user = createAndSaveUser();
 
-        Notification saved = notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
+        Notification saved = notificationDao.saveNotification(
+                "notification.groupAdded", "SWD22S", List.of(user.getId()));
 
         notificationDao.markAsRead(user.getId(), saved.getId());
 

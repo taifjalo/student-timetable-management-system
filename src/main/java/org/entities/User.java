@@ -2,7 +2,12 @@
 
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * JPA entity representing an application user.
@@ -18,30 +23,30 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name="name", nullable=false)
+    @Column(name = "name", nullable = false)
     private String firstName;
 
-    @Column(name="surname", nullable=false)
+    @Column(name = "surname", nullable = false)
     private String sureName;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-
-    @Column(name="phone_number")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name="password", nullable=false)
+    @Column(name = "password", nullable = false)
     private String passwordHash;
 
-    @Column(name="role")
+    @Column(name = "role")
     private String role;
 
     /** Required no-arg constructor for JPA. */
-    public User() {}
+    public User() {
+    }
 
     /** Returns the surrogate primary key. */
     public Long getId() {

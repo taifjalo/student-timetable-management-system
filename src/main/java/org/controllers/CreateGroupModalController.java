@@ -48,7 +48,8 @@ public class CreateGroupModalController {
     private final ResourceBundle bundle = new LocalizationService().getBundle();
 
     private final UserService userService = new UserService(new UserDao());
-    private final GroupService groupService = new GroupService(new GroupDao(), new NotificationService(new NotificationDao()));
+    private final GroupService groupService = new GroupService(
+            new GroupDao(), new NotificationService(new NotificationDao()));
 
     /**
      * Injects the observable groups list so the source tray updates live when a
@@ -227,7 +228,10 @@ public class CreateGroupModalController {
      */
     @FXML
     private void handleDelete() {
-        if (existingGroup == null) { closeModal(); return; }
+        if (existingGroup == null) {
+            closeModal();
+            return;
+        }
         new Thread(() -> {
             try {
                 groupService.deleteGroup(existingGroup.getGroupCode());

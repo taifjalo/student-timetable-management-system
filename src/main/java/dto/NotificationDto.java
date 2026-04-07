@@ -34,11 +34,22 @@ public class NotificationDto {
     }
 
     /** Returns the notification's primary key. */
-    public Long getNotificationId()  { return notificationId; }
+    public Long getNotificationId() {
+        return notificationId;
+    }
+
     /** Returns the locale-resolved display text. */
-    public String getContent()       { return content; }
+    public String getContent() {
+        return content;
+    }
+
     /** Returns the timestamp this notification was sent. */
-    public LocalDateTime getSentAt() { return sentAt; }
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
     /** Returns {@code true} if the recipient has read this notification. */
-    public boolean isRead()          { return isRead; }
+    public boolean isRead() {
+        return isRead;
+    }
 }

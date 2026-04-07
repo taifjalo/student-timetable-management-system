@@ -55,8 +55,8 @@ public class NotificationDao {
             for (Map.Entry<String, Locale> entry : SUPPORTED_LOCALES.entrySet()) {
                 String content = renderContent(messageKey, params, entry.getValue());
                 em.createNativeQuery(
-                    "INSERT INTO notification_translations (notification_id, language_code, content) " +
-                    "VALUES (?, ?, ?)"
+                    "INSERT INTO notification_translations (notification_id, language_code, content) "
+                    + "VALUES (?, ?, ?)"
                 ).setParameter(1, notification.getId())
                  .setParameter(2, entry.getKey())
                  .setParameter(3, content)
@@ -94,17 +94,17 @@ public class NotificationDao {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             @SuppressWarnings("unchecked")
             List<Object[]> result = em.createNativeQuery(
-                "SELECT nr.notification_id, " +
-                "  COALESCE(nt.content, nt_en.content) AS content, " +
-                "  n.sent_at, nr.is_read " +
-                "FROM notification_receivers nr " +
-                "JOIN notifications n ON n.notification_id = nr.notification_id " +
-                "LEFT JOIN notification_translations nt " +
-                "  ON nt.notification_id = nr.notification_id AND nt.language_code = ? " +
-                "LEFT JOIN notification_translations nt_en " +
-                "  ON nt_en.notification_id = nr.notification_id AND nt_en.language_code = 'en' " +
-                "WHERE nr.user_id = ? " +
-                "ORDER BY n.sent_at DESC"
+                "SELECT nr.notification_id, "
+                + "  COALESCE(nt.content, nt_en.content) AS content, "
+                + "  n.sent_at, nr.is_read "
+                + "FROM notification_receivers nr "
+                + "JOIN notifications n ON n.notification_id = nr.notification_id "
+                + "LEFT JOIN notification_translations nt "
+                + "  ON nt.notification_id = nr.notification_id AND nt.language_code = ? "
+                + "LEFT JOIN notification_translations nt_en "
+                + "  ON nt_en.notification_id = nr.notification_id AND nt_en.language_code = 'en' "
+                + "WHERE nr.user_id = ? "
+                + "ORDER BY n.sent_at DESC"
             )
             .setParameter(1, lang)
             .setParameter(2, userId)
@@ -124,10 +124,10 @@ public class NotificationDao {
     public List<NotificationReceiver> findByUserId(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             return em.createQuery(
-                "SELECT nr FROM NotificationReceiver nr " +
-                "JOIN FETCH nr.notification n " +
-                "WHERE nr.id.userId = :userId " +
-                "ORDER BY n.sentAt DESC",
+                "SELECT nr FROM NotificationReceiver nr "
+                + "JOIN FETCH nr.notification n "
+                + "WHERE nr.id.userId = :userId "
+                + "ORDER BY n.sentAt DESC",
                 NotificationReceiver.class
             ).setParameter("userId", userId).getResultList();
         }
@@ -143,8 +143,8 @@ public class NotificationDao {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
             em.createQuery(
-                "UPDATE NotificationReceiver nr SET nr.isRead = true " +
-                "WHERE nr.id.userId = :userId AND nr.id.notificationId = :notifId"
+                "UPDATE NotificationReceiver nr SET nr.isRead = true "
+                + "WHERE nr.id.userId = :userId AND nr.id.notificationId = :notifId"
             ).setParameter("userId", userId)
              .setParameter("notifId", notificationId)
              .executeUpdate();
@@ -161,8 +161,8 @@ public class NotificationDao {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
             em.createQuery(
-                "UPDATE NotificationReceiver nr SET nr.isRead = true " +
-                "WHERE nr.id.userId = :userId"
+                "UPDATE NotificationReceiver nr SET nr.isRead = true "
+                + "WHERE nr.id.userId = :userId"
             ).setParameter("userId", userId).executeUpdate();
             em.getTransaction().commit();
         }
@@ -177,8 +177,8 @@ public class NotificationDao {
     public long countUnread(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             return (Long) em.createQuery(
-                "SELECT COUNT(nr) FROM NotificationReceiver nr " +
-                "WHERE nr.id.userId = :userId AND nr.isRead = false"
+                "SELECT COUNT(nr) FROM NotificationReceiver nr "
+                + "WHERE nr.id.userId = :userId AND nr.isRead = false"
             ).setParameter("userId", userId).getSingleResult();
         }
     }

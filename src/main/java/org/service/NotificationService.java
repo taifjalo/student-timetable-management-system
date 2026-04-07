@@ -40,7 +40,9 @@ public class NotificationService {
      * @param recipientIds IDs of users to notify
      */
     public void notifyLessonAdded(String courseName, String classroom, List<Long> recipientIds) {
-        if (recipientIds == null || recipientIds.isEmpty()) return;
+        if (recipientIds == null || recipientIds.isEmpty()) {
+            return;
+        }
         notificationDao.saveNotification("notification.newLesson", courseName + "|" + classroom, recipientIds);
     }
 
@@ -54,7 +56,9 @@ public class NotificationService {
      * @param recipientIds IDs of users to notify
      */
     public void notifyLessonUpdated(String courseName, String classroom, List<Long> recipientIds) {
-        if (recipientIds == null || recipientIds.isEmpty()) return;
+        if (recipientIds == null || recipientIds.isEmpty()) {
+            return;
+        }
         notificationDao.saveNotification("notification.courseChanged", courseName + "|" + classroom, recipientIds);
     }
 
@@ -67,7 +71,9 @@ public class NotificationService {
      * @param recipientIds IDs of users to notify
      */
     public void notifyLessonDeleted(Long lessonId, List<Long> recipientIds) {
-        if (recipientIds == null || recipientIds.isEmpty()) return;
+        if (recipientIds == null || recipientIds.isEmpty()) {
+            return;
+        }
         notificationDao.saveNotification("notification.lessonCancelled", lessonId.toString(), recipientIds);
     }
 
@@ -79,7 +85,9 @@ public class NotificationService {
      * @param recipientId the student's user ID
      */
     public void notifyStudentAddedToGroup(String groupCode, Long recipientId) {
-        if (recipientId == null) return;
+        if (recipientId == null) {
+            return;
+        }
         notificationDao.saveNotification("notification.groupAdded", groupCode, List.of(recipientId));
     }
 
@@ -91,7 +99,9 @@ public class NotificationService {
      * @param recipientId the student's user ID
      */
     public void notifyStudentRemovedFromGroup(String groupCode, Long recipientId) {
-        if (recipientId == null) return;
+        if (recipientId == null) {
+            return;
+        }
         notificationDao.saveNotification("notification.groupRemoved", groupCode, List.of(recipientId));
     }
 
@@ -106,7 +116,9 @@ public class NotificationService {
      * @param recipientId the recipient's user ID
      */
     public void notifyNewMessage(Long senderId, String senderName, Long recipientId) {
-        if (recipientId == null || recipientId.equals(senderId)) return;
+        if (recipientId == null || recipientId.equals(senderId)) {
+            return;
+        }
         notificationDao.saveNotification("notification.newMessage", senderName, List.of(recipientId));
     }
 

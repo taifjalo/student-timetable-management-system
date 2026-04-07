@@ -24,12 +24,13 @@ class UserDaoTest {
 
         // Arrange New User
         User user = new User();
-        user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
+        user.setUsername("mock" + UUID.randomUUID()); // Make always Random Username to pass DB.
         user.setPasswordHash("hashed");
-        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
+        user.setEmail("mock+" + UUID.randomUUID() + "@test.com"); // Make always Random Email to pass DB.
         user.setFirstName("Mock");
         user.setSureName("User");
-        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
+        // Make always Random phone number to pass DB.
+        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0, 7));
         user.setRole("student");
 
         // Save the User:
@@ -76,14 +77,15 @@ class UserDaoTest {
     void shouldCallPersistWhenSaveUser() {
         // Arrange New User
         User user = new User();
-        user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
+        user.setUsername("mock" + UUID.randomUUID()); // Make always Random Username to pass DB.
         //user.setUsername("mockUser");
         user.setPasswordHash("hashed");
-        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
+        user.setEmail("mock+" + UUID.randomUUID() + "@test.com"); // Make always Random Email to pass DB.
         //user.setEmail("mock@test.com");
         user.setFirstName("Mock");
         user.setSureName("User");
-        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
+        // Make always Random phone number to pass DB.
+        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0, 7));
         //user.setPhoneNumber("0901234565");
 
 

@@ -65,8 +65,12 @@ public class LessonService {
                              String classroom,
                              List<StudentGroup> groups,
                              List<User> users) {
-        if (course == null) throw new IllegalArgumentException("A lesson must belong to a course.");
-        if (classroom == null) classroom = "";
+        if (course == null) {
+            throw new IllegalArgumentException("A lesson must belong to a course.");
+        }
+        if (classroom == null) {
+            classroom = "";
+        }
         Lesson lesson = new Lesson(startAt, endAt, course, classroom);
         lesson.setAssignedGroups(groups);
         lesson.setAssignedUsers(users);
@@ -95,8 +99,12 @@ public class LessonService {
                                List<StudentGroup> groups,
                                List<User> users) {
         Lesson lesson = lessonDao.findById(lessonId);
-        if (lesson == null) throw new IllegalArgumentException("Lesson not found: " + lessonId);
-        if (classroom == null) classroom = "";
+        if (lesson == null) {
+            throw new IllegalArgumentException("Lesson not found: " + lessonId);
+        }
+        if (classroom == null) {
+            classroom = "";
+        }
         lesson.setStartAt(startAt);
         lesson.setEndAt(endAt);
         lesson.setCourse(course);

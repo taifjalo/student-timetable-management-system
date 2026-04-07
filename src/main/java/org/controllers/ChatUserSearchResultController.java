@@ -25,8 +25,8 @@ public class ChatUserSearchResultController {
      *
      * @param user the user to display
      */
-    public void setUser(User user){
-        this.user=user;
+    public void setUser(User user) {
+        this.user = user;
         teacherName.setText(user.getFirstName() + " " + user.getSureName());
     }
 
@@ -35,7 +35,7 @@ public class ChatUserSearchResultController {
      *
      * @param chatController the owning chat controller
      */
-    public void setChatController(ChatController chatController){
+    public void setChatController(ChatController chatController) {
         this.chatController = chatController;
     }
 
@@ -44,7 +44,7 @@ public class ChatUserSearchResultController {
      *
      * @param cSCController the search container controller
      */
-    public void setChatSearchingContainerController(ChatSearchingContainerController cSCController){
+    public void setChatSearchingContainerController(ChatSearchingContainerController cSCController) {
         this.cSCController = cSCController;
     }
 
@@ -53,7 +53,7 @@ public class ChatUserSearchResultController {
      * chat previews list if not already present, and opens their conversation.
      */
     @FXML
-    public void chooseUser(){
+    public void chooseUser() {
         cSCController.closeModal();
         ChatPreview chatPreview = new ChatPreview(user.getId(), user.getFirstName(), user.getSureName(), true);
         chatController.addChatPreview(chatPreview);

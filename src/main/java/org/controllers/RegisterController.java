@@ -68,7 +68,8 @@ public class RegisterController {
 
         try {
             // Register with username as placeholder for required fields not on this form
-            authService.register(username, username, username, username + "@placeholder.com", "000" + username, password, "student");
+            authService.register(username, username, username,
+                    username + "@placeholder.com", "000" + username, password, "student");
 
             navigateToLogin(event);
 

@@ -25,7 +25,9 @@ public class MessageDao {
      */
     public List<Message> findUserMessages(Long userId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("SELECT m FROM Message m WHERE m.senderUser.id = :userId or m.recipientUser.id = :userId ORDER BY m.sentAt DESC ", Message.class)
+            String q1 = "SELECT m FROM Message m WHERE m.senderUser.id = :userId "
+                    + "or m.recipientUser.id = :userId ORDER BY m.sentAt DESC ";
+            return em.createQuery(q1, Message.class)
                     .setParameter("userId", userId)
                     .getResultList();
         }
@@ -41,7 +43,11 @@ public class MessageDao {
      */
     public List<Message> findMessagesBetweenUsers(Long userId1, Long userId2) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("select m FROM Message m WHERE (m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1) ORDER BY m.id ASC", Message.class)
+            String q2 = "select m FROM Message m WHERE "
+                    + "(m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) "
+                    + "OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1) "
+                    + "ORDER BY m.id ASC";
+            return em.createQuery(q2, Message.class)
                     .setParameter("userId1", userId1)
                     .setParameter("userId2", userId2)
                     .getResultList();
@@ -59,7 +65,11 @@ public class MessageDao {
      */
     public List<Message> findNewMessagesBetweenUsers(Long userId1, Long userId2, Long lastMessageId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
-            return em.createQuery("select m FROM Message m WHERE ((m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1)) AND m.id > :lastMessageId ORDER BY m.id ASC", Message.class)
+            String q3 = "select m FROM Message m WHERE "
+                    + "((m.senderUser.id = :userId1 and m.recipientUser.id = :userId2) "
+                    + "OR (m.senderUser.id = :userId2 and m.recipientUser.id = :userId1)) "
+                    + "AND m.id > :lastMessageId ORDER BY m.id ASC";
+            return em.createQuery(q3, Message.class)
                     .setParameter("userId1", userId1)
                     .setParameter("userId2", userId2)
                     .setParameter("lastMessageId", lastMessageId)
@@ -95,7 +105,8 @@ public class MessageDao {
     public void markMessagesAsRead(Long currentUserId, Long otherUserId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             em.getTransaction().begin();
-            em.createQuery(" UPDATE Message m SET m.read = true WHERE m.recipientUser.id = :currentUserId AND m.senderUser.id = :otherUserId AND m.read = false ")
+            em.createQuery(" UPDATE Message m SET m.read = true WHERE m.recipientUser.id = :currentUserId "
+                    + "AND m.senderUser.id = :otherUserId AND m.read = false ")
                     .setParameter("currentUserId", currentUserId)
                     .setParameter("otherUserId", otherUserId)
                     .executeUpdate();

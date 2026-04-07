@@ -28,7 +28,7 @@ public class ChatPreviewController {
      * @param name    the other user's first name
      * @param surname the other user's surname
      */
-    public void setTeacherName(String name, String surname){
+    public void setTeacherName(String name, String surname) {
         teacherName.setText(name + " " + surname);
     }
 
@@ -47,8 +47,8 @@ public class ChatPreviewController {
      *
      * @param chatPreview the preview model
      */
-    public void setChatPreview(ChatPreview chatPreview){
-        this.chatPreview=chatPreview;
+    public void setChatPreview(ChatPreview chatPreview) {
+        this.chatPreview = chatPreview;
     }
 
     /**
@@ -70,7 +70,7 @@ public class ChatPreviewController {
      * FXML action handler — opens the full chat conversation for this preview's user.
      */
     @FXML
-    public void openChat(){
+    public void openChat() {
         chatController.openChat(chatPreview);
     }
 

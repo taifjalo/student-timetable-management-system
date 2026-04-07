@@ -15,7 +15,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -35,7 +39,10 @@ import org.service.SessionManager;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -68,7 +75,8 @@ public class EntryPopOverContentPane extends PopOverContentPane {
      *
      * @param lessonId the database primary key of the persisted lesson
      */
-    public record SavedLesson(Long lessonId) {}
+    public record SavedLesson(Long lessonId) {
+    }
 
     private final LocalizationService localizationService = new LocalizationService();
     ResourceBundle selectedBundle = localizationService.getBundle();
@@ -146,8 +154,8 @@ public class EntryPopOverContentPane extends PopOverContentPane {
 
         final Interval[] snapshotInterval = {entry.getInterval()};
         final Calendar[] snapshotCalendar = {entry.getCalendar()};
-        final boolean[] savedThisSession  = {false};
-        final boolean[] savingInProgress  = {false};
+        final boolean[] savedThisSession = {false};
+        final boolean[] savingInProgress = {false};
 
         if (teacher) {
             EntryDetailsView details = new EntryDetailsView(entry, dateControl);
@@ -164,14 +172,17 @@ public class EntryPopOverContentPane extends PopOverContentPane {
 
         } else {
             GridPane studentView = buildStudentView(entry, existingLesson);
-            PopOverTitledPane detailsPane = new PopOverTitledPane(selectedBundle.getString("event.details"), studentView);
+            PopOverTitledPane detailsPane = new PopOverTitledPane(
+                    selectedBundle.getString("event.details"), studentView);
             getPanes().add(detailsPane);
             setExpandedPane(detailsPane);
         }
 
         popOver.showingProperty().addListener((obs, wasShowing, isShowing) -> {
             if (!isShowing && wasShowing) {
-                if (savingInProgress[0]) return;
+                if (savingInProgress[0]) {
+                    return;
+                }
                 boolean isSaved = entry.getUserObject() instanceof SavedLesson;
                 if (!isSaved) {
                     entry.removeFromCalendar();
@@ -244,27 +255,24 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         String classroom = "—";
         String teacherName = "—";
         String groupsText = "—";
-        String studentsText = "—";
 
         if (existingLesson != null) {
-            if (existingLesson.getClassroom() != null && !existingLesson.getClassroom().isBlank())
+            if (existingLesson.getClassroom() != null && !existingLesson.getClassroom().isBlank()) {
                 classroom = existingLesson.getClassroom();
+            }
 
-            org.entities.User currentUser = SessionManager.getInstance().getCurrentUser();
-            if (currentUser != null)
+            User currentUser = SessionManager.getInstance().getCurrentUser();
+            if (currentUser != null) {
                 teacherName = currentUser.getFirstName() + " " + currentUser.getSureName();
+            }
 
             List<StudentGroup> groups = existingLesson.getAssignedGroups();
-            if (groups != null && !groups.isEmpty())
+            if (!groups.isEmpty()) {
                 groupsText = groups.stream()
                         .map(StudentGroup::getDisplayFieldOfStudies)
                         .collect(Collectors.joining(", "));
+            }
 
-            List<User> users = existingLesson.getAssignedUsers();
-            if (users != null && !users.isEmpty())
-                studentsText = users.stream()
-                        .map(u -> u.getFirstName() + " " + u.getSureName())
-                        .collect(Collectors.joining(", "));
         }
 
         addRow(grid, 0, selectedBundle.getString("event.class"),      valueLabel(classroom));
@@ -332,9 +340,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             titleField.setEditable(false);
             titleField.setMouseTransparent(true);
             titleField.setFocusTraversable(false);
-            titleField.setStyle("-fx-cursor: default; -fx-background-color: transparent;" +
-                                " -fx-border-color: transparent;");
-        } catch (Exception e) {
+            titleField.setStyle("-fx-cursor: default; -fx-background-color: transparent;"
+                                + " -fx-border-color: transparent;");
+        } catch (ReflectiveOperationException e) {
             System.err.println("lockTitleToCalendarName reflection failed: " + e.getMessage());
         }
 
@@ -349,7 +357,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         }
 
         entry.calendarProperty().addListener((obs, oldCal, newCal) -> {
-            if (newCal != null) entry.setTitle(newCal.getName());
+            if (newCal != null) {
+                entry.setTitle(newCal.getName());
+            }
         });
     }
 
@@ -368,12 +378,20 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                 .filter(GridPane.class::isInstance)
                 .map(GridPane.class::cast)
                 .findFirst().orElse(null);
-        if (grid == null) return;
+        if (grid == null) {
+            return;
+        }
 
         HBox startBox = getGridCell(grid, 1, 1);
-        HBox endBox   = getGridCell(grid, 1, 2);
-        if (startBox != null) { removeTimeField(startBox); startBox.getChildren().add(buildTimeInput(entry, true)); }
-        if (endBox   != null) { removeTimeField(endBox);   endBox.getChildren().add(buildTimeInput(entry, false)); }
+        HBox endBox = getGridCell(grid, 1, 2);
+        if (startBox != null) {
+            removeTimeField(startBox);
+            startBox.getChildren().add(buildTimeInput(entry, true));
+        }
+        if (endBox != null) {
+            removeTimeField(endBox);
+            endBox.getChildren().add(buildTimeInput(entry, false));
+        }
     }
 
     /**
@@ -404,7 +422,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                 .filter(GridPane.class::isInstance)
                 .map(GridPane.class::cast)
                 .findFirst().orElse(null);
-        if (grid == null) return;
+        if (grid == null) {
+            return;
+        }
 
         if (grid.getColumnConstraints().size() >= 2) {
             ColumnConstraints col2 = grid.getColumnConstraints().get(1);
@@ -412,10 +432,10 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             col2.setFillWidth(true);
         }
 
-        final int EXTRA_ROWS = 4;
+        final int extraRows = 4;
         grid.getChildren().forEach(n -> {
             Integer r = GridPane.getRowIndex(n);
-            GridPane.setRowIndex(n, (r == null ? 0 : r) + EXTRA_ROWS);
+            GridPane.setRowIndex(n, (r == null ? 0 : r) + extraRows);
         });
 
         buildRow(grid, 0, selectedBundle.getString("event.class"),      ctrl.getClassIdNode());
@@ -424,28 +444,37 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         buildRow(grid, 3, selectedBundle.getString("event.students"), ctrl.getStudentsNode());
 
         int lastRow = grid.getChildren().stream()
-                .mapToInt(n -> { Integer r = GridPane.getRowIndex(n); return r == null ? 0 : r; })
-                .max().orElse(EXTRA_ROWS);
+                .mapToInt(n -> {
+                    Integer r = GridPane.getRowIndex(n);
+                    return r == null ? 0 : r;
+                })
+                .max().orElse(extraRows);
 
         Button deleteBtn = new Button(selectedBundle.getString("event.delete.button"));
-        deleteBtn.setStyle("-fx-background-color: #D03800; -fx-text-fill: white;" +
-                           " -fx-cursor: hand; -fx-background-radius: 6;");
+        deleteBtn.setStyle("-fx-background-color: #D03800; -fx-text-fill: white;"
+                           + " -fx-cursor: hand; -fx-background-radius: 6;");
         deleteBtn.setOnAction(e -> {
             if (entry.getUserObject() instanceof SavedLesson sl) {
                 new Thread(() -> {
-                    try { new LessonService(new LessonDao()).deleteLesson(sl.lessonId()); }
-                    catch (Exception ex) { System.err.println("Delete failed: " + ex.getMessage()); }
+                    try {
+                        new LessonService(new LessonDao()).deleteLesson(sl.lessonId());
+                    } catch (Exception ex) {
+                        System.err.println("Delete failed: " + ex.getMessage());
+                    }
                 }, "delete-lesson-thread").start();
             }
             entry.removeFromCalendar();
         });
 
         Button saveBtn = new Button(selectedBundle.getString("event.save.button"));
-        saveBtn.setStyle("-fx-background-color: #00956D; -fx-text-fill: white;" +
-                         " -fx-cursor: hand; -fx-background-radius: 6;");
+        saveBtn.setStyle("-fx-background-color: #00956D; -fx-text-fill: white;"
+                         + " -fx-cursor: hand; -fx-background-radius: 6;");
         saveBtn.setOnAction(e -> {
             Calendar cal = entry.getCalendar();
-            if (cal == null) { System.err.println("Entry has no calendar — cannot save."); return; }
+            if (cal == null) {
+                System.err.println("Entry has no calendar — cannot save.");
+                return;
+            }
 
             Course course = null;
             if (cal.getUserObject() instanceof Course c) {
@@ -459,7 +488,10 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                     System.err.println("Name-based course lookup failed: " + ex.getMessage());
                 }
             }
-            if (course == null) { System.err.println("Could not resolve Course — cannot save."); return; }
+            if (course == null) {
+                System.err.println("Could not resolve Course — cannot save.");
+                return;
+            }
 
             final Course resolvedCourse = course;
             String classroom = ctrl.getClassroom();
@@ -568,7 +600,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
      */
     private HBox buildTimeInput(Entry<?> entry, boolean isStart) {
         LocalTime initial = isStart ? entry.getStartTime() : entry.getEndTime();
-        TextField hourField   = createNumericField(2, initial != null ? initial.getHour()   : 0);
+        TextField hourField = createNumericField(2, initial != null ? initial.getHour() : 0);
         TextField minuteField = createNumericField(2, initial != null ? initial.getMinute() : 0);
         Label colon = new Label(":");
         colon.setStyle("-fx-font-size: 14px; -fx-padding: 0 2 0 2;");
@@ -589,8 +621,11 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                 int m = clamp(Integer.parseInt(minuteField.getText().trim()), 0, 59);
                 hourField.setText(String.format("%02d", h));
                 minuteField.setText(String.format("%02d", m));
-                if (isStart) entry.changeStartTime(LocalTime.of(h, m), true);
-                else         entry.changeEndTime(LocalTime.of(h, m), false);
+                if (isStart) {
+                    entry.changeStartTime(LocalTime.of(h, m), true);
+                } else {
+                    entry.changeEndTime(LocalTime.of(h, m), false);
+                }
             } catch (NumberFormatException ex) {
                 LocalTime cur = isStart ? entry.getStartTime() : entry.getEndTime();
                 if (cur != null) {
@@ -601,8 +636,16 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         };
 
         for (TextField tf : List.of(hourField, minuteField)) {
-            tf.focusedProperty().addListener((obs, was, is) -> { if (was && !is) commit.run(); });
-            tf.setOnKeyPressed(ke -> { if (ke.getCode() == KeyCode.ENTER) commit.run(); });
+            tf.focusedProperty().addListener((obs, was, is) -> {
+                if (was && !is) {
+                    commit.run();
+                }
+            });
+            tf.setOnKeyPressed(ke -> {
+                if (ke.getCode() == KeyCode.ENTER) {
+                    commit.run();
+                }
+            });
         }
         return box;
     }
@@ -617,7 +660,8 @@ public class EntryPopOverContentPane extends PopOverContentPane {
      */
     private TextField createNumericField(int maxLen, int initialValue) {
         TextField tf = new TextField(String.format("%02d", initialValue));
-        tf.setPrefWidth(36); tf.setMaxWidth(36);
+        tf.setPrefWidth(36);
+        tf.setMaxWidth(36);
         tf.setAlignment(Pos.CENTER);
         tf.setStyle("-fx-font-size: 13px;");
         UnaryOperator<TextFormatter.Change> filter = change ->
@@ -683,7 +727,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                 if (node instanceof Labeled labeled) {
 
                     String text = labeled.getText();
-                    if (text == null || text.isBlank()) return;
+                    if (text == null || text.isBlank()) {
+                        return;
+                    }
 
                     String localized = translate(text, bundle);
                     if (localized != null) {
@@ -717,14 +763,16 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         );
 
         String key = map.get(clean);
-        if (key == null) return null;
+        if (key == null) {
+            return null;
+        }
 
         try {
             String translated = bundle.getString(key);
 
             return text.contains(":") ? translated + ":" : translated;
 
-        } catch (Exception e) {
+        } catch (java.util.MissingResourceException e) {
             return text;
         }
     }

@@ -1,7 +1,9 @@
 // datasource. This folder contains the code for connecting to the database.
 
 package org.datasource;
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 /**
  * Central factory for JPA {@link EntityManager} instances.
@@ -14,11 +16,12 @@ import jakarta.persistence.*;
  *
  * <p>This class is not instantiable.
  */
-public class TimetableConnection {
+public final class TimetableConnection {
 
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("TimetableUnit");
 
-    private TimetableConnection () {}
+    private TimetableConnection() {
+    }
 
     /**
      * Creates and returns a new {@link EntityManager}.
@@ -36,7 +39,9 @@ public class TimetableConnection {
      * database connections. Should be called on application shutdown.
      */
     public static void shutdown() {
-        if (emf.isOpen()) emf.close();
+        if (emf.isOpen()) {
+            emf.close();
+        }
     }
 
 }

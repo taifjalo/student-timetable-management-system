@@ -77,9 +77,10 @@ public class ChatController {
 
     private ObservableList<ChatPreview> chatPreviews =
             FXCollections.observableArrayList(
-                    preview -> new Observable[] { preview.isReadProperty() }
+                    preview -> new Observable[]{preview.isReadProperty()}
             );
-    private SortedList<ChatPreview> chatPreviewsSorted = new SortedList<>(chatPreviews, Comparator.comparing(ChatPreview::getIsRead));
+    private SortedList<ChatPreview> chatPreviewsSorted =
+            new SortedList<>(chatPreviews, Comparator.comparing(ChatPreview::getIsRead));
     private MessageDao messageDao = new MessageDao();
     private UserDao userDao = new UserDao();
     private ChatService chatService = new ChatService(messageDao);
@@ -128,8 +129,8 @@ public class ChatController {
      * already exists, or the full history otherwise. All messages are marked as read
      * both locally and in the database.
      */
-    private void startMessagesAutoUpdate(){
-        updateChatThread = new Thread(()-> {
+    private void startMessagesAutoUpdate() {
+        updateChatThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     List<Message> newMessages;
@@ -137,13 +138,12 @@ public class ChatController {
                     if (!messages.isEmpty()) {
                         Long lastId = messages.get(messages.size() - 1).getId();
                         newMessages = messageDao.findNewMessagesBetweenUsers(userId, otherId, lastId);
-                    }
-                    else {
+                    } else {
                         newMessages = messageDao.findMessagesBetweenUsers(userId, otherId);
                     }
                     Platform.runLater(() -> {
                         messages.addAll(newMessages);
-                        for (Message message: messages){
+                        for (Message message : messages) {
                             message.setRead(true);
                         }
                     });
@@ -162,7 +162,7 @@ public class ChatController {
      *
      * @param chatPreview the preview to open
      */
-    public void chooseUserFromLeftSide(ChatPreview chatPreview){
+    public void chooseUserFromLeftSide(ChatPreview chatPreview) {
         chatUsers.getSelectionModel().select(chatPreview);
         openChat(chatPreview);
     }
@@ -172,7 +172,7 @@ public class ChatController {
      *
      * @param is {@code true} to show, {@code false} to hide
      */
-    public void rightSideVisibility(boolean is){
+    public void rightSideVisibility(boolean is) {
         chatRightSide.setVisible(is);
         chatRightSide.setManaged(is);
     }
@@ -198,7 +198,7 @@ public class ChatController {
      * @param name    the other user's first name
      * @param surname the other user's surname
      */
-    public void setRightSideName(String name, String surname){
+    public void setRightSideName(String name, String surname) {
         rightSideName.setText(name + " " + surname);
     }
 
@@ -207,7 +207,7 @@ public class ChatController {
      *
      * @param id the other user's DB ID
      */
-    public void setOtherId (Long id){
+    public void setOtherId(Long id) {
         this.otherId = id;
     }
 
@@ -217,7 +217,7 @@ public class ChatController {
      *
      * @param id the current user's DB ID
      */
-    public void setUserId (Long id){
+    public void setUserId(Long id) {
         this.userId = id;
     }
 
@@ -226,13 +226,13 @@ public class ChatController {
      * marks all messages as read, and starts the auto-update polling thread.
      * Interrupts any previously running message-update thread first.
      */
-    public void loadMessages(){
+    public void loadMessages() {
         if (updateChatThread != null) {
             updateChatThread.interrupt();
         }
         messages.setAll(messageDao.findMessagesBetweenUsers(userId, otherId));
         messageDao.markMessagesAsRead(userId, otherId);
-        for (Message message: messages){
+        for (Message message : messages) {
             message.setRead(true);
         }
         startMessagesAutoUpdate();
@@ -244,7 +244,7 @@ public class ChatController {
      *
      * @param chatPreview the preview to add
      */
-    public void addChatPreview(ChatPreview chatPreview){
+    public void addChatPreview(ChatPreview chatPreview) {
         chatPreviews.add(chatPreview);
     }
 
@@ -275,7 +275,8 @@ public class ChatController {
                 } else {
                     try {
 
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/chat-view/messages-person.fxml"));
+                        FXMLLoader loader = new FXMLLoader(
+                                getClass().getResource("/ui/chat-view/messages-person.fxml"));
                         Parent root = loader.load();
                         ChatPreviewController cpController = loader.getController();
                         cpController.setChatController(ChatController.this);
@@ -292,21 +293,19 @@ public class ChatController {
                 }
             }
         });
-        chatMessages.setCellFactory(listView ->  new ListCell<>() {
+        chatMessages.setCellFactory(listView -> new ListCell<>() {
             @Override
-            protected void updateItem(Message message, boolean empty){
+            protected void updateItem(Message message, boolean empty) {
                 super.updateItem(message, empty);
 
-                if (empty || message == null){
+                if (empty || message == null) {
                     setGraphic(null);
                 } else {
                     try {
-
                         FXMLLoader loader;
                         if (message.getSenderUser().getId().equals(userId)) {
                             loader = new FXMLLoader(getClass().getResource("/ui/chat-view/sent-message.fxml"));
-                        }
-                        else {
+                        } else {
                             loader = new FXMLLoader(getClass().getResource("/ui/chat-view/received-message.fxml"));
                         }
                         Parent root = loader.load();
@@ -318,7 +317,6 @@ public class ChatController {
                         e.printStackTrace();
                     }
                 }
-
             }
         });
     }
@@ -328,9 +326,9 @@ public class ChatController {
      * Interrupts both background polling threads and closes the chat stage.
      */
     @FXML
-    private void closeChat(){
+    private void closeChat() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
-        if (updateChatThread!=null) {
+        if (updateChatThread != null) {
             updateChatThread.interrupt();
         }
         updatePreviewsThread.interrupt();
@@ -342,7 +340,7 @@ public class ChatController {
      * Persists the typed message and sends a new-message notification to the recipient.
      */
     @FXML
-    private void sendMessage(){
+    private void sendMessage() {
         messageDao.saveMessage(userId, otherId, messageTypeField.getText());
         notificationService.notifyNewMessage(
                 userId,
@@ -358,22 +356,26 @@ public class ChatController {
      * On match, opens a search-results popup ({@code chat-searching-container.fxml}).
      */
     @FXML
-    private void searchChatUsers(){
+    private void searchChatUsers() {
         String text = chatSearchField.getText();
         String[] words = text.trim().split("\\s+");
-        if (words.length < 2) return;
+        if (words.length < 2) {
+            return;
+        }
         List<User> users = userDao.findUserByNameSurname(words[0], words[1]);
         if (!users.isEmpty()) {
             try {
-                FXMLLoader containerLoader = new FXMLLoader(getClass().getResource("/ui/chat-view/chat-searching-container.fxml"));
+                FXMLLoader containerLoader =
+                        new FXMLLoader(getClass().getResource("/ui/chat-view/chat-searching-container.fxml"));
                 Parent root = containerLoader.load();
                 ChatSearchingContainerController chatSearchingContainerController = containerLoader.getController();
                 chatSearchingContainerController.setChatController(this);
                 List<HBox> userItems = new ArrayList<>();
-                for (User user: users){
-                    FXMLLoader userLoader = new FXMLLoader(getClass().getResource("/ui/chat-view/chat-user-search-results.fxml"));
+                for (User user : users) {
+                    FXMLLoader userLoader =
+                            new FXMLLoader(getClass().getResource("/ui/chat-view/chat-user-search-results.fxml"));
                     HBox child = userLoader.load();
-                    ChatUserSearchResultController cUSRController =userLoader.getController();
+                    ChatUserSearchResultController cUSRController = userLoader.getController();
                     cUSRController.setUser(user);
                     cUSRController.setChatController(this);
                     cUSRController.setChatSearchingContainerController(chatSearchingContainerController);
@@ -386,12 +388,10 @@ public class ChatController {
                 modalStage.initModality(Modality.APPLICATION_MODAL);
                 modalStage.initOwner(closeButton.getScene().getWindow());
                 modalStage.showAndWait();
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
     }
 
 

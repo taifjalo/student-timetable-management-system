@@ -11,11 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static net.fortuna.ical4j.model.LocationType.other;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -107,8 +106,8 @@ class ChatServiceTest {
         User recipientUser = createUser(2L, "recipient");
 
         // Create read "true" messages sent by recipient user
-        Message readMessage1 = createMessage( recipientUser, senderUser,true);
-        Message readMessage2 = createMessage( recipientUser, senderUser,true);
+        Message readMessage1 = createMessage(recipientUser, senderUser, true);
+        Message readMessage2 = createMessage(recipientUser, senderUser, true);
 
         when(messageDao.findUserMessages(1L)).thenReturn(List.of(readMessage1, readMessage2));
 
@@ -127,7 +126,7 @@ class ChatServiceTest {
         User recipientUser = createUser(2L, "recipient");
 
         // Create read "true" messages sent by recipient user
-        Message readMessage = createMessage( recipientUser, senderUser,true);
+        Message readMessage = createMessage(recipientUser, senderUser, true);
 
         // Create unread "false" messages sent by recipient user
         Message unreadMessage = createMessage(recipientUser, senderUser, false);
@@ -156,11 +155,11 @@ class ChatServiceTest {
         User recipientUser2 = createUser(2L, "recipient2");
         User recipientUser3 = createUser(3L, "recipient3");
 
-        Message u2_unread = createMessage(recipientUser2 , senderUser, false);
-        Message u3_read = createMessage(recipientUser3, senderUser, true);
+        Message u2Unread = createMessage(recipientUser2, senderUser, false);
+        Message u3Read = createMessage(recipientUser3, senderUser, true);
 
         when(messageDao.findUserMessages(1L))
-                .thenReturn(List.of(u2_unread, u3_read));
+                .thenReturn(List.of(u2Unread, u3Read));
 
         List<ChatPreview> result =
                 chatService.getChatPreviews(1L);

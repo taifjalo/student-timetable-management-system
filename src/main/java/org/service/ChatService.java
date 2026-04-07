@@ -5,7 +5,10 @@ import org.dao.MessageDao;
 import org.entities.Message;
 import org.entities.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service that builds the list of chat conversation previews shown in the
@@ -56,7 +59,8 @@ public class ChatService {
                 isRead = message.isRead();
             }
             if (!chatPreviews.containsKey(otherUser.getId())) {
-                chatPreviews.put(otherUser.getId(), new ChatPreview(otherUser.getId(), otherUser.getFirstName(), otherUser.getSureName(), isRead));
+                chatPreviews.put(otherUser.getId(), new ChatPreview(
+                        otherUser.getId(), otherUser.getFirstName(), otherUser.getSureName(), isRead));
             } else {
                 ChatPreview preview = chatPreviews.get(otherUser.getId());
                 if (!message.isRead() && message.getRecipientUser().getId().equals(id)) {

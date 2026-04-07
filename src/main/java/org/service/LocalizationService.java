@@ -1,13 +1,10 @@
 package org.service;
 
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -71,13 +68,11 @@ public class LocalizationService {
             throw new IllegalArgumentException("Language code cannot be null or blank");
         }
 
-        switch (languageCode.toLowerCase()) {
+        switch (languageCode.toLowerCase(java.util.Locale.ROOT)) {
             case "fi" -> setLocale(new Locale("fi", "FI"));
             case "en" -> setLocale(new Locale("en", "US"));
             case "ar" -> setLocale(new Locale("ar", "IQ"));
             case "ru" -> setLocale(new Locale("ru", "RU"));
-            // reachable until these cases are added and language menu items are added to login.fxml.
-
             default -> throw new IllegalArgumentException("Unsupported language code: " + languageCode);
         }
     }
@@ -116,7 +111,7 @@ public class LocalizationService {
      *
      * @param root the root {@link Parent} whose text direction should be adjusted
      */
-    public void swapSides(Parent root){
+    public void swapSides(Parent root) {
         if (currentLocale.getLanguage().equals("ar")) {
             root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         } else {
