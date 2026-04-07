@@ -1,6 +1,14 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,7 +38,8 @@ public class NotificationReceiver {
         private Long notificationId;
 
         /** Required no-arg constructor for JPA. */
-        public NotificationReceiverId() {}
+        public NotificationReceiverId() {
+        }
 
         /**
          * Creates the composite key.
@@ -44,16 +53,26 @@ public class NotificationReceiver {
         }
 
         /** Returns the recipient user ID component of the key. */
-        public Long getUserId() { return userId; }
+        public Long getUserId() {
+            return userId;
+        }
+
         /** Returns the notification ID component of the key. */
-        public Long getNotificationId() { return notificationId; }
+        public Long getNotificationId() {
+            return notificationId;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof NotificationReceiverId)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof NotificationReceiverId)) {
+                return false;
+            }
             NotificationReceiverId that = (NotificationReceiverId) o;
-            return Objects.equals(userId, that.userId) && Objects.equals(notificationId, that.notificationId);
+            return Objects.equals(userId, that.userId)
+                && Objects.equals(notificationId, that.notificationId);
         }
 
         @Override
@@ -79,7 +98,8 @@ public class NotificationReceiver {
     private boolean isRead = false;
 
     /** Required no-arg constructor for JPA. */
-    public NotificationReceiver() {}
+    public NotificationReceiver() {
+    }
 
     /**
      * Creates a new unread receiver row linking a user to a notification.
@@ -96,22 +116,42 @@ public class NotificationReceiver {
     }
 
     /** Returns the composite primary key. */
-    public NotificationReceiverId getId() { return id; }
+    public NotificationReceiverId getId() {
+        return id;
+    }
+
     /** Sets the composite primary key (used by JPA; do not call manually). */
-    public void setId(NotificationReceiverId id) { this.id = id; }
+    public void setId(NotificationReceiverId id) {
+        this.id = id;
+    }
 
     /** Returns the recipient user. */
-    public User getUser() { return user; }
+    public User getUser() {
+        return user;
+    }
+
     /** Sets the recipient user. */
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     /** Returns the associated notification. */
-    public Notification getNotification() { return notification; }
+    public Notification getNotification() {
+        return notification;
+    }
+
     /** Sets the associated notification. */
-    public void setNotification(Notification notification) { this.notification = notification; }
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
 
     /** Returns {@code true} if the recipient has read this notification. */
-    public boolean isRead() { return isRead; }
+    public boolean isRead() {
+        return isRead;
+    }
+
     /** Marks the notification as read or unread for this recipient. */
-    public void setRead(boolean read) { isRead = read; }
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 }

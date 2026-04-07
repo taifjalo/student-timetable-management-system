@@ -70,8 +70,10 @@ public class NavbarController {
      * Starts an infinite 360-degree rotation animation on the refresh icon
      * to signal that a background refresh is in progress.
      */
-    private void startSpin() {
-        if (refreshIcon == null) return;
+    public void startSpin() {
+        if (refreshIcon == null) {
+            return;
+        }
         refreshIcon.setRotate(0);
         spinTimeline = new Timeline(
                 new KeyFrame(Duration.ZERO,       new KeyValue(refreshIcon.rotateProperty(), 0)),
@@ -101,7 +103,9 @@ public class NavbarController {
      * at {@code "99+"}.
      */
     public void refreshBadge() {
-        if (SessionManager.getInstance().getCurrentUser() == null) return;
+        if (SessionManager.getInstance().getCurrentUser() == null) {
+            return;
+        }
         long count = notificationService.getUnreadCount(
                 SessionManager.getInstance().getCurrentUser().getId());
         if (count > 0) {
@@ -122,10 +126,22 @@ public class NavbarController {
         fieldSearch.textProperty().addListener((obs, oldVal, newVal) ->
                 calendarView.getSearchField().setText(newVal));
 
-        calViewDay.setOnAction(e -> { calendarView.showDayPage(); calViewDay.setSelected(true); });
-        calViewWeek.setOnAction(e -> { calendarView.showWeekPage(); calViewWeek.setSelected(true); });
-        calViewMonth.setOnAction(e -> { calendarView.showMonthPage(); calViewMonth.setSelected(true); });
-        calViewYear.setOnAction(e -> { calendarView.showYearPage(); calViewYear.setSelected(true); });
+        calViewDay.setOnAction(e -> {
+            calendarView.showDayPage();
+            calViewDay.setSelected(true);
+        });
+        calViewWeek.setOnAction(e -> {
+            calendarView.showWeekPage();
+            calViewWeek.setSelected(true);
+        });
+        calViewMonth.setOnAction(e -> {
+            calendarView.showMonthPage();
+            calViewMonth.setSelected(true);
+        });
+        calViewYear.setOnAction(e -> {
+            calendarView.showYearPage();
+            calViewYear.setSelected(true);
+        });
     }
 
     /**
@@ -171,7 +187,9 @@ public class NavbarController {
             notificationsPopOver.setHeaderAlwaysVisible(false);
             notificationsPopOver.setArrowSize(10);
             notificationsPopOver.showingProperty().addListener((obs, wasShowing, isShowing) -> {
-                if (!isShowing) refreshBadge();
+                if (!isShowing) {
+                    refreshBadge();
+                }
             });
             notificationsPopOver.show((Node) event.getSource());
         } catch (Exception e) {
@@ -216,7 +234,7 @@ public class NavbarController {
      * stage and injects the current user's ID into {@link ChatController}.
      */
     @FXML
-    private void openChat(){
+    private void openChat() {
         try {
             SessionManager sessionManager = SessionManager.getInstance();
             User currentUser = sessionManager.getCurrentUser();
@@ -226,8 +244,8 @@ public class NavbarController {
             Parent root = loader.load();
             localizationService.swapSides(root);
 
-            ChatController ChatController = loader.getController();
-            ChatController.setUserId(currentUser.getId());
+            ChatController chatController = loader.getController();
+            chatController.setUserId(currentUser.getId());
             Scene scene = new Scene(root);
             scene.setFill(Color.TRANSPARENT);
             scene.getStylesheets().add(
@@ -239,7 +257,7 @@ public class NavbarController {
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

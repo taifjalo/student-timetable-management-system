@@ -5,7 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.dao.UserDao;
@@ -70,11 +74,15 @@ public class UserSettingsController {
     @FXML
     public void initialize() {
         User user = SessionManager.getInstance().getCurrentUser();
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         // Header
         displayNameText.setText(user.getFirstName());
-        String role = user.getRole() != null ? capitalize(user.getRole()) : selectedBundle.getString("settings.modal.role.label");
+        String role = user.getRole() != null
+                ? capitalize(user.getRole())
+                : selectedBundle.getString("settings.modal.role.label");
         roleText.setText(role);
 
         // Fields
@@ -95,7 +103,9 @@ public class UserSettingsController {
     @FXML
     private void handleSave() {
         User user = SessionManager.getInstance().getCurrentUser();
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         String newUsername = usernameField.getText().trim();
 
@@ -103,7 +113,8 @@ public class UserSettingsController {
         if (!newUsername.equals(user.getUsername())) {
             User existing = userDao.findByUsername(newUsername);
             if (existing != null) {
-                messageLabel.setText(selectedBundle.getString("settings.modal.save.error.message") + " Username already exists");
+                String msg = selectedBundle.getString("settings.modal.save.error.message") + " Username already exists";
+                messageLabel.setText(msg);
                 return;
             }
         }
@@ -146,19 +157,24 @@ public class UserSettingsController {
         }
 
         languageMenuButton.setText(selectedItem.getText());
+        // Force-close the MenuButton popup before any scene work so it doesn't
+        // get stranded on screen (visible on top of all other windows) while the
+        // JavaFX thread is busy loading the new scene.
+        languageMenuButton.hide();
         selectedBundle = localizationService.getBundle();
 
         // Reload the owner stage so the whole main app uses the new bundle.
         Stage currentStage = getCurrentStage();
         Stage mainStage = currentStage.getOwner() instanceof Stage owner ? owner : currentStage;
 
+        // Close the settings modal first so its popup windows are properly destroyed
+        // before the owner stage's scene is replaced.
+        if (currentStage != mainStage) {
+            currentStage.close();
+        }
+
         try {
             localizationService.reloadScene(mainStage, "/ui/main-app.fxml");
-
-            // Close settings modal after the main app has been recreated in the new locale.
-            if (currentStage != mainStage) {
-                currentStage.close();
-            }
         } catch (IOException e) {
             messageLabel.setText(selectedBundle.getString("settings.modal.language.error"));
             e.printStackTrace();
@@ -175,12 +191,13 @@ public class UserSettingsController {
 
         Locale currentLocale = localizationService.getCurrentLocale();
         String lang = currentLocale.getLanguage();
-        languageMenuButton.setText(switch (lang) {
+        String langLabel = switch (lang) {
             case "fi" -> fiItem.getText();
             case "ar" -> arItem.getText();
             case "ru" -> ruItem.getText();
             default   -> enItem.getText();
-        });
+        };
+        languageMenuButton.setText(langLabel);
     }
 
     /**
@@ -192,7 +209,9 @@ public class UserSettingsController {
     private void handleChangePassword() {
         passwordMessageLabel.setText("");
         User user = SessionManager.getInstance().getCurrentUser();
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         String current = currentPasswordField.getText();
         String newPw = newPasswordField.getText();
@@ -222,9 +241,11 @@ public class UserSettingsController {
             newPasswordField.clear();
             newPasswordAgainField.clear();
             passwordMessageLabel.setStyle("-fx-text-fill: #00956D;");
-            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.success.message"));
+            passwordMessageLabel.setText(
+                    selectedBundle.getString("settings.change.password.success.message"));
         } catch (Exception e) {
-            passwordMessageLabel.setText(selectedBundle.getString("settings.change.password.error.message") + e.getMessage());
+            passwordMessageLabel.setText(
+                    selectedBundle.getString("settings.change.password.error.message") + e.getMessage());
         }
     }
 
@@ -244,7 +265,8 @@ public class UserSettingsController {
                 currentStage.close();
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/auth/login.fxml"), localizationService.getBundle());
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ui/auth/login.fxml"), localizationService.getBundle());
             Parent root = loader.load();
             localizationService.swapSides(root);
 
@@ -286,7 +308,10 @@ public class UserSettingsController {
      * @return the capitalized string, or {@code s} unchanged if null/empty
      */
     private String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return s.substring(0, 1).toUpperCase(java.util.Locale.ROOT)
+                + s.substring(1).toLowerCase(java.util.Locale.ROOT);
     }
 }

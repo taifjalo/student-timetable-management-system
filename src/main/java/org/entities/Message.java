@@ -1,7 +1,14 @@
 // entity. This folder contains the entity classes. The entity classes are annotated with JPA annotations.
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "messages")
-public class Message implements Comparable<Message>{
+public class Message implements Comparable<Message> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +43,8 @@ public class Message implements Comparable<Message>{
     private User recipientUser;
 
     /** Required no-arg constructor for JPA. */
-    public Message() {}
+    public Message() {
+    }
 
     /**
      * Creates a new unread message.
@@ -49,44 +57,88 @@ public class Message implements Comparable<Message>{
     public Message(LocalDateTime sentAt, String content, User senderUser, User recipientUser) {
         this.sentAt = sentAt;
         this.content = content;
-        this.senderUser= senderUser;
+        this.senderUser = senderUser;
         this.recipientUser = recipientUser;
         this.read = false;
     }
 
     /** Returns the surrogate primary key. */
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
+
     /** Returns the timestamp this message was sent. */
-    public LocalDateTime getSentAt() { return sentAt; }
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
     /** Sets the sent timestamp. */
-    public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
+    public void setSentAt(LocalDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
 
     /** Returns the message text content. */
-    public String getContent() { return content; }
+    public String getContent() {
+        return content;
+    }
+
     /** Sets the message text content. */
-    public void setContent(String content) { this.content = content; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     /** Returns {@code true} if the recipient has read this message. */
-    public boolean isRead() { return read; }
+    public boolean isRead() {
+        return read;
+    }
+
     /** Marks the message as read or unread. */
-    public void setRead(boolean read) { this.read = read; }
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 
     /** Returns the user who sent this message. */
-    public User getSenderUser() { return senderUser; }
+    public User getSenderUser() {
+        return senderUser;
+    }
+
     /** Sets the sender. */
-    public void setSenderUser(User senderUser) { this.senderUser = senderUser; }
+    public void setSenderUser(User senderUser) {
+        this.senderUser = senderUser;
+    }
 
     /** Returns the user who should receive this message. */
-    public User getRecipientUser() { return recipientUser; }
+    public User getRecipientUser() {
+        return recipientUser;
+    }
+
     /** Sets the recipient. */
-    public void setRecipientUser(User recipientUser) { this.recipientUser = recipientUser; }
+    public void setRecipientUser(User recipientUser) {
+        this.recipientUser = recipientUser;
+    }
 
     /**
      * Compares messages chronologically by {@code sentAt}.
      * Used by {@link java.util.SortedList} in the chat view to keep messages in order.
      */
     @Override
-    public int compareTo(Message other){
+    public int compareTo(Message other) {
         return this.sentAt.compareTo(other.sentAt);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Message other)) {
+            return false;
+        }
+        return id != null && id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.hashCode();
     }
 }

@@ -33,7 +33,7 @@ public class AuthService {
      * @param password  plain-text password; will be BCrypt-hashed before storage
      * @param role      role string, typically {@code "student"} or {@code "teacher"}
      * @return the newly created and persisted {@link User}
-     * @throws RuntimeException if the username is already taken or the role is blank
+     * @throws IllegalArgumentException if the username is already taken or the role is blank
      */
     public User register(String firstName,
                          String lastName,
@@ -44,13 +44,13 @@ public class AuthService {
                          String role) {
 
 
-        // if password exists
+        // reject if username is already taken
         if (userDao.findByUsername(username) != null) {
-            throw new RuntimeException("Username already exists");
+            throw new IllegalArgumentException("Username already exists");
         }
 
         if (role == null || role.isBlank()) {
-            throw new RuntimeException("Role is required");
+            throw new IllegalArgumentException("Role is required");
         }
 
         // save hash password to the database
@@ -78,7 +78,7 @@ public class AuthService {
      * @param username the login username
      * @param password the plain-text password to verify
      * @return the authenticated {@link User}
-     * @throws RuntimeException if the username does not exist or the password is incorrect
+     * @throws IllegalArgumentException if the username does not exist or the password is incorrect
      */
     public User login(String username, String password) {
 
@@ -88,9 +88,8 @@ public class AuthService {
         // if the user inputs not null AND passwords hash in database are correct. return the user and log in.
         if (user != null && BCrypt.checkpw(password, user.getPasswordHash())) {
             return user;
-        }
-        else {
-            throw new RuntimeException("Invalid username or password");
+        } else {
+            throw new IllegalArgumentException("Invalid username or password");
         }
     }
 

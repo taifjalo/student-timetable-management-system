@@ -37,14 +37,18 @@ public class LessonDao {
             List<StudentGroup> managedGroups = new ArrayList<>();
             for (StudentGroup g : lesson.getAssignedGroups()) {
                 StudentGroup managed = em.find(StudentGroup.class, g.getGroupCode());
-                if (managed != null) managedGroups.add(managed);
+                if (managed != null) {
+                    managedGroups.add(managed);
+                }
             }
             lesson.setAssignedGroups(managedGroups);
 
             List<User> managedUsers = new ArrayList<>();
             for (User u : lesson.getAssignedUsers()) {
                 User managed = em.find(User.class, u.getId());
-                if (managed != null) managedUsers.add(managed);
+                if (managed != null) {
+                    managedUsers.add(managed);
+                }
             }
             lesson.setAssignedUsers(managedUsers);
 
@@ -64,9 +68,9 @@ public class LessonDao {
     public Lesson findById(Long lessonId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             List<Lesson> results = em.createQuery(
-                    "SELECT DISTINCT l FROM Lesson l " +
-                    "LEFT JOIN FETCH l.assignedGroups " +
-                    "WHERE l.id = :id", Lesson.class)
+                    "SELECT DISTINCT l FROM Lesson l "
+                    + "LEFT JOIN FETCH l.assignedGroups "
+                    + "WHERE l.id = :id", Lesson.class)
                 .setParameter("id", lessonId)
                 .getResultList();
 
@@ -124,10 +128,10 @@ public class LessonDao {
     public List<Lesson> findLessonsByCourseWithGroups(Long courseId) {
         try (EntityManager em = TimetableConnection.createEntityManager()) {
             List<Lesson> lessons = em.createQuery(
-                    "SELECT DISTINCT l FROM Lesson l " +
-                    "LEFT JOIN FETCH l.assignedGroups " +
-                    "WHERE l.course.id = :courseId " +
-                    "ORDER BY l.startAt ASC",
+                    "SELECT DISTINCT l FROM Lesson l "
+                    + "LEFT JOIN FETCH l.assignedGroups "
+                    + "WHERE l.course.id = :courseId "
+                    + "ORDER BY l.startAt ASC",
                     Lesson.class)
                 .setParameter("courseId", courseId)
                 .getResultList();
@@ -135,9 +139,9 @@ public class LessonDao {
             if (!lessons.isEmpty()) {
                 List<Long> ids = lessons.stream().map(Lesson::getId).toList();
                 em.createQuery(
-                        "SELECT DISTINCT l FROM Lesson l " +
-                        "LEFT JOIN FETCH l.assignedUsers " +
-                        "WHERE l.id IN :ids",
+                        "SELECT DISTINCT l FROM Lesson l "
+                        + "LEFT JOIN FETCH l.assignedUsers "
+                        + "WHERE l.id IN :ids",
                         Lesson.class)
                     .setParameter("ids", ids)
                     .getResultList();
@@ -190,14 +194,18 @@ public class LessonDao {
             List<StudentGroup> managedGroups = new ArrayList<>();
             for (StudentGroup g : lesson.getAssignedGroups()) {
                 StudentGroup managed = em.find(StudentGroup.class, g.getGroupCode());
-                if (managed != null) managedGroups.add(managed);
+                if (managed != null) {
+                    managedGroups.add(managed);
+                }
             }
             lesson.setAssignedGroups(managedGroups);
 
             List<User> managedUsers = new ArrayList<>();
             for (User u : lesson.getAssignedUsers()) {
                 User managed = em.find(User.class, u.getId());
-                if (managed != null) managedUsers.add(managed);
+                if (managed != null) {
+                    managedUsers.add(managed);
+                }
             }
             lesson.setAssignedUsers(managedUsers);
 

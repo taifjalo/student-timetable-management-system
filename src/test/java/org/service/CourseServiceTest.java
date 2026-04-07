@@ -2,9 +2,7 @@ package org.service;
 
 import com.calendarfx.model.Calendar;
 import org.dao.CourseDao;
-import org.dao.LessonDao;
 import org.entities.Course;
-import org.entities.Lesson;
 import org.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +29,8 @@ class CourseServiceTest {
     CourseService courseService;
 
     @DisplayName("Helper Method: First Should Create User")
-    private User createUser(Long id, String firstName, String lastName, String userName, String password, String phoneNumber, String email) {
+    private User createUser(Long id, String firstName, String lastName,
+            String userName, String password, String phoneNumber, String email) {
         User user = new User();
         user.setId(id);
         user.setFirstName(firstName);

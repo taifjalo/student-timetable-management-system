@@ -1,6 +1,15 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +59,8 @@ public class Lesson {
     private List<User> assignedUsers = new ArrayList<>();
 
     /** Required no-arg constructor for JPA. */
-    public Lesson() {}
+    public Lesson() {
+    }
 
     /**
      * Creates a new lesson without any group or user assignments.
@@ -68,37 +78,72 @@ public class Lesson {
     }
 
     /** Returns the surrogate primary key. */
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
+
     /** Sets the surrogate primary key (used by JPA; do not call manually). */
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /** Returns the lesson start date-time. */
-    public LocalDateTime getStartAt() { return startAt; }
+    public LocalDateTime getStartAt() {
+        return startAt;
+    }
+
     /** Sets the lesson start date-time. */
-    public void setStartAt(LocalDateTime startAt) { this.startAt = startAt; }
+    public void setStartAt(LocalDateTime startAt) {
+        this.startAt = startAt;
+    }
 
     /** Returns the lesson end date-time. */
-    public LocalDateTime getEndAt() { return endAt; }
+    public LocalDateTime getEndAt() {
+        return endAt;
+    }
+
     /** Sets the lesson end date-time. */
-    public void setEndAt(LocalDateTime endAt) { this.endAt = endAt; }
+    public void setEndAt(LocalDateTime endAt) {
+        this.endAt = endAt;
+    }
 
     /** Returns the course this lesson belongs to. */
-    public Course getCourse() { return course; }
+    public Course getCourse() {
+        return course;
+    }
+
     /** Sets the course this lesson belongs to. */
-    public void setCourse(Course course) { this.course = course; }
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 
     /** Returns the classroom identifier (e.g. {@code "A101"}). */
-    public String getClassroom() { return classroom; }
+    public String getClassroom() {
+        return classroom;
+    }
+
     /** Sets the classroom identifier. */
-    public void setClassroom(String classroom) { this.classroom = classroom; }
+    public void setClassroom(String classroom) {
+        this.classroom = classroom;
+    }
 
-    /** Returns the student groups assigned to this lesson. */
-    public List<StudentGroup> getAssignedGroups() { return assignedGroups; }
-    /** Sets the student groups assigned to this lesson. */
-    public void setAssignedGroups(List<StudentGroup> assignedGroups) { this.assignedGroups = assignedGroups; }
+    /** Returns a defensive copy of the student groups assigned to this lesson. */
+    public List<StudentGroup> getAssignedGroups() {
+        return assignedGroups == null ? new ArrayList<>() : new ArrayList<>(assignedGroups);
+    }
 
-    /** Returns the individual users (students) directly assigned to this lesson. */
-    public List<User> getAssignedUsers() { return assignedUsers; }
-    /** Sets the individual users directly assigned to this lesson. */
-    public void setAssignedUsers(List<User> assignedUsers) { this.assignedUsers = assignedUsers; }
+    /** Sets the student groups assigned to this lesson (stores a defensive copy). */
+    public void setAssignedGroups(List<StudentGroup> assignedGroups) {
+        this.assignedGroups = assignedGroups == null ? new ArrayList<>() : new ArrayList<>(assignedGroups);
+    }
+
+    /** Returns a defensive copy of the individual users directly assigned to this lesson. */
+    public List<User> getAssignedUsers() {
+        return assignedUsers == null ? new ArrayList<>() : new ArrayList<>(assignedUsers);
+    }
+
+    /** Sets the individual users directly assigned to this lesson (stores a defensive copy). */
+    public void setAssignedUsers(List<User> assignedUsers) {
+        this.assignedUsers = assignedUsers == null ? new ArrayList<>() : new ArrayList<>(assignedUsers);
+    }
 }

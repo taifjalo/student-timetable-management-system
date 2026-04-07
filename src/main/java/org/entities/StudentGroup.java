@@ -1,6 +1,10 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * JPA entity representing a student group (e.g. a class cohort like {@code "SWD22S"}).
@@ -22,7 +26,8 @@ public class StudentGroup {
     private String localizedFieldOfStudies;
 
     /** Required no-arg constructor for JPA. */
-    public StudentGroup() {}
+    public StudentGroup() {
+    }
 
     /**
      * Creates a new student group.
@@ -36,15 +41,32 @@ public class StudentGroup {
     }
 
     /** Returns the unique group code that is used as the primary key. */
-    public String getGroupCode() { return groupCode; }
+    public String getGroupCode() {
+        return groupCode;
+    }
+
     /** Sets the group code (primary key). */
-    public void setGroupCode(String groupCode) { this.groupCode = groupCode; }
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
 
     /** Returns the display name / field of studies for this group. */
-    public String getFieldOfStudies() { return fieldOfStudies; }
-    /** Sets the display name / field of studies. */
-    public void setFieldOfStudies(String fieldOfStudies) { this.fieldOfStudies = fieldOfStudies; }
+    public String getFieldOfStudies() {
+        return fieldOfStudies;
+    }
 
+    /** Sets the display name / field of studies. */
+    public void setFieldOfStudies(String fieldOfStudies) {
+        this.fieldOfStudies = fieldOfStudies;
+    }
+
+    /**
+     * Returns the best available display name for this group.
+     * Prefers {@code localizedFieldOfStudies} if set, falls back to {@code fieldOfStudies},
+     * and ultimately returns {@code "Unknown group"} if neither is populated.
+     *
+     * @return a non-null display string for use in the UI
+     */
     public String getDisplayFieldOfStudies() {
         if (localizedFieldOfStudies != null && !localizedFieldOfStudies.isBlank()) {
             return localizedFieldOfStudies;
@@ -55,11 +77,22 @@ public class StudentGroup {
         return "Unknown group";
     }
 
-    public String getLocalizedFieldOfStudies(){
+    /**
+     * Returns the locale-specific translation of the field of studies, or {@code null}
+     * if no translation has been stored for the current locale.
+     *
+     * @return the localized field-of-studies string, or {@code null}
+     */
+    public String getLocalizedFieldOfStudies() {
         return localizedFieldOfStudies;
     }
 
-    public void setLocalizedFieldOfStudies(String localizedFieldOfStudies){
+    /**
+     * Sets the locale-specific translation of the field of studies.
+     *
+     * @param localizedFieldOfStudies the translated string, or {@code null} to clear it
+     */
+    public void setLocalizedFieldOfStudies(String localizedFieldOfStudies) {
         this.localizedFieldOfStudies = localizedFieldOfStudies;
     }
 }

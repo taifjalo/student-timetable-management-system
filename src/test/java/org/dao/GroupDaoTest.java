@@ -2,7 +2,9 @@ package org.dao;
 
 import org.entities.StudentGroup;
 import org.entities.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,12 +36,13 @@ class GroupDaoTest {
 
         // Arrange New User
         User user = new User();
-        user.setUsername("mock" + UUID.randomUUID());                               // Make always Random Username to pass DB.
+        user.setUsername("mock" + UUID.randomUUID()); // Make always Random Username to pass DB.
         user.setPasswordHash("hashed");
-        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");                   // Make always Random Email to pass DB.
+        user.setEmail("mock+" + UUID.randomUUID() + "@test.com"); // Make always Random Email to pass DB.
         user.setFirstName("Mock");
         user.setSureName("User");
-        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0,7)); // Make always Random phone number to pass DB.
+        // Make always Random phone number to pass DB.
+        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0, 7));
         user.setRole("student");
 
         // Save the User:
@@ -89,7 +92,7 @@ class GroupDaoTest {
     @DisplayName("Delete: Should remove group")
     void shouldDeleteGroup() {
 
-        StudentGroup group = groupDao.save(createGroup("DEL1", "Temp"));
+        groupDao.save(createGroup("DEL1", "Temp"));
 
         groupDao.delete("DEL1");
 

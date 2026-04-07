@@ -274,7 +274,9 @@ public class CreateCourseModalController {
      * @return hex color string, or {@code "#888888"} for unknown styles
      */
     private String styleToHex(Style style) {
-        if (style == null) return "#888888";
+        if (style == null) {
+            return "#888888";
+        }
         return switch (style) {
             case STYLE1 -> "#77C04B"; // green
             case STYLE2 -> "#418FCB"; // blue

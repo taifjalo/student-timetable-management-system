@@ -57,7 +57,9 @@ public class NotificationsPopupController {
             Label empty = new Label(bundle.getString("notifications.popup.empty"));
             empty.setStyle("-fx-text-fill: #999; -fx-font-size: 13; -fx-padding: 20;");
             notificationList.getChildren().add(empty);
-            if (markAllLabel != null) markAllLabel.setVisible(false);
+            if (markAllLabel != null) {
+                markAllLabel.setVisible(false);
+            }
             return;
         }
 
@@ -95,10 +97,16 @@ public class NotificationsPopupController {
      */
     private String formatTime(LocalDateTime sentAt) {
         long minutes = ChronoUnit.MINUTES.between(sentAt, LocalDateTime.now());
-        if (minutes < 1)  return bundle.getString("notifications.popup.time.just.now");
-        if (minutes < 60) return minutes + " " + bundle.getString("notifications.popup.time.min.ago");
+        if (minutes < 1) {
+            return bundle.getString("notifications.popup.time.just.now");
+        }
+        if (minutes < 60) {
+            return minutes + " " + bundle.getString("notifications.popup.time.min.ago");
+        }
         long hours = ChronoUnit.HOURS.between(sentAt, LocalDateTime.now());
-        if (hours < 24)   return hours + " " + bundle.getString("notifications.popup.time.h.ago");
+        if (hours < 24) {
+            return hours + " " + bundle.getString("notifications.popup.time.h.ago");
+        }
         long days = ChronoUnit.DAYS.between(sentAt, LocalDateTime.now());
         return days + " " + bundle.getString("notifications.popup.time.d.ago");
     }
@@ -173,8 +181,8 @@ public class NotificationsPopupController {
 
         /** Applies the background and dot color based on the current read state. */
         private void applyStyle() {
-            row.setStyle((unread ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;") +
-                    " -fx-cursor: hand;");
+            row.setStyle((unread ? "-fx-background-color: #F0FAF6;" : "-fx-background-color: white;")
+                    + " -fx-cursor: hand;");
             dot.setStyle(unread
                     ? "-fx-background-color: #00956D; -fx-background-radius: 50%;"
                     : "-fx-background-color: transparent;");
@@ -189,7 +197,9 @@ public class NotificationsPopupController {
         }
 
         /** Returns the root VBox node to add to the notification list. */
-        VBox getRoot() { return root; }
+        VBox getRoot() {
+            return root;
+        }
 
 
     }

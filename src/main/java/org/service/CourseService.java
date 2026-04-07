@@ -98,7 +98,9 @@ public class CourseService {
      * @return list of courses the user can see
      */
     public List<Course> getCoursesForUser(Long userId) {
-        if (userId == null) return courseDao.findAll();
+        if (userId == null) {
+            return courseDao.findAll();
+        }
         return courseDao.findCoursesForUser(userId);
     }
 
@@ -124,8 +126,8 @@ public class CourseService {
      * @param course the course to convert
      * @return a new {@link Calendar} with the course name and matching color style
      */
-    public Calendar toCalendar(Course course) {
-        Calendar calendar = new Calendar(course.getDisplayName());
+    public Calendar<Course> toCalendar(Course course) {
+        Calendar<Course> calendar = new Calendar<>(course.getDisplayName());
         calendar.setStyle(colorCodeToStyle(course.getColorCode()));
         calendar.setUserObject(course);
         return calendar;
@@ -139,8 +141,10 @@ public class CourseService {
      * @return the matching {@link Style}
      */
     public static Style colorCodeToStyle(String colorCode) {
-        if (colorCode == null) return Style.STYLE1;
-        return switch (colorCode.toUpperCase()) {
+        if (colorCode == null) {
+            return Style.STYLE1;
+        }
+        return switch (colorCode.toUpperCase(java.util.Locale.ROOT)) {
             case "#77C04B" -> Style.STYLE1;
             case "#418FCB" -> Style.STYLE2;
             case "#F7D15B" -> Style.STYLE3;

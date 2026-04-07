@@ -1,6 +1,14 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -34,7 +42,8 @@ public class StudentProfile {
     private StudentGroup studentGroup;
 
     /** Required no-arg constructor for JPA. */
-    public StudentProfile() {}
+    public StudentProfile() {
+    }
 
     /**
      * Creates a new student profile.
@@ -52,25 +61,47 @@ public class StudentProfile {
     }
 
     /** Returns the user ID (mirrors {@code user.getId()} via {@code @MapsId}). */
-    public Long getUserId() { return userId; }
+    public Long getUserId() {
+        return userId;
+    }
 
     /** Returns the associated user. */
-    public User getUser() { return user; }
+    public User getUser() {
+        return user;
+    }
+
     /** Sets the associated user. */
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     /** Returns the date-time the student started their studies. */
-    public LocalDateTime getStudyStartDate() { return studyStartDate; }
+    public LocalDateTime getStudyStartDate() {
+        return studyStartDate;
+    }
+
     /** Sets the study start date-time. */
-    public void setStudyStartDate(LocalDateTime studyStartDate) { this.studyStartDate = studyStartDate; }
+    public void setStudyStartDate(LocalDateTime studyStartDate) {
+        this.studyStartDate = studyStartDate;
+    }
 
     /** Returns the expected study end date. */
-    public LocalDate getStudyEndDate() { return studyEndDate; }
+    public LocalDate getStudyEndDate() {
+        return studyEndDate;
+    }
+
     /** Sets the expected study end date. */
-    public void setStudyEndDate(LocalDate studyEndDate) { this.studyEndDate = studyEndDate; }
+    public void setStudyEndDate(LocalDate studyEndDate) {
+        this.studyEndDate = studyEndDate;
+    }
 
     /** Returns the student group this student belongs to, or {@code null} if unassigned. */
-    public StudentGroup getStudentGroup() { return studentGroup; }
+    public StudentGroup getStudentGroup() {
+        return studentGroup;
+    }
+
     /** Assigns the student to a group. */
-    public void setStudentGroup(StudentGroup studentGroup) { this.studentGroup = studentGroup; }
+    public void setStudentGroup(StudentGroup studentGroup) {
+        this.studentGroup = studentGroup;
+    }
 }

@@ -1,6 +1,12 @@
 package org.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * JPA entity representing an academic course (e.g. "Mathematics").
@@ -27,7 +33,8 @@ public class Course {
     private String localizedName;
 
     /** Required no-arg constructor for JPA. */
-    public Course() {}
+    public Course() {
+    }
 
     /**
      * Creates a new course with the given name and color code.
@@ -41,22 +48,34 @@ public class Course {
     }
 
     /** Returns the surrogate primary key. */
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     /** Sets the surrogate primary key (used by JPA; do not call manually). */
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /** Returns the display name of this course. */
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     /** Sets the display name. */
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /** Returns the hex color code for this course. */
-    public String getColorCode() { return colorCode; }
+    public String getColorCode() {
+        return colorCode;
+    }
 
     /** Sets the hex color code. */
-    public void setColorCode(String colorCode) { this.colorCode = colorCode; }
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
 
     public void setLocalizedName(String localizedName) {
         this.localizedName = localizedName;

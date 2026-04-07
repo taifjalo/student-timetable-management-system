@@ -10,10 +10,16 @@ class NotificationsPopupControllerTest {
     @DisplayName("Helper Method: Mirrors Notifications Popup Controller.formatTime() logic.")
     private String formatTime(java.time.LocalDateTime sentAt) {
         long minutes = java.time.temporal.ChronoUnit.MINUTES.between(sentAt, java.time.LocalDateTime.now());
-        if (minutes < 1)  return "Just now";
-        if (minutes < 60) return minutes + " min ago";
+        if (minutes < 1) {
+            return "Just now";
+        }
+        if (minutes < 60) {
+            return minutes + " min ago";
+        }
         long hours = java.time.temporal.ChronoUnit.HOURS.between(sentAt, java.time.LocalDateTime.now());
-        if (hours < 24)   return hours + " h ago";
+        if (hours < 24) {
+            return hours + " h ago";
+        }
         long days = java.time.temporal.ChronoUnit.DAYS.between(sentAt, java.time.LocalDateTime.now());
         return days + " d ago";
     }

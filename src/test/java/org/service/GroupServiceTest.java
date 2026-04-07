@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -108,8 +107,8 @@ class GroupServiceTest {
     void getAllGroups() {
 
         List<StudentGroup> groups = List.of(
-                createGroup("G1","CS"),
-                createGroup("G2","IT")
+                createGroup("G1", "CS"),
+                createGroup("G2", "IT")
         );
 
         when(groupeDao.findAll()).thenReturn(groups);

@@ -9,8 +9,11 @@ class UserSettingsControllerTest {
 
      @DisplayName("Helper method: Mirrors User Settings Controller.capitalize() logic.")
      private String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return s.substring(0, 1).toUpperCase(java.util.Locale.ROOT)
+                + s.substring(1).toLowerCase(java.util.Locale.ROOT);
     }
 
     @DisplayName("Helper method: Mirrors UserSettingsController.nullSafe() logic.")

@@ -2,3 +2,12 @@
 *.iml
 target/
 dependency-reduced-pom.xml
+
+# Logs
+*.log
+
+# Static analysis tool configs (session-specific, not project-wide)
+spotbugs-exclude.xml
+
+# Scripts used during the static analysis session
+docs/quality/*.py

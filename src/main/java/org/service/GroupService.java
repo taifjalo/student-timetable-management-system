@@ -75,7 +75,9 @@ public class GroupService {
      */
     public StudentGroup updateGroup(String groupCode, String groupName, List<User> members) {
         StudentGroup group = groupDao.findByCode(groupCode);
-        if (group == null) throw new IllegalArgumentException("Group not found: " + groupCode);
+        if (group == null) {
+            throw new IllegalArgumentException("Group not found: " + groupCode);
+        }
 
         // Capture previous members BEFORE saveGroupWithMembers wipes them
         List<User> previousMembers = groupDao.findMembersByGroupCode(groupCode);
@@ -128,7 +130,9 @@ public class GroupService {
      * @return list of groups the user belongs to, or all groups
      */
     public List<StudentGroup> getGroupsForUser(Long userId) {
-        if (userId == null) return groupDao.findAll();
+        if (userId == null) {
+            return groupDao.findAll();
+        }
         return groupDao.findAllForUser(userId);
     }
 

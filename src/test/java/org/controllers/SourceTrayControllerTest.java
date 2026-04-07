@@ -10,8 +10,12 @@ class SourceTrayControllerTest {
 
     @DisplayName("Helper Method: Mirrors SourceTrayController.toSingular() logic for isolated testing.")
     private String toSingular(String word) {
-        if (word == null || word.isEmpty()) return word;
-        if (word.endsWith("s") || word.endsWith("S")) return word.substring(0, word.length() - 1);
+        if (word == null || word.isEmpty()) {
+            return word;
+        }
+        if (word.endsWith("s") || word.endsWith("S")) {
+            return word.substring(0, word.length() - 1);
+        }
         return word;
     }
 
@@ -54,8 +58,10 @@ class SourceTrayControllerTest {
     // SourceTrayController: styleToHex
      @DisplayName("Helper Method: Mirrors SourceTrayController.styleToHex() logic.")
      private String styleToHex(String style) {
-        if (style == null) return "#888888";
-        switch (style.toLowerCase()) {
+        if (style == null) {
+            return "#888888";
+        }
+        switch (style.toLowerCase(java.util.Locale.ROOT)) {
             case "style1": return "#77C04B";
             case "style2": return "#418FCB";
             case "style3": return "#F7D15B";

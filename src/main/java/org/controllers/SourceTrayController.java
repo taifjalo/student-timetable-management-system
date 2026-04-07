@@ -6,6 +6,7 @@ import com.calendarfx.view.CalendarView;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,16 +14,23 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import org.application.SourceTrayRowFactory;
 import org.dao.GroupDao;
 import org.entities.StudentGroup;
@@ -50,11 +58,70 @@ public class SourceTrayController {
     private static final String SECTION_TYPE_GROUP = "GROUP";
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
+    private Timeline skeletonPulse;
 
     private final LocalizationService localizationService = new LocalizationService();
     private final SourceTrayRowFactory sourceTrayRowFactory = new SourceTrayRowFactory();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
+
+    /**
+     * Injects shimmer skeleton placeholders into the source-tray scroll pane so the
+     * sidebar has content while the real lesson/group data loads in the background.
+     * The skeleton pulses between 45 % and 95 % opacity on a 1.4-second loop.
+     * It is automatically replaced (and the animation stopped) when
+     * {@link #addSourceSectionsToSourceTray} is called.
+     *
+     * @param calendarView the CalendarFX view whose source tray to populate
+     */
+    public void showSkeleton(CalendarView calendarView) {
+        ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
+                .filter(ScrollPane.class::isInstance)
+                .map(ScrollPane.class::cast)
+                .findFirst().orElse(null);
+        if (sourceScrollPane == null) {
+            return;
+        }
+
+        VBox skeleton = new VBox(8);
+        skeleton.setPadding(new Insets(12, 16, 12, 16));
+
+        // — Courses section —
+        skeleton.getChildren().add(bone(110, 13));  // section title
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+        skeleton.getChildren().add(bone(60, 24));               // add button
+
+        Separator sep = new Separator();
+        VBox.setMargin(sep, new Insets(10, 0, 10, 0));
+        skeleton.getChildren().add(sep);
+
+        // — Groups section —
+        skeleton.getChildren().add(bone(90, 13));               // section title
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+
+        sourceScrollPane.setFitToWidth(true);
+        sourceScrollPane.setContent(skeleton);
+
+        skeletonPulse = new Timeline(
+                new KeyFrame(Duration.ZERO,          new KeyValue(skeleton.opacityProperty(), 0.45)),
+                new KeyFrame(Duration.millis(700),   new KeyValue(skeleton.opacityProperty(), 0.95)),
+                new KeyFrame(Duration.millis(1400),  new KeyValue(skeleton.opacityProperty(), 0.45))
+        );
+        skeletonPulse.setCycleCount(Timeline.INDEFINITE);
+        skeletonPulse.play();
+    }
+
+    /** Returns a rounded grey placeholder rectangle used inside the skeleton loader. */
+    private Region bone(double maxWidth, double height) {
+        Region r = new Region();
+        r.setMaxWidth(maxWidth);
+        r.setPrefHeight(height);
+        r.setStyle("-fx-background-color: #DEDEDE; -fx-background-radius: 6;");
+        return r;
+    }
 
     /**
      * Replaces the CalendarFX source-tray scroll-pane content with the two custom
@@ -67,6 +134,10 @@ public class SourceTrayController {
      * @param courseSource the {@link CalendarSource} backing the courses section
      */
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
+        if (skeletonPulse != null) {
+            skeletonPulse.stop();
+            skeletonPulse = null;
+        }
         this.calendarSource = courseSource;
         this.selectedBundle = localizationService.getBundle();
 
@@ -80,7 +151,7 @@ public class SourceTrayController {
             groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
         } catch (Exception e) {
             System.err.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
-            groups = java.util.Collections.emptyList();
+            groups = Collections.emptyList();
         }
 
         this.groupsList = FXCollections.observableArrayList(groups);
@@ -91,14 +162,18 @@ public class SourceTrayController {
                 .findFirst()
                 .orElse(null);
 
-        if (sourceScrollPane == null || sourceScrollPane.getContent() == null) return;
+        if (sourceScrollPane == null || sourceScrollPane.getContent() == null) {
+            return;
+        }
 
         Node coursesSection = createSourceSectionNode(courseSource);
         Node groupsSection = createGroupsSectionNode("Groups", groupsList);
-        if (coursesSection == null || groupsSection == null) return;
+        if (coursesSection == null || groupsSection == null) {
+            return;
+        }
 
         Separator sectionDivider = new Separator();
-        VBox.setMargin(sectionDivider, new javafx.geometry.Insets(20, 0, 0, 0));
+        VBox.setMargin(sectionDivider, new Insets(20, 0, 0, 0));
         VBox wrapper = new VBox(12, coursesSection, sectionDivider, groupsSection);
         wrapper.getStyleClass().add("source-tray-content");
         sourceScrollPane.setFitToWidth(true);
@@ -128,7 +203,9 @@ public class SourceTrayController {
         VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
         Button addButton = (Button) groupsLoader.getNamespace().get("addButton");
 
-        if (sectionTitleText == null || groupsListContainer == null) return null;
+        if (sectionTitleText == null || groupsListContainer == null) {
+            return null;
+        }
 
         if (addButton != null) {
             addButton.setUserData(SECTION_TYPE_COURSE);
@@ -181,7 +258,9 @@ public class SourceTrayController {
         VBox groupsListContainer = (VBox) groupsLoader.getNamespace().get("groupsListContainer");
         Button addButton = (Button) groupsLoader.getNamespace().get("addButton");
 
-        if (sectionTitleText == null || groupsListContainer == null) return null;
+        if (sectionTitleText == null || groupsListContainer == null) {
+            return null;
+        }
 
         if (addButton != null) {
             addButton.setUserData(SECTION_TYPE_GROUP);
@@ -203,7 +282,7 @@ public class SourceTrayController {
         }
 
         // Listen for new groups added/removed so the tray updates live
-        items.addListener((javafx.collections.ListChangeListener<StudentGroup>) change -> {
+        items.addListener((ListChangeListener<StudentGroup>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (StudentGroup added : change.getAddedSubList()) {
@@ -258,7 +337,9 @@ public class SourceTrayController {
      */
     private void openModal(Calendar calendar, String sectionType, ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/modals/source-tray-course-modal/course-modal.fxml"),localizationService.getBundle());
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ui/modals/source-tray-course-modal/course-modal.fxml"),
+                    localizationService.getBundle());
             Parent root = loader.load();
             localizationService.swapSides(root);
             CreateCourseModalController modalController = loader.getController();
@@ -268,7 +349,7 @@ public class SourceTrayController {
             showModal(root, calendar != null ? calendar.getName() : null, sectionType, event);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to open course modal", e);
+            throw new IllegalStateException("Failed to open course modal", e);
         }
     }
 
@@ -281,7 +362,7 @@ public class SourceTrayController {
      */
     private void openModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
-            java.net.URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
+            URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
             if (fxmlUrl == null) {
                 System.err.println("[SourceTrayController] group-modal.fxml not found on classpath");
                 return;

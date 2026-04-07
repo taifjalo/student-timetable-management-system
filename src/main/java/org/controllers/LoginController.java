@@ -113,6 +113,9 @@ public class LoginController {
         }
 
         languageMenuButton.setText(selectedItem.getText());
+        // Dismiss the popup before touching the scene — otherwise it stays
+        // floating on top of every other window on the desktop.
+        languageMenuButton.hide();
 
         // Reload the Scene when the Lang changes
         Stage stage = (Stage) languageMenuButton.getScene().getWindow();
@@ -142,12 +145,13 @@ public class LoginController {
 
         Locale currentLocale = localizationService.getCurrentLocale();
         String lang = currentLocale.getLanguage();
-        languageMenuButton.setText(switch (lang) {
+        String langLabel = switch (lang) {
             case "fi" -> fiItem.getText();
             case "ar" -> arItem.getText();
             case "ru" -> ruItem.getText();
             default   -> enItem.getText();
-        });
+        };
+        languageMenuButton.setText(langLabel);
     }
 
     /**
@@ -163,7 +167,6 @@ public class LoginController {
                 throw new IllegalArgumentException("register.fxml not found");
             }
 
-            ResourceBundle bundle = localizationService.getBundle();
             FXMLLoader loader = new FXMLLoader(registerFxml, localizationService.getBundle());
             Parent root = loader.load();
             localizationService.swapSides(root);
@@ -174,7 +177,7 @@ public class LoginController {
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();
-        } catch (Exception e) {
+        } catch (java.io.IOException e) {
             e.printStackTrace();
         }
     }

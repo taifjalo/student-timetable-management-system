@@ -1,7 +1,6 @@
 package org.controllers;
 
 import com.calendarfx.model.Calendar;
-import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -44,7 +43,8 @@ public class CreateLessonModalController {
     private boolean isEditMode = false;
     private Long dbLessonId = null;
 
-    private final LessonService lessonService = new LessonService(new LessonDao(), new NotificationService(new NotificationDao()));
+    private final LessonService lessonService = new LessonService(
+            new LessonDao(), new NotificationService(new NotificationDao()));
     private final LocalizationService localizationService = new LocalizationService();
     private ResourceBundle bundle;
 
@@ -120,8 +120,10 @@ public class CreateLessonModalController {
 
         // For edit mode derive recipients from the lesson's already-assigned users.
         // For new lessons no groups are assigned yet so the list is empty.
-        List<Long> recipientIds = (isEditMode && entry.getUserObject() instanceof Lesson l && l.getAssignedUsers() != null)
-                ? l.getAssignedUsers().stream().map(User::getId).toList()
+        boolean hasUsers = isEditMode && entry.getUserObject() instanceof Lesson l
+                && !l.getAssignedUsers().isEmpty();
+        List<Long> recipientIds = hasUsers
+                ? ((Lesson) entry.getUserObject()).getAssignedUsers().stream().map(User::getId).toList()
                 : List.of();
 
         try {
@@ -159,12 +161,12 @@ public class CreateLessonModalController {
     @FXML
     private void handleDelete() {
         try {
-            if (dbLessonId != null) {
-                List<Long> recipientIds = (entry.getUserObject() instanceof Lesson l && l.getAssignedUsers() != null)
+            if (dbLessonId != null && entry != null) {
+                List<Long> recipientIds = (entry.getUserObject() instanceof Lesson l)
                         ? l.getAssignedUsers().stream().map(User::getId).toList()
                         : List.of();
                 lessonService.deleteLesson(dbLessonId, recipientIds);
-                if (calendar != null && entry != null) {
+                if (calendar != null) {
                     calendar.removeEntry(entry);
                 }
             }
