@@ -37,7 +37,7 @@ import java.util.ResourceBundle;
  * (type-ahead search with chip UI).
  *
  * <p>This class is not an FXML controller — it is instantiated directly by
- * {@link EntryPopOverContentPane} and its nodes are
+ * {@code EntryPopOverContentPane} and its nodes are
  * inserted into the pop-over's detail grid.
  *
  * <p>Available groups are loaded asynchronously on construction. The selected
