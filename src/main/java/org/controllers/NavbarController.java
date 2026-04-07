@@ -1,6 +1,7 @@
 package org.controllers;
 
 import com.calendarfx.view.CalendarView;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -79,7 +80,7 @@ public class NavbarController {
                 new KeyFrame(Duration.ZERO,       new KeyValue(refreshIcon.rotateProperty(), 0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(refreshIcon.rotateProperty(), 360))
         );
-        spinTimeline.setCycleCount(Timeline.INDEFINITE);
+        spinTimeline.setCycleCount(Animation.INDEFINITE);
         spinTimeline.play();
     }
 

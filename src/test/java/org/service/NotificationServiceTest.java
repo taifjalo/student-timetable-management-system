@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Logic Test: NotificationService tests with JUnit 5 & Mockito")
@@ -38,9 +37,9 @@ class NotificationServiceTest {
         notificationService.notifyLessonAdded("Math", "A101", recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.newLesson"),
-            eq("Math|A101"),
-            eq(recipients)
+            "notification.newLesson",
+            "Math|A101",
+            recipients
         );
     }
 
@@ -70,9 +69,9 @@ class NotificationServiceTest {
         notificationService.notifyLessonUpdated("Physics", "B202", recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.courseChanged"),
-            eq("Physics|B202"),
-            eq(recipients)
+            "notification.courseChanged",
+            "Physics|B202",
+            recipients
         );
     }
 
@@ -86,9 +85,9 @@ class NotificationServiceTest {
         notificationService.notifyLessonDeleted(37294L, recipients);
 
         verify(notificationDao).saveNotification(
-            eq("notification.lessonCancelled"),
-            eq("37294"),
-            eq(recipients)
+            "notification.lessonCancelled",
+            "37294",
+            recipients
         );
     }
 
@@ -108,9 +107,9 @@ class NotificationServiceTest {
         notificationService.notifyStudentAddedToGroup("CS101", 5L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.groupAdded"),
-            eq("CS101"),
-            eq(List.of(5L))
+            "notification.groupAdded",
+            "CS101",
+            List.of(5L)
         );
     }
 
@@ -130,9 +129,9 @@ class NotificationServiceTest {
         notificationService.notifyStudentRemovedFromGroup("CS101", 7L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.groupRemoved"),
-            eq("CS101"),
-            eq(List.of(7L))
+            "notification.groupRemoved",
+            "CS101",
+            List.of(7L)
         );
     }
 
@@ -152,9 +151,9 @@ class NotificationServiceTest {
         notificationService.notifyNewMessage(1L, "John", 2L);
 
         verify(notificationDao).saveNotification(
-            eq("notification.newMessage"),
-            eq("John"),
-            eq(List.of(2L))
+            "notification.newMessage",
+            "John",
+            List.of(2L)
         );
     }
 

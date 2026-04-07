@@ -26,10 +26,10 @@ public class NotificationDao {
     /** All locales for which translations are pre-rendered at save time. */
     @SuppressWarnings("deprecation")
     private static final Map<String, Locale> SUPPORTED_LOCALES = Map.of(
-        "en", new Locale("en", "US"),
-        "fi", new Locale("fi", "FI"),
-        "ar", new Locale("ar", "IQ"),
-        "ru", new Locale("ru", "RU")
+        "en", Locale.of("en", "US"),
+        "fi", Locale.of("fi", "FI"),
+        "ar", Locale.of("ar", "IQ"),
+        "ru", Locale.of("ru", "RU")
     );
 
     /**

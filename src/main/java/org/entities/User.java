@@ -46,6 +46,7 @@ public class User {
 
     /** Required no-arg constructor for JPA. */
     public User() {
+        // Intentionally empty — JPA requires a public no-arg constructor
     }
 
     /** Returns the surrogate primary key. */

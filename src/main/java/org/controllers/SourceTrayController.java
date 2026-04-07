@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -110,7 +111,7 @@ public class SourceTrayController {
                 new KeyFrame(Duration.millis(700),   new KeyValue(skeleton.opacityProperty(), 0.95)),
                 new KeyFrame(Duration.millis(1400),  new KeyValue(skeleton.opacityProperty(), 0.45))
         );
-        skeletonPulse.setCycleCount(Timeline.INDEFINITE);
+        skeletonPulse.setCycleCount(Animation.INDEFINITE);
         skeletonPulse.play();
     }
 
@@ -150,7 +151,7 @@ public class SourceTrayController {
         try {
             groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
         } catch (Exception e) {
-            System.err.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
+            System.out.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
             groups = Collections.emptyList();
         }
 
@@ -322,7 +323,7 @@ public class SourceTrayController {
         Button source = (Button) event.getSource();
         String sectionType = source.getUserData() != null ? source.getUserData().toString() : SECTION_TYPE_GROUP;
         if (SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType)) {
-            openModal((Calendar) null, SECTION_TYPE_COURSE, event);
+            openModal((Calendar<?>) null, SECTION_TYPE_COURSE, event);
         } else {
             openModal((StudentGroup) null, SECTION_TYPE_GROUP, event);
         }
@@ -335,7 +336,7 @@ public class SourceTrayController {
      * @param sectionType the section type constant ({@value #SECTION_TYPE_COURSE})
      * @param event       the originating action event (used to resolve the owner window)
      */
-    private void openModal(Calendar calendar, String sectionType, ActionEvent event) {
+    private void openModal(Calendar<?> calendar, String sectionType, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/ui/modals/source-tray-course-modal/course-modal.fxml"),
@@ -364,7 +365,7 @@ public class SourceTrayController {
         try {
             URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
             if (fxmlUrl == null) {
-                System.err.println("[SourceTrayController] group-modal.fxml not found on classpath");
+                System.out.println("[SourceTrayController] group-modal.fxml not found on classpath");
                 return;
             }
             FXMLLoader loader = new FXMLLoader(fxmlUrl, localizationService.getBundle());
@@ -372,7 +373,7 @@ public class SourceTrayController {
             localizationService.swapSides(root);
             CreateGroupModalController modalController = loader.getController();
             if (modalController == null) {
-                System.err.println("[SourceTrayController] CreateGroupModalController is null after load");
+                System.out.println("[SourceTrayController] CreateGroupModalController is null after load");
                 return;
             }
             if (group != null) {
@@ -382,7 +383,7 @@ public class SourceTrayController {
             modalController.applyProps();
             showModal(root, group != null ? group.getFieldOfStudies() : null, sectionType, event);
         } catch (Exception e) {
-            System.err.println("[SourceTrayController] Failed to open group modal: " + e.getMessage());
+            System.out.println("[SourceTrayController] Failed to open group modal: " + e.getMessage());
             e.printStackTrace();
         }
     }

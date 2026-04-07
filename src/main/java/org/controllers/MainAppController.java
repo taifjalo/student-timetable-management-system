@@ -198,7 +198,7 @@ public class MainAppController {
                 try {
                     dbCourses = courseService.getCoursesForUser(studentUserId);
                 } catch (Exception e) {
-                    System.err.println("Refresh: failed to load courses: " + e.getMessage());
+                    System.out.println("Refresh: failed to load courses: " + e.getMessage());
                     dbCourses = new ArrayList<>();
                 }
 
@@ -210,7 +210,7 @@ public class MainAppController {
                                 : lessonService.getLessonsByCourseWithGroups(course.getId());
                         courseToLessons.put(course, lessons);
                     } catch (Exception ex) {
-                        System.err.println("Refresh: failed lessons for "
+                        System.out.println("Refresh: failed lessons for "
                                 + course.getDisplayName() + ": " + ex.getMessage());
                         courseToLessons.put(course, new ArrayList<>());
                     }
@@ -251,7 +251,7 @@ public class MainAppController {
                     }
                 });
             } catch (Exception e) {
-                System.err.println("Refresh failed: " + e.getMessage());
+                System.out.println("Refresh failed: " + e.getMessage());
                 e.printStackTrace();
                 Platform.runLater(() -> navbarController.stopSpin());
             }
@@ -286,7 +286,7 @@ public class MainAppController {
                 try {
                     dbCourses = courseService.getCoursesForUser(studentUserId);
                 } catch (Exception e) {
-                    System.err.println("loadData: failed to load courses: " + e.getMessage());
+                    System.out.println("loadData: failed to load courses: " + e.getMessage());
                     dbCourses = new ArrayList<>();
                 }
 
@@ -336,8 +336,8 @@ public class MainAppController {
 
                         if (firstLoad) {
                             SplitPane sp = calendarView.lookupAll(".split-pane").stream()
-                                    .filter(n -> n instanceof SplitPane)
-                                    .map(n -> (SplitPane) n)
+                                    .filter(SplitPane.class::isInstance)
+                                    .map(SplitPane.class::cast)
                                     .filter(p -> p.getItems().size() >= 2)
                                     .findFirst()
                                     .orElse(null);
@@ -355,7 +355,7 @@ public class MainAppController {
                     }
                 });
             } catch (Exception e) {
-                System.err.println("loadDataFromDatabase failed: " + e.getMessage());
+                System.out.println("loadDataFromDatabase failed: " + e.getMessage());
                 e.printStackTrace();
                 Platform.runLater(() -> navbarController.stopSpin());
             }
@@ -381,7 +381,7 @@ public class MainAppController {
             StudentGroup g = new GroupDao().findGroupByUserId(currentUser.getId());
             return g != null ? g.getGroupCode() : null;
         } catch (Exception ex) {
-            System.err.println("Failed to resolve student group: " + ex.getMessage());
+            System.out.println("Failed to resolve student group: " + ex.getMessage());
             return null;
         }
     }
@@ -483,10 +483,10 @@ public class MainAppController {
      */
     private Set<String> getVariants(String key) {
         return Set.of(
-                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("en", "US")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ru", "RU")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("fi", "FI")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", new Locale("ar", "IQ")).getString(key)
+                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("en", "US")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("ru", "RU")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("fi", "FI")).getString(key),
+                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("ar", "IQ")).getString(key)
         );
     }
 }
