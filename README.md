@@ -33,6 +33,8 @@ The application supports the following languages, selectable from the Settings s
 3. The UI updates instantly across all screens
 4. Selecting Arabic automatically switches the layout to **Right-to-Left**
 
+> **Note:** The CalendarFX calendar widget does not support RTL layout and is pinned to Left-to-Right regardless of locale. All other UI components switch correctly to RTL when Arabic is selected.
+
 Translation files are located at `src/main/resources/i18n/MessagesBundle//`:
 - `MessagesBundle_en_US.properties`
 - `MessagesBundle_fi_FI.properties`
@@ -58,6 +60,22 @@ The database schema obtained from the ER diagram.
 ## Use Case diagram
 ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Use%20case%20diagram.png)
 The use case diagram shows how users interact with the system and what actions they can perform.
+
+## Static Code Analysis
+
+The project was subjected to a full static analysis pass using four tools. Results are documented in [`docs/quality/analysis-report.html`](docs/quality/analysis-report.html).
+
+| Tool        | Baseline | After | Reduction |
+|-------------|----------|-------|-----------|
+| Checkstyle  | 2,773    | 0     | 100%      |
+| SpotBugs    | 135      | 0     | 100%      |
+| PMD         | 75       | 54    | 28%       |
+| CPD         | 0        | 0     | —         |
+| **Total**   | **2,983**| **54**| **98.2%** |
+
+The 54 remaining PMD violations are `UnusedPrivateMethod` false positives caused by JavaFX FXML event handlers being invoked reflectively — PMD's static call-graph analysis cannot observe reflection-based dispatch.
+
+Checkstyle rules that conflict with JavaFX FXML controller patterns (magic numbers, final parameters, visibility modifiers) are suppressed via [`checkstyle.xml`](checkstyle.xml) rather than inline annotations.
 
 ## Sprint Reports
 [Sprint reports folder](https://github.com/taifjalo/student-timetable-management-system/tree/main/docs/sprints_reports)
