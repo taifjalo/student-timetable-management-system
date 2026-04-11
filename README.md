@@ -41,13 +41,13 @@ Translation files are located at `src/main/resources/i18n/MessagesBundle//`:
 - `MessagesBundle_ar_IQ.properties`
 - `MessagesBundle_ru_RU.properties`
 
-## 🌍 Database Localization
+## Database Localization
 
 The database implements localization using a separate translation-table approach.
 
 All translatable data is stored outside of the main entities and placed into dedicated translation tables. Each translation is linked to a specific language via the `language_code`.
 
-### 🗂️ Structure
+**Structure**
 
 The localization system consists of:
 
@@ -62,18 +62,18 @@ Each translation table contains:
 - a `language_code` (foreign key to `LANGUAGES`)
 - localized fields (e.g., `name`, `content`, `field_of_studies`)
 
-### 🔗 Relationships
+**Relationships**
 
 - One entity → many translations (one per language)
 - One language → many translations across different entities
 
-### 📌 Key Design
+**Key Design**
 
 - Composite keys (`entity_id`, `language_code`) ensure unique translations per language
 - Main tables store only language-independent data
 - Translation tables store only localized text
 
-### ✅ Advantages
+**Advantages**
 
 - Scalable for multiple languages
 - No data duplication in main tables
