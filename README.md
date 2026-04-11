@@ -41,13 +41,43 @@ Translation files are located at `src/main/resources/i18n/MessagesBundle//`:
 - `MessagesBundle_ar_IQ.properties`
 - `MessagesBundle_ru_RU.properties`
 
-## DB Localization method
+## 🌍 Database Localization
 
-For our localization method we chose translation table. The database content is localized using a separate table for all languages.
+The database implements localization using a separate translation-table approach.
 
-The tables we use are course_translations and group_translations.
+All translatable data is stored outside of the main entities and placed into dedicated translation tables. Each translation is linked to a specific language via the `language_code`.
 
+### 🗂️ Structure
 
+The localization system consists of:
+
+- `LANGUAGES` — stores supported languages
+- Translation tables:
+  - `COURSE_TRANSLATIONS`
+  - `GROUP_TRANSLATIONS`
+  - `NOTIFICATION_TRANSLATIONS`
+
+Each translation table contains:
+- a reference to the main entity (`course_id`, `group_code`, `notification_id`)
+- a `language_code` (foreign key to `LANGUAGES`)
+- localized fields (e.g., `name`, `content`, `field_of_studies`)
+
+### 🔗 Relationships
+
+- One entity → many translations (one per language)
+- One language → many translations across different entities
+
+### 📌 Key Design
+
+- Composite keys (`entity_id`, `language_code`) ensure unique translations per language
+- Main tables store only language-independent data
+- Translation tables store only localized text
+
+### ✅ Advantages
+
+- Scalable for multiple languages
+- No data duplication in main tables
+- Flexible and normalized structure
 
 ## ER diagram
 ![file link](https://github.com/taifjalo/student-timetable-management-system/blob/main/docs/diagrams/Timetable%20ER-schema.png)
