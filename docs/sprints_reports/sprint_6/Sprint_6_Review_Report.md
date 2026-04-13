@@ -29,7 +29,7 @@ UPDATE AFTER REVIEW
 | Team Member Name | Assigned Tasks                                                                                                        | Time Spent (hrs) | In-class Tasks |
 |---|-----------------------------------------------------------------------------------------------------------------------|------------------|----------------|
 | Taif Jalo |                                                                                                                       |                  |                |
-| Miska Voutilainen |                                                                                                                       |                  |                |
+| Miska Voutilainen | Minor codebase refactor, full JDoc, DB localization; static analysis with Checkstyle, SpotBugs, and PMD (fixed/suppressed 2,900 issues total); Sonar analysis (fixed 80 bugs); documented static analysis process in [quality analysis report](../../quality/analysis-report.html) | 20                 | Submitted               |
 | Elias Norta | Refactor & update codebase, UI/UX design documentation pdf, Update Trello, Sprint documentation (plan, review report) | 20               | Submitted      |
 | Nikita Rybakov |                                                                                                                       |                  |                |
 
