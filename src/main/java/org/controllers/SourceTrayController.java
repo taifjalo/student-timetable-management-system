@@ -217,11 +217,12 @@ public class SourceTrayController {
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
             for (Calendar calendar : source.getCalendars()) {
-                groupsListContainer.getChildren().add(sourceTrayRowFactory.createCalendarRow(
+                Node row = sourceTrayRowFactory.createCalendarRow(
                         calendar,
                         SessionManager.getInstance().isTeacher(),
                         e -> openModal(calendar, SECTION_TYPE_COURSE, e)
-                ));
+                );
+                groupsListContainer.getChildren().add(row);
             }
         };
 
@@ -275,11 +276,12 @@ public class SourceTrayController {
         // Render initial rows
         groupsListContainer.getChildren().clear();
         for (StudentGroup group : items) {
-            groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+            Node row = sourceTrayRowFactory.createGroupRow(
                     group,
                     SessionManager.getInstance().isTeacher(),
                     e -> openModal(group, SECTION_TYPE_GROUP, e)
-            ));
+            );
+            groupsListContainer.getChildren().add(row);
         }
 
         // Listen for new groups added/removed so the tray updates live
@@ -287,22 +289,24 @@ public class SourceTrayController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (StudentGroup added : change.getAddedSubList()) {
-                        groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+                        Node row = sourceTrayRowFactory.createGroupRow(
                                 added,
                                 SessionManager.getInstance().isTeacher(),
                                 e -> openModal(added, SECTION_TYPE_GROUP, e)
-                        ));
+                        );
+                        groupsListContainer.getChildren().add(row);
                     }
                 }
                 if (change.wasRemoved()) {
                     // Rebuild on removal — simplest safe approach
                     groupsListContainer.getChildren().clear();
                     for (StudentGroup group : items) {
-                        groupsListContainer.getChildren().add(sourceTrayRowFactory.createGroupRow(
+                        Node row = sourceTrayRowFactory.createGroupRow(
                                 group,
                                 SessionManager.getInstance().isTeacher(),
                                 e -> openModal(group, SECTION_TYPE_GROUP, e)
-                        ));
+                        );
+                        groupsListContainer.getChildren().add(row);
                     }
                 }
             }

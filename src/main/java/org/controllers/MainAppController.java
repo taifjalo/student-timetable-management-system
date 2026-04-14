@@ -15,7 +15,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.geometry.NodeOrientation;
 import javafx.util.Duration;
 import org.application.EntryPopOverContentPane;
 import org.entities.User;
@@ -88,9 +87,6 @@ public class MainAppController {
             mainRoot.setTop(navbar);
 
             calendarView = new CalendarView();
-            // CalendarFX does not support RTL layout — pin it to LTR regardless
-            // of the active locale so Arabic doesn't break the calendar rendering.
-            calendarView.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
             mainRoot.setCenter(calendarView);
 
             calendarView.selectedPageProperty().addListener((obs, o, n) ->
@@ -472,6 +468,7 @@ public class MainAppController {
         timeline.setCycleCount(5); // 5 attempts
         timeline.play();
     }
+
 
     /**
      * Returns the set of translations for a bundle key across all four supported

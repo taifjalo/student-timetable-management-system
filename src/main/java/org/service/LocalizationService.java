@@ -106,13 +106,22 @@ public class LocalizationService {
     }
 
     /**
+     * Returns whether the current locale uses right-to-left layout.
+     *
+     * @return {@code true} when Arabic is active, otherwise {@code false}
+     */
+    public boolean isRTL() {
+        return currentLocale.getLanguage().equals("ar");
+    }
+
+    /**
      * Sets the node orientation of the given root to RTL for Arabic or LTR for all
      * other locales. Should be called after loading any FXML root.
      *
      * @param root the root {@link Parent} whose text direction should be adjusted
      */
     public void swapSides(Parent root) {
-        if (currentLocale.getLanguage().equals("ar")) {
+        if (isRTL()) {
             root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         } else {
             root.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
