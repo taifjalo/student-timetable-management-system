@@ -22,7 +22,9 @@ The full Product Backlog and Sprint setup are available in the Trello workspace:
 
 ## Demo Summary (What Was Shown in the Review)
 
-UPDATE AFTER REVIEW
+During the sprint 6 review, the team showed how DB localization works on the app with courses, groups, and notifications. 
+
+The team also showed documentation of DB localization, static code analysis, design docs, and acceptance test cases. The team walked through the SonarQube dashboard to demonstrate the improvements in code quality and maintainability.
 
 ## Team Member Contributions
 
