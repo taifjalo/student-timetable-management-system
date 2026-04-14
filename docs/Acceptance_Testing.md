@@ -230,4 +230,4 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 * Load testing / stress testing
 * Security penetration testing
 * Mobile device testing (application is desktop-only)
-* Automated test execution (manual test design only for this sprint)
+  * Automated test execution (manual test design only for this sprint)
