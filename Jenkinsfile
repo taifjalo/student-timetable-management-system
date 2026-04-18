@@ -9,6 +9,7 @@ pipeline {
 
     environment {
           PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
+          JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'
           DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
           DOCKERHUB_REPO = 'taifjalo1/student-timetable-management-system'
           DOCKER_IMAGE_TAG = 'latest'
@@ -50,6 +51,22 @@ pipeline {
         stage('Publish Coverage Report') {
             steps {
                 jacoco()
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    bat """
+                        mvn sonar:sonar ^
+                        -Dsonar.projectKey=taifjalo_student-timetable-management-system ^
+                        -Dsonar.projectName=Student Timetable Management System ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.token=b78e49484120154b6413db4c164336b41300206a ^
+                        -Dsonar.java.binaries=target/classes ^
+                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    """
+                }
             }
         }
 
