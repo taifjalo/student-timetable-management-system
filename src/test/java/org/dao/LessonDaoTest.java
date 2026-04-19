@@ -89,4 +89,52 @@ class LessonDaoTest {
 
         assertNull(lessonDao.findById(lessonId));
     }
+
+    @Test
+    @DisplayName("Integration Test: Should Find Course By Id")
+    void shouldFindCourseById() {
+        Course course = createAndSaveCourse();
+
+        Course found = lessonDao.findCourseById(course.getId());
+
+        assertNotNull(found);
+        assertEquals(course.getId(), found.getId());
+    }
+
+    @Test
+    @DisplayName("Integration Test: Should Return All Courses")
+    void shouldReturnAllCourses() {
+        createAndSaveCourse();
+        createAndSaveCourse();
+
+        List<Course> courses = lessonDao.findAllCourses();
+
+        assertNotNull(courses);
+        assertFalse(courses.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Integration Test: Should Update Lesson Classroom")
+    void shouldUpdateLessonClassroom() {
+        Course course = createAndSaveCourse();
+        Lesson lesson = new Lesson(
+                LocalDateTime.of(2026, 3, 11, 9, 0),
+                LocalDateTime.of(2026, 3, 11, 10, 0),
+                course, "OLD-1");
+        lessonDao.saveLesson(lesson);
+
+        lesson.setClassroom("NEW-2");
+        Lesson updated = lessonDao.updateLesson(lesson);
+
+        assertEquals("NEW-2", updated.getClassroom());
+        Lesson reloaded = lessonDao.findById(lesson.getId());
+        assertNotNull(reloaded);
+        assertEquals("NEW-2", reloaded.getClassroom());
+    }
+
+    @Test
+    @DisplayName("Integration Test: Delete non-existing lesson should not throw")
+    void shouldNotThrowWhenDeletingNonExistingLesson() {
+        assertDoesNotThrow(() -> lessonDao.deleteLesson(Long.MAX_VALUE));
+    }
 }

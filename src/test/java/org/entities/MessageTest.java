@@ -3,11 +3,22 @@ package org.entities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessageTest {
+
+    private void setId(Message message, Long id) {
+        try {
+            Field field = Message.class.getDeclaredField("id");
+            field.setAccessible(true);
+            field.set(message, id);
+        } catch (ReflectiveOperationException e) {
+            fail("Failed to set id via reflection: " + e.getMessage());
+        }
+    }
 
     @Test
     @DisplayName("Message: Parameterized constructor should set all fields")
@@ -67,6 +78,36 @@ class MessageTest {
         assertEquals("Test", message.getContent());
         assertSame(sender, message.getSenderUser());
         assertSame(recipient, message.getRecipientUser());
+    }
+
+    @Test
+    @DisplayName("Message: equals/hashCode should use id identity")
+    void messageEqualsAndHashCodeById() {
+        Message first = new Message();
+        setId(first, 11L);
+
+        Message second = new Message();
+        setId(second, 11L);
+
+        Message different = new Message();
+        setId(different, 12L);
+
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+        assertNotEquals(first, different);
+        assertNotEquals(null, first);
+        assertNotEquals(null, first);
+    }
+
+    @Test
+    @DisplayName("Message: equals/hashCode when id is null")
+    void messageEqualsAndHashCodeWhenIdIsNull() {
+        Message first = new Message();
+        Message second = new Message();
+
+        assertEquals(0, first.hashCode());
+        assertNotEquals(first, second);
+        assertEquals(first, first);
     }
 
 }
