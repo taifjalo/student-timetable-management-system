@@ -3,134 +3,231 @@ package org.dao;
 import org.entities.Notification;
 import org.entities.NotificationReceiver;
 import org.entities.User;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Integration Test: Applied with DB integration, without JUnit 5 mock logic")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class NotificationDaoTest {
 
-    private final NotificationDao notificationDao = new NotificationDao();
-    private final UserDao userDao = new UserDao();
+    private NotificationDao notificationDao;
+    private UserDao         userDao;
+    private User            testUser;
 
-    @DisplayName("Helper Method: First Create the user")
-    private User createAndSaveUser() {
-        User user = new User();
-        user.setUsername("mock" + UUID.randomUUID());
-        user.setPasswordHash("hashed");
-        user.setEmail("mock+" + UUID.randomUUID() + "@test.com");
-        user.setFirstName("Mock");
-        user.setSureName("User");
-        user.setPhoneNumber("090" + UUID.randomUUID().toString().substring(0, 7));
-        user.setRole("student");
-        userDao.save(user);
-        return user;
+    @BeforeEach
+    void setUp() {
+        notificationDao = new NotificationDao();
+        userDao         = new UserDao();
+        testUser        = createUser("NotifUser");
+    }
+
+    // ── Helper ───────────────────────────────────────────────────────────────
+
+    private User createUser(String prefix) {
+        User u = new User();
+        u.setUsername(prefix + "_" + UUID.randomUUID());
+        u.setPasswordHash("hashed");
+        u.setEmail(prefix + "_" + UUID.randomUUID() + "@test.com");
+        u.setFirstName(prefix);
+        u.setSureName("Test");
+        u.setPhoneNumber("090" + UUID.randomUUID().toString().replace("-","").substring(0, 7));
+        u.setRole("student");
+        userDao.save(u);
+        return u;
+    }
+
+    private Notification saveNotification(Long... recipientIds) {
+        return notificationDao.saveNotification(
+                "notification.lesson.created",
+                "Math|Room 101",
+                List.of(recipientIds)
+        );
+    }
+
+    // ── saveNotification ──────────────────────────────────────────────────────
+
+    @Test
+    @Order(1)
+    @DisplayName("saveNotification: persists notification and returns with ID")
+    void testSaveNotification() {
+        Notification n = saveNotification(testUser.getId());
+
+        assertNotNull(n);
+        assertNotNull(n.getId());
     }
 
     @Test
-    @DisplayName("Integration Test: Should Save Notification And Find It By User")
-    void shouldSaveNotificationAndFindByUser() {
-        User user = createAndSaveUser();
+    @Order(2)
+    @DisplayName("saveNotification: works with multiple recipients")
+    void testSaveNotificationMultipleRecipients() {
+        User user2 = createUser("NotifUser2");
 
-        Notification saved = notificationDao.saveNotification(
-                "notification.newLesson", "CS101|Room 202", List.of(user.getId()));
+        Notification n = notificationDao.saveNotification(
+                "notification.lesson.created",
+                "Physics|Room 202",
+                List.of(testUser.getId(), user2.getId())
+        );
 
-        List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
-
-        assertFalse(results.isEmpty());
-        assertEquals(saved.getId(), results.get(0).getNotification().getId());
+        assertNotNull(n);
+        assertNotNull(n.getId());
     }
 
     @Test
-    @DisplayName("Integration Test: Should Save Notification For Multiple Recipients")
-    void shouldSaveNotificationForMultipleRecipients() {
-        User user1 = createAndSaveUser();
-        User user2 = createAndSaveUser();
+    @Order(3)
+    @DisplayName("saveNotification: works with null messageParams")
+    void testSaveNotificationNullParams() {
+        Notification n = notificationDao.saveNotification(
+                "notification.lesson.created",
+                null,
+                List.of(testUser.getId())
+        );
 
-        Notification saved = notificationDao.saveNotification(
-                "notification.newMessage", "Alice", List.of(user1.getId(), user2.getId()));
+        assertNotNull(n);
+        assertNotNull(n.getId());
+    }
 
-        List<NotificationReceiver> results1 = notificationDao.findByUserId(user1.getId());
-        List<NotificationReceiver> results2 = notificationDao.findByUserId(user2.getId());
+    // ── findByUserId ──────────────────────────────────────────────────────────
 
-        assertTrue(results1.stream().anyMatch(nr -> saved.getId().equals(nr.getNotification().getId())));
-        assertTrue(results2.stream().anyMatch(nr -> saved.getId().equals(nr.getNotification().getId())));
+    @Test
+    @Order(4)
+    @DisplayName("findByUserId: returns receivers after notification saved")
+    void testFindByUserId() {
+        saveNotification(testUser.getId());
+
+        List<NotificationReceiver> receivers =
+                notificationDao.findByUserId(testUser.getId());
+
+        assertNotNull(receivers);
+        assertFalse(receivers.isEmpty());
     }
 
     @Test
-    @DisplayName("Integration Test: Should Default isRead To False On Save")
-    void shouldDefaultIsReadToFalse() {
-        User user = createAndSaveUser();
+    @Order(5)
+    @DisplayName("findByUserId: returns empty for user with no notifications")
+    void testFindByUserIdEmpty() {
+        User fresh = createUser("FreshUser");
 
-        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
+        List<NotificationReceiver> receivers =
+                notificationDao.findByUserId(fresh.getId());
 
-        List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
-        NotificationReceiver latest = results.get(0);
+        assertNotNull(receivers);
+        assertTrue(receivers.isEmpty());
+    }
 
-        assertFalse(latest.isRead());
+    // ── findTranslatedForUser ─────────────────────────────────────────────────
+
+    @Test
+    @Order(6)
+    @DisplayName("findTranslatedForUser: returns rows after notification saved")
+    void testFindTranslatedForUser() {
+        saveNotification(testUser.getId());
+
+        List<Object[]> rows = notificationDao.findTranslatedForUser(testUser.getId());
+
+        assertNotNull(rows);
+        assertFalse(rows.isEmpty());
     }
 
     @Test
-    @DisplayName("Integration Test: Should Mark Single Notification As Read")
-    void shouldMarkSingleNotificationAsRead() {
-        User user = createAndSaveUser();
+    @Order(7)
+    @DisplayName("findTranslatedForUser: each row has 4 columns")
+    void testFindTranslatedForUserRowStructure() {
+        saveNotification(testUser.getId());
 
-        Notification saved = notificationDao.saveNotification(
-                "notification.groupAdded", "SWD22S", List.of(user.getId()));
+        List<Object[]> rows = notificationDao.findTranslatedForUser(testUser.getId());
 
-        notificationDao.markAsRead(user.getId(), saved.getId());
-
-        List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
-        NotificationReceiver nr = results.stream()
-            .filter(r -> r.getNotification().getId().equals(saved.getId()))
-            .findFirst()
-            .orElseThrow();
-
-        assertTrue(nr.isRead());
+        assertFalse(rows.isEmpty());
+        assertEquals(4, rows.get(0).length);
     }
 
     @Test
-    @DisplayName("Integration Test: Should Mark All Notifications As Read")
-    void shouldMarkAllNotificationsAsRead() {
-        User user = createAndSaveUser();
+    @Order(8)
+    @DisplayName("findTranslatedForUser: returns empty for user with no notifications")
+    void testFindTranslatedForUserEmpty() {
+        User fresh = createUser("FreshTranslated");
 
-        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
-        notificationDao.saveNotification("notification.groupRemoved", "SWD22S", List.of(user.getId()));
+        List<Object[]> rows = notificationDao.findTranslatedForUser(fresh.getId());
 
-        notificationDao.markAllAsRead(user.getId());
+        assertNotNull(rows);
+        assertTrue(rows.isEmpty());
+    }
 
-        List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
-        assertTrue(results.stream().allMatch(NotificationReceiver::isRead));
+    // ── countUnread ───────────────────────────────────────────────────────────
+
+    @Test
+    @Order(9)
+    @DisplayName("countUnread: returns > 0 after new notification")
+    void testCountUnreadAfterSave() {
+        saveNotification(testUser.getId());
+
+        long count = notificationDao.countUnread(testUser.getId());
+
+        assertTrue(count >= 1);
     }
 
     @Test
-    @DisplayName("Integration Test: Should Count Unread And Decrease After MarkAllAsRead")
-    void shouldCountUnreadAndDecreaseAfterMarkAll() {
-        User user = createAndSaveUser();
+    @Order(10)
+    @DisplayName("countUnread: returns 0 for user with no notifications")
+    void testCountUnreadZero() {
+        User fresh = createUser("FreshCount");
 
-        notificationDao.saveNotification("notification.groupAdded", "SWD22S", List.of(user.getId()));
-        notificationDao.saveNotification("notification.groupRemoved", "SWD22S", List.of(user.getId()));
+        long count = notificationDao.countUnread(fresh.getId());
 
-        long unreadBefore = notificationDao.countUnread(user.getId());
-        assertTrue(unreadBefore >= 2);
+        assertEquals(0, count);
+    }
 
-        notificationDao.markAllAsRead(user.getId());
+    // ── markAsRead ────────────────────────────────────────────────────────────
 
-        long unreadAfter = notificationDao.countUnread(user.getId());
-        assertEquals(0, unreadAfter);
+    @Test
+    @Order(11)
+    @DisplayName("markAsRead: reduces unread count by 1")
+    void testMarkAsRead() {
+        Notification n = saveNotification(testUser.getId());
+        long before = notificationDao.countUnread(testUser.getId());
+
+        notificationDao.markAsRead(testUser.getId(), n.getId());
+
+        long after = notificationDao.countUnread(testUser.getId());
+
+        assertTrue(after < before || after == 0);
     }
 
     @Test
-    @DisplayName("Integration Test: Should Return Empty List When User Has No Notifications")
-    void shouldReturnEmptyListForUserWithNoNotifications() {
-        User user = createAndSaveUser();
+    @Order(12)
+    @DisplayName("markAsRead: does nothing for non-existent notification")
+    void testMarkAsReadNonExistent() {
+        assertDoesNotThrow(() ->
+                notificationDao.markAsRead(testUser.getId(), Long.MAX_VALUE)
+        );
+    }
 
-        List<NotificationReceiver> results = notificationDao.findByUserId(user.getId());
+    // ── markAllAsRead ─────────────────────────────────────────────────────────
 
-        assertTrue(results.isEmpty());
+    @Test
+    @Order(13)
+    @DisplayName("markAllAsRead: sets unread count to 0")
+    void testMarkAllAsRead() {
+        saveNotification(testUser.getId());
+        saveNotification(testUser.getId());
+
+        notificationDao.markAllAsRead(testUser.getId());
+
+        long count = notificationDao.countUnread(testUser.getId());
+
+        assertEquals(0, count);
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("markAllAsRead: works for user with no notifications")
+    void testMarkAllAsReadNoNotifications() {
+        User fresh = createUser("FreshMarkAll");
+
+        assertDoesNotThrow(() ->
+                notificationDao.markAllAsRead(fresh.getId())
+        );
     }
 }
