@@ -162,9 +162,45 @@ class CourseServiceTest {
     }
 
     @Test
-    @DisplayName("ColorCodeToStyle: Should map all known color codes correctly")
-    void shouldMapAllColorCodesToStyles() {
-        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#6495ED"));
+    @DisplayName("ColorCodeToStyle: Should map #77C04B to STYLE1")
+    void shouldMapColorStyle1() {
+        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#77C04B"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #418FCB to STYLE2")
+    void shouldMapColorStyle2() {
+        assertEquals(Calendar.Style.STYLE2, CourseService.colorCodeToStyle("#418FCB"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #F7D15B to STYLE3")
+    void shouldMapColorStyle3() {
+        assertEquals(Calendar.Style.STYLE3, CourseService.colorCodeToStyle("#F7D15B"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #9D5B9F to STYLE4")
+    void shouldMapColorStyle4() {
+        assertEquals(Calendar.Style.STYLE4, CourseService.colorCodeToStyle("#9D5B9F"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #D0525F to STYLE5")
+    void shouldMapColorStyle5() {
+        assertEquals(Calendar.Style.STYLE5, CourseService.colorCodeToStyle("#D0525F"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #F9844B to STYLE6")
+    void shouldMapColorStyle6() {
+        assertEquals(Calendar.Style.STYLE6, CourseService.colorCodeToStyle("#F9844B"));
+    }
+
+    @Test
+    @DisplayName("ColorCodeToStyle: Should map #AE663E to STYLE7")
+    void shouldMapColorStyle7() {
+        assertEquals(Calendar.Style.STYLE7, CourseService.colorCodeToStyle("#AE663E"));
     }
 
     @Test
@@ -182,9 +218,79 @@ class CourseServiceTest {
     @Test
     @DisplayName("ColorCodeToStyle: Should be case-insensitive")
     void shouldBeCaseInsensitive() {
-        assertEquals(Calendar.Style.STYLE1, CourseService.colorCodeToStyle("#ff8c00"));
+        assertEquals(Calendar.Style.STYLE6, CourseService.colorCodeToStyle("#f9844b"));
     }
 
+    @Test
+    @DisplayName("ToCalendar: Should set correct name from course")
+    void shouldSetCalendarNameFromCourse() {
+        Course course = createCourse(1L, "Biology", "#418FCB");
+        Calendar calendar = courseService.toCalendar(course);
+        assertEquals("Biology", calendar.getName());
+    }
+
+    @Test
+    @DisplayName("ToCalendar: Should set correct style from course color")
+    void shouldSetCalendarStyleFromColor() {
+        Course course = createCourse(1L, "Chemistry", "#418FCB");
+        Calendar calendar = courseService.toCalendar(course);
+        assertEquals("style2", calendar.getStyle());
+    }
+
+    @Test
+    @DisplayName("GetCoursesForUser: Should return all courses when userId is null")
+    void shouldReturnAllCoursesWhenUserIdIsNull() {
+        List<Course> courses = List.of(
+                createCourse(1L, "Math", "#FF0000"),
+                createCourse(2L, "Physics", "#FF8C00")
+        );
+        when(courseDao.findAll()).thenReturn(courses);
+
+        List<Course> result = courseService.getCoursesForUser(null);
+
+        assertEquals(2, result.size());
+        verify(courseDao).findAll();
+        verify(courseDao, never()).findCoursesForUser(any());
+    }
+
+    @Test
+    @DisplayName("GetCoursesForUser: Should return user-specific courses when userId is provided")
+    void shouldReturnUserCoursesWhenUserIdProvided() {
+        List<Course> userCourses = List.of(
+                createCourse(1L, "Math", "#FF0000")
+        );
+        when(courseDao.findCoursesForUser(1L)).thenReturn(userCourses);
+
+        List<Course> result = courseService.getCoursesForUser(1L);
+
+        assertEquals(1, result.size());
+        verify(courseDao).findCoursesForUser(1L);
+    }
+
+    @Test
+    @DisplayName("Create: Should throw when name is null")
+    void shouldThrowWhenNameIsNull() {
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.createCourse(null, "#FF0000"));
+        verify(courseDao, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Update: Should throw when name is null")
+    void shouldThrowWhenUpdateNameIsNull() {
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.updateCourse(1L, null, "#FF0000"));
+        verify(courseDao, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Delete: Should throw when course not found")
+    void shouldThrowWhenDeleteCourseNotFound() {
+        when(courseDao.findById(99L)).thenReturn(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> courseService.deleteCourse(99L));
+        verify(courseDao, never()).delete(any());
+    }
 
     @Test
     @DisplayName("Find Course: Should Throw If Course Not Found")
