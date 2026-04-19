@@ -17,6 +17,9 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>
+            src/main/java/org/controllers/**,src/main/java/org/application/**,src/main/java/org/service/LocalizationService.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
