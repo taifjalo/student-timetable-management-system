@@ -13,6 +13,7 @@ pipeline {
           DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
           DOCKERHUB_REPO = 'taifjalo1/student-timetable-management-system'
           DOCKER_IMAGE_TAG = 'latest'
+          SONAR_TOKEN = 'b78e49484120154b6413db4c164336b41300206a'
       }
 
 
@@ -54,21 +55,24 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SonarCloud Analysis') {
             steps {
-                withSonarQubeEnv('SonarQubeServer') {
-                    bat """
-                        mvn sonar:sonar ^
-                        -Dsonar.projectKey=taifjalo_student-timetable-management-system ^
-                        -Dsonar.projectName=Student Timetable Management System ^
-                        -Dsonar.host.url=http://localhost:9000 ^
-                        -Dsonar.token=b78e49484120154b6413db4c164336b41300206a ^
-                        -Dsonar.java.binaries=target/classes ^
-                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-                    """
-                }
+                bat """
+                    mvn sonar:sonar ^
+                    -Dsonar.projectKey=taifjalo_student-timetable-management-system ^
+                    -Dsonar.organization=taif-jalo ^
+                    -Dsonar.projectName="Student Timetable Management System" ^
+                    -Dsonar.host.url=https://sonarcloud.io ^
+                    -Dsonar.token=%SONAR_TOKEN% ^
+                    -Dsonar.java.binaries=target/classes ^
+                    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml ^
+                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml ^
+                    -Dsonar.java.spotbugs.reportPaths=target/spotbugsXml.xml ^
+                    -Dsonar.java.pmd.reportPaths=target/pmd.xml
+                """
             }
         }
+    }
 
          stage('Build Docker Image') {
               steps {
