@@ -11,8 +11,12 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.organization>miska-voutilainen</sonar.organization>
-        <sonar.projectKey>org.example:student-timetable-management-system</sonar.projectKey>
+        <sonar.projectKey>taifjalo_student-timetable-management-system</sonar.projectKey>
+        <sonar.organization>taif-jalo</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
