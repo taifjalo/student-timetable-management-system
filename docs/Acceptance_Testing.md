@@ -66,7 +66,7 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 |-------------------------|---|--------------|-----|
 | Register Account        | Functional | TC-01        | Yes |
 | Login                   | Functional | TC-02, TC-03 | Yes |
-| View Timetable          | Functional | TC-04        | Yes|
+| View Timetable          | Functional | TC-04, TC-18 | Yes |
 | Create Lesson (Teacher) | Functional | TC-05        | Yes |
 | Create Course           | Functional | TC-06        | Yes |
 | Create Group            | Functional | TC-07        | Yes    |
@@ -76,9 +76,14 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 | Select Language         | Functional | TC-11        | Yes |
 | RTL Layout (Arabic)     | Functional | TC-12        | Yes |
 | Logout                  | Functional | TC-13        | Yes |
-| UI Readability          | Usability | TC-14        | Yes |
-| Language Switch Speed   | Performance | TC-15        | Yes |
-| Login Response Time     | Performance | TC-16        | Yes |
+| Edit/Delete Lesson      | Functional | TC-14        | Yes |
+| Search User & Start Conversation | Functional | TC-15 | Yes |
+| Mark Notifications Read | Functional | TC-16        | Yes |
+| Update Profile Information | Functional | TC-17        | Yes |
+| UI Readability          | Usability | TC-19        | Yes |
+| Language Switch Speed   | Performance | TC-20        | Yes |
+| Login Response Time     | Performance | TC-21        | Yes |
+| Data Refresh Time       | Performance | TC-22        | Yes |
 
 
 ---
@@ -193,11 +198,56 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 | **Expected Result** | User session is cleared, user is redirected to Login screen                                         |
 | **Pass Criteria** | `SessionManager` has no logged-in user, Login screen is displayed                                   |
 
+### TC-14 — Edit or Delete Lesson
+| Field | Detail |
+|---|---|
+| **User Story** | As a teacher, I want to edit or delete an existing lesson |
+| **Precondition** | User is logged in as teacher or admin, and at least one lesson already exists |
+| **Steps** | 1. Open the calendar. 2. Select an existing lesson. 3. Change one lesson detail and save. 4. Reopen the lesson and delete it. |
+| **Expected Result** | The edited lesson updates in the calendar, and the deleted lesson no longer appears |
+| **Pass Criteria** | Lesson changes persist correctly in the database, and deletion removes the lesson from the timetable view |
+
+### TC-15 — Search User and Start Conversation
+| Field | Detail |
+|---|---|
+| **User Story** | As a user, I want to search for another user and start a conversation |
+| **Precondition** | User is logged in, and at least one other user exists in the system |
+| **Steps** | 1. Open Messages. 2. Search by first name or last name. 3. Select a matching user. 4. Start a conversation and send a message. |
+| **Expected Result** | The matching user is found, a conversation opens, and the message is visible in the thread |
+| **Pass Criteria** | The conversation is created successfully and the message is stored with the correct sender and recipient |
+
+### TC-16 — Mark Notifications as Read
+| Field | Detail |
+|---|---|
+| **User Story** | As a user, I want to mark notifications as read individually or all at once |
+| **Precondition** | User is logged in and has at least one unread notification |
+| **Steps** | 1. Open the notifications pane. 2. Mark one notification as read. 3. Mark all notifications as read. |
+| **Expected Result** | The unread indicator updates correctly and the selected notifications change to read state |
+| **Pass Criteria** | Notification read status is updated correctly for both single-item and bulk actions |
+
+### TC-17 — Update User Profile Information
+| Field | Detail |
+|---|---|
+| **User Story** | As a user, I want to update my profile information such as first name and email |
+| **Precondition** | User is logged in and on the Settings page |
+| **Steps** | 1. Open Settings. 2. Change the first name. 3. Change the email address. 4. Save the changes. |
+| **Expected Result** | The updated profile information is saved and displayed correctly after refresh or reopen |
+| **Pass Criteria** | The first name and email are updated in the `users` table and reflected in the UI |
+
+### TC-18 — View Timetable in Year View
+| Field | Detail |
+|---|---|
+| **User Story** | As a student, I want to view my timetable in year view |
+| **Precondition** | User is logged in, lessons are assigned to their group |
+| **Steps** | 1. Log in. 2. Open the calendar. 3. Switch to year view. 4. Review the displayed timetable. |
+| **Expected Result** | The timetable is displayed in year view with all assigned lessons visible in the annual overview |
+| **Pass Criteria** | CalendarFX displays year-view events matching the database records, with correct course colour and lesson details |
+
 ---
 
 ## 5. Usability Test Cases
 
-### TC-14 — UI Readability
+### TC-19 — UI Readability
 | Field | Detail                                                                 |
 |---|------------------------------------------------------------------------|
 | **Test Objective** | Verify the UI is readable and intuitive for a new user                 |
@@ -209,19 +259,27 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 
 ## 6. Performance Test Cases
 
-### TC-15 — Language Switch Speed
+### TC-20 — Language Switch Speed
 | Field | Detail |
 |---|---|
 | **Test Objective** | Language switch should feel instant |
 | **Method** | Measure time from menu selection to UI update |
 | **Pass Criteria** | UI updates within 500ms of language selection |
 
-### TC-16 — Login Response Time
+### TC-21 — Login Response Time
 | Field | Detail |
 |---|---|
 | **Test Objective** | Login should complete quickly |
 | **Method** | Measure time from button click to calendar view appearing |
 | **Pass Criteria** | Login completes within 3 seconds on a standard network connection |
+
+### TC-22 — Data refresh time
+
+| Field | Detail                                                          |
+|---|-----------------------------------------------------------------|
+| **Test Objective** | All data should reload quickly                                  |
+| **Method** | Measure time from button click to data being refreshed          |
+| **Pass Criteria** | Data refreshes after 5 seconds on a standard network connection |
 
 ---
 
