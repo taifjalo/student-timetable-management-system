@@ -523,7 +523,6 @@ public class EntryPopOverContentPane extends PopOverContentPane {
                     });
                 } catch (Exception ex) {
                     System.out.println("Save failed: " + ex.getMessage());
-                    ex.printStackTrace();
                     javafx.application.Platform.runLater(() -> {
                         savingInProgress[0] = false;
                         saveBtn.setDisable(false);

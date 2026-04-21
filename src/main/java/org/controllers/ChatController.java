@@ -289,7 +289,6 @@ public class ChatController {
                         setGraphic(root);
 
                     } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -315,7 +314,6 @@ public class ChatController {
                         mController.setTime(message.getSentAt());
                         setGraphic(root);
                     } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
