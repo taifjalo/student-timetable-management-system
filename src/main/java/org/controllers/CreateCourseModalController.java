@@ -33,7 +33,7 @@ public class CreateCourseModalController {
     @FXML private Button deleteButton;
     @FXML private Button confirmButton;
 
-    private Calendar calendar;
+    private Calendar<Course> calendar;
     private CalendarSource calendarSource;
     private boolean isEditMode = false;
     private Style selectedStyle = Style.STYLE1;
@@ -80,7 +80,7 @@ public class CreateCourseModalController {
      * @param calendar the CalendarFX calendar representing the course to edit,
      *                 or {@code null} to stay in create mode
      */
-    public void setCalendar(Calendar calendar) {
+    public void setCalendar(Calendar<Course> calendar) {
         this.calendar = calendar;
         this.isEditMode = calendar != null;
         if (calendar != null) {
@@ -230,7 +230,7 @@ public class CreateCourseModalController {
             } else {
                 Course saved = courseService.createCourse(name, colorCode);
                 Course refreshed = courseService.getCourseById(saved.getId());
-                Calendar newCal = courseService.toCalendar(refreshed);
+                Calendar<Course> newCal = courseService.toCalendar(refreshed);
                 if (calendarSource != null) {
                     calendarSource.getCalendars().add(newCal);
                 }

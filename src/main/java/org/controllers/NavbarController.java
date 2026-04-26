@@ -188,7 +188,7 @@ public class NavbarController {
             notificationsPopOver.setHeaderAlwaysVisible(false);
             notificationsPopOver.setArrowSize(10);
             notificationsPopOver.showingProperty().addListener((obs, wasShowing, isShowing) -> {
-                if (!isShowing) {
+                if (Boolean.FALSE.equals(isShowing)) {
                     refreshBadge();
                 }
             });
