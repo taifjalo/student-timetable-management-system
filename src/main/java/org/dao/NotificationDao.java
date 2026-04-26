@@ -23,6 +23,8 @@ import java.util.ResourceBundle;
  */
 public class NotificationDao {
 
+    private static final String USER_ID_PARAM = "userId";
+
     /** All locales for which translations are pre-rendered at save time. */
     @SuppressWarnings("deprecation")
     private static final Map<String, Locale> SUPPORTED_LOCALES = Map.of(
@@ -129,7 +131,7 @@ public class NotificationDao {
                 + "WHERE nr.id.userId = :userId "
                 + "ORDER BY n.sentAt DESC",
                 NotificationReceiver.class
-            ).setParameter("userId", userId).getResultList();
+            ).setParameter(USER_ID_PARAM, userId).getResultList();
         }
     }
 
@@ -145,7 +147,7 @@ public class NotificationDao {
             em.createQuery(
                 "UPDATE NotificationReceiver nr SET nr.isRead = true "
                 + "WHERE nr.id.userId = :userId AND nr.id.notificationId = :notifId"
-            ).setParameter("userId", userId)
+            ).setParameter(USER_ID_PARAM, userId)
              .setParameter("notifId", notificationId)
              .executeUpdate();
             em.getTransaction().commit();
@@ -163,7 +165,7 @@ public class NotificationDao {
             em.createQuery(
                 "UPDATE NotificationReceiver nr SET nr.isRead = true "
                 + "WHERE nr.id.userId = :userId"
-            ).setParameter("userId", userId).executeUpdate();
+            ).setParameter(USER_ID_PARAM, userId).executeUpdate();
             em.getTransaction().commit();
         }
     }
@@ -179,7 +181,7 @@ public class NotificationDao {
             return (Long) em.createQuery(
                 "SELECT COUNT(nr) FROM NotificationReceiver nr "
                 + "WHERE nr.id.userId = :userId AND nr.isRead = false"
-            ).setParameter("userId", userId).getSingleResult();
+            ).setParameter(USER_ID_PARAM, userId).getSingleResult();
         }
     }
 

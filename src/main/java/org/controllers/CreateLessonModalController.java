@@ -39,7 +39,7 @@ public class CreateLessonModalController {
     @FXML private Button confirmButton;
 
     private Entry<?> entry;
-    private Calendar calendar;
+    private Calendar<?> calendar;
     private boolean isEditMode = false;
     private Long dbLessonId = null;
 

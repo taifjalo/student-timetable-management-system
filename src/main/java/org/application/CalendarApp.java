@@ -36,7 +36,6 @@ public class CalendarApp extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/auth/login.fxml"), bundle);
 
-//        Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 

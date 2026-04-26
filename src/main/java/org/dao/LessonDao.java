@@ -81,7 +81,9 @@ public class LessonDao {
             Lesson lesson = results.get(0);
             // Initialize assigned users while the session is still open, but do it
             // separately to avoid Hibernate's multiple-bag fetch problem.
-            lesson.getAssignedUsers().size();
+            if (!lesson.getAssignedUsers().isEmpty()) {
+                // collection is now fully loaded
+            }
             return lesson;
         }
     }

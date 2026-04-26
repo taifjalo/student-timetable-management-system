@@ -48,7 +48,7 @@ public class LocalizationService {
      * @param locale the new locale to apply; must not be {@code null}
      * @throws IllegalArgumentException if {@code locale} is {@code null}
      */
-    public void setLocale(Locale locale) {
+    public static void setLocale(Locale locale) {
         if (locale == null) {
             throw new IllegalArgumentException("Locale cannot be null");
         }

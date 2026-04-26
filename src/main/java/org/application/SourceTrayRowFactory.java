@@ -17,7 +17,7 @@ import org.entities.StudentGroup;
  */
 public class SourceTrayRowFactory {
 
-    public HBox createCalendarRow(Calendar calendar, boolean canEdit, EventHandler<ActionEvent> onEdit) {
+    public HBox createCalendarRow(Calendar<?> calendar, boolean canEdit, EventHandler<ActionEvent> onEdit) {
         Region colorDot = new Region();
         colorDot.setMinSize(12, 12);
         colorDot.setMaxSize(12, 12);

@@ -7,7 +7,6 @@ import org.entities.NotificationReceiver;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service that encapsulates all notification-related business logic.
@@ -147,7 +146,7 @@ public class NotificationService {
                         row[2] instanceof Timestamp ts ? ts.toLocalDateTime() : (LocalDateTime) row[2],
                         ((Number) row[3]).intValue() != 0
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
