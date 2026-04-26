@@ -24,6 +24,8 @@ import org.service.GroupService;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 import org.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +37,10 @@ import java.util.ResourceBundle;
  * inside the CalendarFX entry pop-over for teachers: classroom, teacher name,
  * assigned groups (chip UI with a context-menu picker), and assigned students
  * (type-ahead search with chip UI).
- *
- * <p>This class is not an FXML controller — it is instantiated directly by
- * {@code EntryPopOverContentPane} and its nodes are
- * inserted into the pop-over's detail grid.
- *
- * <p>Available groups are loaded asynchronously on construction. The selected
- * groups and users are exposed via {@link #getSelectedGroups()} and
- * {@link #getSelectedUsers()} so the save handler can persist them.
- *
- * <p>When {@link #setReadOnly(boolean)} is called the interactive controls
- * (text field, buttons) are replaced with read-only labels, making the widget
- * suitable for the student view.
  */
 public class EventExtraDetailsController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventExtraDetailsController.class);
 
     private final TextField classroomField;
     private final Label teacherLabel;
@@ -67,9 +59,6 @@ public class EventExtraDetailsController {
 
     /**
      * Constructs the extra-details widget.
-     * Pre-fills classroom and existing group/user chips from {@code existingLesson}
-     * when editing an existing lesson, or leaves fields blank for a new entry.
-     * Starts a background thread to load all available groups.
      *
      * @param entry          the CalendarFX entry this pop-over is attached to
      * @param existingLesson the persisted lesson for edit mode, or {@code null} for create mode
@@ -87,13 +76,18 @@ public class EventExtraDetailsController {
                 : "-";
         teacherLabel = new Label(teacherName);
 
-        groupRow = new HBox(6);
-        groupRow.setAlignment(Pos.CENTER_LEFT);
+        groupRow = setupGroupRow(existingLesson);
+        studentsRow = setupStudentsRow(existingLesson);
+    }
+
+    private HBox setupGroupRow(Lesson existingLesson) {
+        HBox row = new HBox(6);
+        row.setAlignment(Pos.CENTER_LEFT);
 
         Button addGroupBtn = new Button(selectedBundle.getString("event.add.group.button"));
         addGroupBtn.setStyle("-fx-cursor: hand;");
         addGroupBtn.setOnAction(e -> showGroupPicker(addGroupBtn));
-        groupRow.getChildren().add(addGroupBtn);
+        row.getChildren().add(addGroupBtn);
 
         if (existingLesson != null) {
             for (StudentGroup existingGroup : existingLesson.getAssignedGroups()) {
@@ -101,72 +95,86 @@ public class EventExtraDetailsController {
             }
         }
 
-        new Thread(() -> {
+        Thread.ofVirtual().name("load-groups-for-lesson").start(() -> {
             try {
                 List<StudentGroup> groups = groupService.getAllGroups();
                 Platform.runLater(() -> availableGroups.addAll(groups));
             } catch (Exception ex) {
-                System.out.println("Failed to load groups: " + ex.getMessage());
+                LOGGER.warn("Failed to load groups: {}", ex.getMessage());
             }
-        }, "load-groups-for-lesson").start();
+        });
 
-        studentsRow = new FlowPane(6, 6);
-        studentsRow.setAlignment(Pos.CENTER_LEFT);
+        return row;
+    }
+
+    private FlowPane setupStudentsRow(Lesson existingLesson) {
+        FlowPane row = new FlowPane(6, 6);
+        row.setAlignment(Pos.CENTER_LEFT);
 
         TextField userSearchField = new TextField();
         userSearchField.setPromptText(selectedBundle.getString("event.search.users.prompt"));
         userSearchField.setPrefWidth(180);
 
         ContextMenu userSuggestions = new ContextMenu();
-        userSearchField.textProperty().addListener((obs, oldValue, newValue) -> {
-            userSuggestions.hide();
-            String query = newValue == null ? "" : newValue.trim();
-            if (query.length() < 2) {
-                return;
-            }
+        setupUserSearchListener(userSearchField, userSuggestions);
 
-            new Thread(() -> {
-                try {
-                    List<User> matches = userService.searchStudents(query);
-                    Platform.runLater(() -> {
-                        userSuggestions.getItems().clear();
-
-                        for (User match : matches) {
-                            if (selectedUsers.stream().anyMatch(u -> Objects.equals(u.getId(), match.getId()))) {
-                                continue;
-                            }
-                            String fullName = match.getFirstName() + " " + match.getSureName();
-                            MenuItem item = new MenuItem(fullName);
-                            item.setOnAction(e -> {
-                                addUserChip(match, userSearchField);
-                                userSearchField.clear();
-                                userSuggestions.hide();
-                            });
-                            userSuggestions.getItems().add(item);
-                        }
-
-                        if (!userSuggestions.getItems().isEmpty() && userSearchField.isFocused()) {
-                            userSuggestions.show(userSearchField, javafx.geometry.Side.BOTTOM, 0, 0);
-                        }
-                    });
-                } catch (Exception ex) {
-                    System.out.println("Failed to search users: " + ex.getMessage());
-                }
-            }, "search-users-for-lesson").start();
-        });
-
-        userSearchField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (!isFocused) {
-                Platform.runLater(userSuggestions::hide);
-            }
-        });
-
-        studentsRow.getChildren().add(userSearchField);
+        row.getChildren().add(userSearchField);
 
         if (existingLesson != null) {
             for (User existingUser : existingLesson.getAssignedUsers()) {
                 addUserChip(existingUser, userSearchField);
             }
+        }
+
+        return row;
+    }
+
+    private void setupUserSearchListener(TextField userSearchField, ContextMenu userSuggestions) {
+        userSearchField.textProperty().addListener((obs, oldValue, newValue) -> {
+            userSuggestions.hide();
+            String query = newValue == null ? "" : newValue.trim();
+            if (query.length() >= 2) {
+                startUserSearch(query, userSuggestions, userSearchField);
+            }
+        });
+
+        userSearchField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (Boolean.FALSE.equals(isFocused)) {
+                Platform.runLater(userSuggestions::hide);
+            }
+        });
+    }
+
+    private void startUserSearch(String query, ContextMenu userSuggestions, TextField userSearchField) {
+        Thread.ofVirtual().name("search-users-for-lesson").start(() -> {
+            try {
+                List<User> matches = userService.searchStudents(query);
+                Platform.runLater(() -> buildUserSuggestions(matches, userSuggestions, userSearchField));
+            } catch (Exception ex) {
+                LOGGER.warn("Failed to search users: {}", ex.getMessage());
+            }
+        });
+    }
+
+    private void buildUserSuggestions(List<User> matches, ContextMenu userSuggestions, TextField userSearchField) {
+        userSuggestions.getItems().clear();
+
+        for (User match : matches) {
+            if (selectedUsers.stream().anyMatch(u -> Objects.equals(u.getId(), match.getId()))) {
+                continue;
+            }
+            String fullName = match.getFirstName() + " " + match.getSureName();
+            MenuItem item = new MenuItem(fullName);
+            item.setOnAction(e -> {
+                addUserChip(match, userSearchField);
+                userSearchField.clear();
+                userSuggestions.hide();
+            });
+            userSuggestions.getItems().add(item);
+        }
+
+        if (!userSuggestions.getItems().isEmpty() && userSearchField.isFocused()) {
+            userSuggestions.show(userSearchField, javafx.geometry.Side.BOTTOM, 0, 0);
         }
     }
 
@@ -206,11 +214,7 @@ public class EventExtraDetailsController {
     }
 
     /**
-     * Converts all interactive controls to read-only labels when {@code readOnly} is
-     * {@code true}. Replaces the classroom text field with a label, converts group
-     * chips to styled non-clickable labels (removing the "Add group" button), and
-     * converts user chips to styled non-clickable labels (removing the search field).
-     * A dash ({@code "—"}) is shown when no value is set.
+     * Converts all interactive controls to read-only labels.
      *
      * @param readOnly {@code true} to make the widget read-only; {@code false} is a no-op
      */
@@ -218,11 +222,15 @@ public class EventExtraDetailsController {
         if (!readOnly) {
             return;
         }
+        replaceClassroomWithLabel();
+        replaceGroupChipsWithLabels();
+        replaceStudentChipsWithLabels();
+    }
 
+    private void replaceClassroomWithLabel() {
         String classroomText = classroomField.getText().trim();
         Label classroomLabel = new Label(classroomText.isEmpty() ? "—" : classroomText);
         classroomLabel.setStyle("-fx-padding: 2 0 2 0;");
-        // Replace the TextField in its parent with the label
         if (classroomField.getParent() instanceof GridPane gp) {
             int col = GridPane.getColumnIndex(classroomField) == null
                     ? 0 : GridPane.getColumnIndex(classroomField);
@@ -233,17 +241,17 @@ public class EventExtraDetailsController {
             GridPane.setRowIndex(classroomLabel, row);
             gp.getChildren().add(classroomLabel);
         }
+    }
 
+    private void replaceGroupChipsWithLabels() {
         List<Node> toReplace = new ArrayList<>(groupRow.getChildren());
         groupRow.getChildren().clear();
         for (Node n : toReplace) {
             if (n instanceof Button btn) {
                 String text = btn.getText();
-                // Skip the "Add group" button entirely
                 if (text != null && text.startsWith("+")) {
                     continue;
                 }
-                // Convert group chips to plain styled labels
                 Label groupLabel = new Label(text);
                 groupLabel.setStyle(
                         "-fx-background-radius: 12; -fx-border-radius: 12;"
@@ -252,16 +260,17 @@ public class EventExtraDetailsController {
                 groupRow.getChildren().add(groupLabel);
             }
         }
-        // If no groups assigned, show a dash
         if (groupRow.getChildren().isEmpty()) {
             groupRow.getChildren().add(new Label("—"));
         }
+    }
 
+    private void replaceStudentChipsWithLabels() {
         List<Node> studentNodes = new ArrayList<>(studentsRow.getChildren());
         studentsRow.getChildren().clear();
         for (Node n : studentNodes) {
             if (n instanceof TextField) {
-                continue; // remove search field
+                continue;
             }
             if (n instanceof Button btn) {
                 Label userLabel = new Label(btn.getText());
@@ -278,10 +287,7 @@ public class EventExtraDetailsController {
     }
 
     /**
-     * Shows a {@link ContextMenu} beneath the add-group button listing all groups
-     * not yet selected. Skips groups already in {@link #selectedGroups}.
-     *
-     * @param addGroupBtn the button to anchor the context menu to
+     * Shows a context menu listing all groups not yet selected.
      */
     private void showGroupPicker(Button addGroupBtn) {
         if (availableGroups.isEmpty()) {
@@ -305,12 +311,7 @@ public class EventExtraDetailsController {
     }
 
     /**
-     * Adds a removable group chip button to the group row for the given group.
-     * Does nothing if the group is already selected. The chip is inserted before
-     * the add-group button.
-     *
-     * @param group      the group to add
-     * @param addGroupBtn the add-group button used to determine insertion position
+     * Adds a removable group chip button to the group row.
      */
     private void addGroupChip(StudentGroup group, Button addGroupBtn) {
         if (selectedGroups.stream().anyMatch(g -> g.getGroupCode().equals(group.getGroupCode()))) {
@@ -331,13 +332,7 @@ public class EventExtraDetailsController {
     }
 
     /**
-     * Adds a removable user chip button to the students row for the given user.
-     * Does nothing if the user is already selected. The chip is inserted before
-     * the search field. Shows an {@code exit.png} icon as the chip's graphic if
-     * the image can be loaded.
-     *
-     * @param user            the user to add
-     * @param userSearchField the search field used to determine insertion position
+     * Adds a removable user chip button to the students row.
      */
     private void addUserChip(User user, TextField userSearchField) {
         if (selectedUsers.stream().anyMatch(u -> Objects.equals(u.getId(), user.getId()))) {
