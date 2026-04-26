@@ -28,6 +28,8 @@ import org.service.CourseService;
 import org.service.LessonService;
 import org.service.LocalizationService;
 import org.service.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -41,27 +43,14 @@ import java.util.Set;
 
 /**
  * Root controller for the main application scene ({@code main-app.fxml}).
- * Owns the {@link CalendarView}, the {@link CalendarSource} for courses, and
- * coordinates the {@link NavbarController} and {@link SourceTrayController}.
- *
- * <p>On initialization it:
- * <ol>
- *   <li>Loads the navbar FXML and injects it into the top of the border pane.</li>
- *   <li>Creates the {@link CalendarView} and configures entry interactions
- *       (teachers can create/edit; students are read-only).</li>
- *   <li>Calls {@link #loadDataFromDatabase(boolean)} to populate courses and
- *       lessons from the database and build the source tray.</li>
- *   <li>Starts a daemon thread that keeps the calendar's today/time current.</li>
- * </ol>
- *
- * <p>The {@link #refresh()} method re-fetches all data on a background thread
- * and is triggered by the navbar refresh button.
  */
 public class MainAppController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainAppController.class);
+    private static final String MESSAGES_BUNDLE = "i18n/MessagesBundle";
+
     @FXML private BorderPane mainRoot;
 
-    // Kept as fields so refresh() can reach them without re-initialising the whole scene
     private CalendarView calendarView;
     private CalendarSource myCalendarSource;
     private SourceTrayController sourceTrayController;
@@ -71,13 +60,11 @@ public class MainAppController {
     ResourceBundle selectedBundle = localizationService.getBundle();
 
     /**
-     * JavaFX initialize callback — sets up the full main-app scene including the
-     * navbar, calendar view, source tray, and initial database load.
+     * JavaFX initialize callback.
      */
     @FXML
     public void initialize() {
         try {
-
             FXMLLoader navbarLoader = new FXMLLoader(
                     getClass().getResource("/ui/timetable-management-navbar.fxml"),
                     localizationService.getBundle());
@@ -89,17 +76,11 @@ public class MainAppController {
             calendarView = new CalendarView();
             mainRoot.setCenter(calendarView);
 
-            calendarView.selectedPageProperty().addListener((obs, o, n) ->
-                    localizeCalendarSafe());
-
-            calendarView.dateProperty().addListener((obs, o, n) ->
-                    localizeCalendarSafe());
-
-            calendarView.skinProperty().addListener((obs, o, n) ->
-                    localizeCalendarSafe());
+            calendarView.selectedPageProperty().addListener((obs, o, n) -> localizeCalendarSafe());
+            calendarView.dateProperty().addListener((obs, o, n) -> localizeCalendarSafe());
+            calendarView.skinProperty().addListener((obs, o, n) -> localizeCalendarSafe());
 
             navbarController.setCalendarView(calendarView);
-            // Give the navbar a handle so the refresh button can call back here
             navbarController.setMainAppController(this);
 
             myCalendarSource = new CalendarSource(selectedBundle.getString("sourcetray.courses.section.title"));
@@ -117,47 +98,23 @@ public class MainAppController {
                             param.getEntry()));
 
             calendarView.setEntryEditPolicy(param -> {
-                // Students cannot interact with entries at all
                 if (!SessionManager.getInstance().isTeacher()) {
                     return false;
                 }
-                // Teachers: no drag-to-move or drag-to-resize
                 return switch (param.getEditOperation()) {
                     case MOVE, CHANGE_START, CHANGE_END -> false;
                     default -> true;
                 };
             });
 
-            // Students cannot create new entries by clicking on the calendar
             if (!SessionManager.getInstance().isTeacher()) {
                 calendarView.setEntryFactory(param -> null);
             }
 
-            Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
-                @Override
-                public void run() {
-                    while (true) {
-                        Platform.runLater(() -> {
-                            calendarView.setToday(LocalDate.now());
-                            calendarView.setTime(LocalTime.now());
-                        });
-                        try {
-                            sleep(10000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            updateTimeThread.setPriority(Thread.MIN_PRIORITY);
-            updateTimeThread.setDaemon(true);
-            updateTimeThread.start();
+            startTimeUpdateThread();
 
             sourceTrayController = new SourceTrayController();
 
-            // Show source tray with skeleton immediately, then kick off the DB load.
-            // Platform.runLater defers until after the scene is fully laid out so
-            // the CSS lookup inside showSkeleton() resolves correctly.
             Platform.runLater(() -> {
                 calendarView.setShowSourceTray(true);
                 calendarView.applyCss();
@@ -166,80 +123,50 @@ public class MainAppController {
                 loadDataFromDatabase(true);
             });
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void startTimeUpdateThread() {
+        Thread timeThread = Thread.ofVirtual().name("Calendar: Update Time Thread").start(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                Platform.runLater(() -> {
+                    calendarView.setToday(LocalDate.now());
+                    calendarView.setTime(LocalTime.now());
+                });
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+        timeThread.toString(); // suppress unused-variable warning; thread runs in background
+    }
+
     /**
-     * Re-fetches all courses and lessons from the database on a background thread
-     * and rebuilds the calendar entries and source tray on the JavaFX thread.
-     * Called by the navbar refresh button; the spinner animation is stopped in
-     * {@code finally} regardless of outcome.
+     * Re-fetches all courses and lessons from the database on a background thread.
      */
     public void refresh() {
         new Thread(() -> {
             try {
                 CourseService courseService = new CourseService(new CourseDao());
                 LessonService lessonService = new LessonService(new LessonDao());
+                boolean isTeacher = SessionManager.getInstance().isTeacher();
+                String studentGroupCode = resolveStudentGroupCode(isTeacher);
+                Long studentUserId = resolveStudentUserId(isTeacher);
 
-                final boolean isTeacher = SessionManager.getInstance().isTeacher();
-                final String studentGroupCode = resolveStudentGroupCode(isTeacher);
-                final Long studentUserId = isTeacher ? null
-                        : (SessionManager.getInstance().getCurrentUser() != null
-                                ? SessionManager.getInstance().getCurrentUser().getId() : null);
-
-                List<Course> dbCourses;
-                try {
-                    dbCourses = courseService.getCoursesForUser(studentUserId);
-                } catch (Exception e) {
-                    System.out.println("Refresh: failed to load courses: " + e.getMessage());
-                    dbCourses = new ArrayList<>();
-                }
-
-                Map<Course, List<Lesson>> courseToLessons = new LinkedHashMap<>();
-                for (Course course : dbCourses) {
-                    try {
-                        List<Lesson> lessons = isTeacher
-                                ? lessonService.getLessonsByCourse(course.getId())
-                                : lessonService.getLessonsByCourseWithGroups(course.getId());
-                        courseToLessons.put(course, lessons);
-                    } catch (Exception ex) {
-                        System.out.println("Refresh: failed lessons for "
-                                + course.getDisplayName() + ": " + ex.getMessage());
-                        courseToLessons.put(course, new ArrayList<>());
-                    }
-                }
-
-                final Map<Course, List<Lesson>> finalMap = courseToLessons;
+                List<Course> dbCourses = fetchCourses(courseService, studentUserId, "Refresh");
+                Map<Course, List<Lesson>> courseToLessons =
+                        buildCourseToLessonsMap(dbCourses, isTeacher, lessonService);
 
                 Platform.runLater(() -> {
                     try {
                         myCalendarSource.getCalendars().clear();
-                        for (Map.Entry<Course, List<Lesson>> e : finalMap.entrySet()) {
-                            Course course  = e.getKey();
-                            Calendar<Course> cal   = courseService.toCalendar(course);
-                            for (Lesson lesson : e.getValue()) {
-                                if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
-                                    continue;
-                                }
-                                Entry<EntryPopOverContentPane.SavedLesson> entry =
-                                        new Entry<>(course.getDisplayName());
-                                entry.setInterval(new Interval(
-                                        lesson.getStartAt().toLocalDate(),
-                                        lesson.getStartAt().toLocalTime(),
-                                        lesson.getEndAt().toLocalDate(),
-                                        lesson.getEndAt().toLocalTime()
-                                ));
-                                entry.setUserObject(
-                                        new EntryPopOverContentPane.SavedLesson(lesson.getId()));
-                                cal.addEntry(entry);
-                            }
-                            myCalendarSource.getCalendars().add(cal);
-                        }
-
-                        // SourceTrayController fetches its own groups
+                        populateCalendarEntries(courseService, courseToLessons,
+                                isTeacher, studentGroupCode, studentUserId);
                         sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
                         navbarController.refreshBadge();
                     } finally {
@@ -247,30 +174,22 @@ public class MainAppController {
                     }
                 });
             } catch (Exception e) {
-                System.out.println("Refresh failed: " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.warn("Refresh failed: {}", e.getMessage());
                 Platform.runLater(() -> navbarController.stopSpin());
             }
         }, "refresh-thread").start();
     }
 
-
     /**
      * Loads courses and their lessons from the database into the calendar source.
-     * On the first load it also shows the source tray and sets the sidebar divider position.
-     * Students see only lessons assigned to their group or directly to them.
      *
-     * @param firstLoad {@code true} on application startup — triggers source-tray setup
-     *                  and divider positioning on the JavaFX thread
+     * @param firstLoad {@code true} on application startup
      */
     private void loadDataFromDatabase(boolean firstLoad) {
         final boolean isTeacher = SessionManager.getInstance().isTeacher();
         final String studentGroupCode = resolveStudentGroupCode(isTeacher);
-        final Long studentUserId = isTeacher ? null
-                : (SessionManager.getInstance().getCurrentUser() != null
-                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        final Long studentUserId = resolveStudentUserId(isTeacher);
 
-        // Show the spinner immediately so the user knows a load is in progress.
         navbarController.startSpin();
 
         new Thread(() -> {
@@ -278,92 +197,112 @@ public class MainAppController {
                 CourseService courseService = new CourseService(new CourseDao());
                 LessonService lessonService = new LessonService(new LessonDao());
 
-                List<Course> dbCourses;
-                try {
-                    dbCourses = courseService.getCoursesForUser(studentUserId);
-                } catch (Exception e) {
-                    System.out.println("loadData: failed to load courses: " + e.getMessage());
-                    dbCourses = new ArrayList<>();
-                }
+                List<Course> dbCourses = fetchCourses(courseService, studentUserId, "loadData");
+                Map<Course, List<Lesson>> courseToLessons =
+                        buildCourseToLessonsMap(dbCourses, isTeacher, lessonService);
 
-                Map<Course, List<Lesson>> courseToLessons = new LinkedHashMap<>();
-                for (Course course : dbCourses) {
-                    try {
-                        List<Lesson> lessons = isTeacher
-                                ? lessonService.getLessonsByCourse(course.getId())
-                                : lessonService.getLessonsByCourseWithGroups(course.getId());
-                        courseToLessons.put(course, lessons);
-                    } catch (Exception ex) {
-                        courseToLessons.put(course, new ArrayList<>());
-                    }
-                }
-
-                final Map<Course, List<Lesson>> finalMap = courseToLessons;
                 final CourseService finalCourseService = courseService;
-
                 Platform.runLater(() -> {
                     try {
                         myCalendarSource.getCalendars().clear();
-                        for (Map.Entry<Course, List<Lesson>> e : finalMap.entrySet()) {
-                            Course course = e.getKey();
-                            Calendar<Course> cal = finalCourseService.toCalendar(course);
-                            for (Lesson lesson : e.getValue()) {
-                                if (!isTeacher && !lessonVisibleToStudent(
-                                        lesson, studentGroupCode, studentUserId)) {
-                                    continue;
-                                }
-                                Entry<EntryPopOverContentPane.SavedLesson> entry =
-                                        new Entry<>(course.getDisplayName());
-                                entry.setInterval(new Interval(
-                                        lesson.getStartAt().toLocalDate(),
-                                        lesson.getStartAt().toLocalTime(),
-                                        lesson.getEndAt().toLocalDate(),
-                                        lesson.getEndAt().toLocalTime()
-                                ));
-                                entry.setUserObject(
-                                        new EntryPopOverContentPane.SavedLesson(lesson.getId()));
-                                cal.addEntry(entry);
-                            }
-                            myCalendarSource.getCalendars().add(cal);
-                        }
-
+                        populateCalendarEntries(finalCourseService, courseToLessons,
+                                isTeacher, studentGroupCode, studentUserId);
                         sourceTrayController.addSourceSectionsToSourceTray(calendarView, myCalendarSource);
                         navbarController.refreshBadge();
-
                         if (firstLoad) {
-                            SplitPane sp = calendarView.lookupAll(".split-pane").stream()
-                                    .filter(SplitPane.class::isInstance)
-                                    .map(SplitPane.class::cast)
-                                    .filter(p -> p.getItems().size() >= 2)
-                                    .findFirst()
-                                    .orElse(null);
-
-                            if (sp != null && sp.getWidth() > 0) {
-                                double sidebarWidth = 300;
-                                sp.setDividerPositions(sidebarWidth / sp.getWidth());
-                                if (sp.getItems().get(0) instanceof Region r) {
-                                    r.setMinWidth(300);
-                                }
-                            }
+                            applySidebarDivider();
                         }
                     } finally {
                         navbarController.stopSpin();
                     }
                 });
             } catch (Exception e) {
-                System.out.println("loadDataFromDatabase failed: " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.warn("loadDataFromDatabase failed: {}", e.getMessage());
                 Platform.runLater(() -> navbarController.stopSpin());
             }
         }, "load-data-thread").start();
     }
 
+    private List<Course> fetchCourses(CourseService courseService, Long studentUserId, String context) {
+        try {
+            return courseService.getCoursesForUser(studentUserId);
+        } catch (Exception e) {
+            LOGGER.warn("{}: failed to load courses: {}", context, e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    private List<Lesson> fetchLessonsForCourse(Course course, boolean isTeacher, LessonService lessonService) {
+        try {
+            return isTeacher
+                    ? lessonService.getLessonsByCourse(course.getId())
+                    : lessonService.getLessonsByCourseWithGroups(course.getId());
+        } catch (Exception ex) {
+            LOGGER.warn("Failed to load lessons for {}: {}", course.getDisplayName(), ex.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    private Map<Course, List<Lesson>> buildCourseToLessonsMap(List<Course> courses,
+                                                               boolean isTeacher,
+                                                               LessonService lessonService) {
+        Map<Course, List<Lesson>> map = new LinkedHashMap<>();
+        for (Course course : courses) {
+            map.put(course, fetchLessonsForCourse(course, isTeacher, lessonService));
+        }
+        return map;
+    }
+
+    private void populateCalendarEntries(CourseService courseService,
+                                          Map<Course, List<Lesson>> courseToLessons,
+                                          boolean isTeacher,
+                                          String studentGroupCode,
+                                          Long studentUserId) {
+        for (Map.Entry<Course, List<Lesson>> e : courseToLessons.entrySet()) {
+            Course course = e.getKey();
+            Calendar<Course> cal = courseService.toCalendar(course);
+            for (Lesson lesson : e.getValue()) {
+                if (!isTeacher && !lessonVisibleToStudent(lesson, studentGroupCode, studentUserId)) {
+                    continue;
+                }
+                Entry<EntryPopOverContentPane.SavedLesson> entry = new Entry<>(course.getDisplayName());
+                entry.setInterval(new Interval(
+                        lesson.getStartAt().toLocalDate(), lesson.getStartAt().toLocalTime(),
+                        lesson.getEndAt().toLocalDate(),   lesson.getEndAt().toLocalTime()));
+                entry.setUserObject(new EntryPopOverContentPane.SavedLesson(lesson.getId()));
+                cal.addEntry(entry);
+            }
+            myCalendarSource.getCalendars().add(cal);
+        }
+    }
+
+    private void applySidebarDivider() {
+        SplitPane sp = calendarView.lookupAll(".split-pane").stream()
+                .filter(SplitPane.class::isInstance)
+                .map(SplitPane.class::cast)
+                .filter(p -> p.getItems().size() >= 2)
+                .findFirst()
+                .orElse(null);
+
+        if (sp != null && sp.getWidth() > 0) {
+            double sidebarWidth = 300;
+            sp.setDividerPositions(sidebarWidth / sp.getWidth());
+            if (sp.getItems().get(0) instanceof Region r) {
+                r.setMinWidth(300);
+            }
+        }
+    }
+
+    private Long resolveStudentUserId(boolean isTeacher) {
+        if (isTeacher) {
+            return null;
+        }
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        return currentUser != null ? currentUser.getId() : null;
+    }
+
     /**
-     * Returns the group code of the current student's assigned group, or {@code null}
-     * if the user is a teacher, has no group, or the lookup fails.
-     *
-     * @param isTeacher {@code true} if the current session user is a teacher
-     * @return the group code string, or {@code null}
+     * Returns the group code of the current student's assigned group, or {@code null}.
      */
     private String resolveStudentGroupCode(boolean isTeacher) {
         if (isTeacher) {
@@ -377,22 +316,15 @@ public class MainAppController {
             StudentGroup g = new GroupDao().findGroupByUserId(currentUser.getId());
             return g != null ? g.getGroupCode() : null;
         } catch (Exception ex) {
-            System.out.println("Failed to resolve student group: " + ex.getMessage());
+            LOGGER.warn("Failed to resolve student group: {}", ex.getMessage());
             return null;
         }
     }
 
     /**
      * Returns {@code true} if the given lesson should be shown to a specific student.
-     * A lesson is visible if the student is directly assigned to it OR their group is assigned.
-     *
-     * @param lesson           the lesson to check
-     * @param studentGroupCode the student's group code, or {@code null} if unassigned
-     * @param studentUserId    the student's DB user ID, or {@code null} if unknown
-     * @return {@code true} if the lesson is visible to this student
      */
     private boolean lessonVisibleToStudent(Lesson lesson, String studentGroupCode, Long studentUserId) {
-        // Check individual assignment first
         List<User> assignedUsers = lesson.getAssignedUsers();
         if (studentUserId != null) {
             boolean directlyAssigned = assignedUsers.stream()
@@ -401,7 +333,6 @@ public class MainAppController {
                 return true;
             }
         }
-        // Check group assignment
         if (studentGroupCode == null) {
             return false;
         }
@@ -413,29 +344,14 @@ public class MainAppController {
     }
 
     /**
-     * Walks the CalendarFX node tree and replaces hard-coded English button/label
-     * text with the active locale's translations. Targets the "Today" button and
-     * the "All Day" label, matching against all four supported locale variants so
-     * the replacement is idempotent regardless of the previous locale.
+     * Translates hard-coded CalendarFX button/label text using the active locale.
      */
     private void localizeCalendar() {
-
-        // берём переводы один раз
         String todayLocalized = localizationService.getBundle().getString("today.button");
-
         Set<String> todayVariants = getVariants("today.button");
-
         calendarView.lookupAll(".button").forEach(node -> {
             if (node instanceof Button b) {
-
-                String text = b.getText();
-                if (text == null) {
-                    return;
-                }
-
-                if (todayVariants.contains(text) || text.equals(todayLocalized)) {
-                    b.setText(todayLocalized);
-                }
+                localizeButton(b, todayLocalized, todayVariants);
             }
         });
 
@@ -443,47 +359,45 @@ public class MainAppController {
         Set<String> allDayVariants = getVariants("calendar.label.allDay");
         calendarView.lookupAll(".label").forEach(node -> {
             if (node instanceof Label l) {
-
-                String text = l.getText();
-                if (text == null) {
-                    return;
-                }
-
-                if (allDayVariants.contains(text)) {
-                    l.setText(allDayLocalized);
-                }
+                localizeLabel(l, allDayLocalized, allDayVariants);
             }
         });
     }
 
+    private void localizeButton(Button b, String localized, Set<String> variants) {
+        String text = b.getText();
+        if (text != null && (variants.contains(text) || text.equals(localized))) {
+            b.setText(localized);
+        }
+    }
+
+    private void localizeLabel(Label l, String localized, Set<String> variants) {
+        String text = l.getText();
+        if (text != null && variants.contains(text)) {
+            l.setText(localized);
+        }
+    }
+
     /**
-     * Schedules {@link #localizeCalendar()} to run 5 times at 50 ms intervals via a
-     * {@link Timeline}. Repeated attempts compensate for CalendarFX nodes that are
-     * created lazily after a page switch or skin change.
+     * Schedules {@link #localizeCalendar()} to run 5 times at 50 ms intervals.
      */
     private void localizeCalendarSafe() {
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(50), e -> localizeCalendar())
         );
-        timeline.setCycleCount(5); // 5 attempts
+        timeline.setCycleCount(5);
         timeline.play();
     }
 
-
     /**
-     * Returns the set of translations for a bundle key across all four supported
-     * locales (en_US, ru_RU, fi_FI, ar_IQ). Used by {@link #localizeCalendar()} to
-     * recognize a label regardless of the locale it was rendered in.
-     *
-     * @param key the resource bundle key to look up
-     * @return a {@link Set} of all four translated strings
+     * Returns the set of translations for a bundle key across all four supported locales.
      */
     private Set<String> getVariants(String key) {
         return Set.of(
-                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("en", "US")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("ru", "RU")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("fi", "FI")).getString(key),
-                ResourceBundle.getBundle("i18n/MessagesBundle", Locale.of("ar", "IQ")).getString(key)
+                ResourceBundle.getBundle(MESSAGES_BUNDLE, Locale.of("en", "US")).getString(key),
+                ResourceBundle.getBundle(MESSAGES_BUNDLE, Locale.of("ru", "RU")).getString(key),
+                ResourceBundle.getBundle(MESSAGES_BUNDLE, Locale.of("fi", "FI")).getString(key),
+                ResourceBundle.getBundle(MESSAGES_BUNDLE, Locale.of("ar", "IQ")).getString(key)
         );
     }
 }
