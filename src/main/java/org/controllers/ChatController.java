@@ -31,13 +31,12 @@ import org.entities.User;
 import org.service.ChatService;
 import org.service.NotificationService;
 import org.service.SessionManager;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-
 
 /**
  * Controller for the chat window ({@code messages.fxml}).
@@ -52,6 +51,8 @@ import java.util.List;
  * keeps unread conversations at the top.
  */
 public class ChatController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
 
     @FXML
     private VBox chatRightSide;
@@ -74,8 +75,6 @@ public class ChatController {
     @FXML
     private TextField chatSearchField;
 
-
-
     private ObservableList<ChatPreview> chatPreviews =
             FXCollections.observableArrayList(
                     preview -> new Observable[]{preview.isReadProperty()}
@@ -95,11 +94,9 @@ public class ChatController {
 
     /**
      * Starts the background thread that polls for new chat previews every 500 ms.
-     * Any newly fetched previews are added to {@link #chatPreviews}; if the preview
-     * belongs to the currently open conversation it is immediately marked as read.
      */
     public void startPreviewsAutoUpdate() {
-        updatePreviewsThread = new Thread(() -> {
+        updatePreviewsThread = Thread.ofVirtual().name("update-previews-thread").start(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Thread.sleep(500);
@@ -117,21 +114,19 @@ public class ChatController {
                     });
 
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
         });
-        updatePreviewsThread.start();
     }
 
     /**
      * Starts the background thread that polls for new messages in the active conversation
-     * every 500 ms. Fetches only messages newer than the last known ID when a history
-     * already exists, or the full history otherwise. All messages are marked as read
-     * both locally and in the database.
+     * every 500 ms.
      */
     private void startMessagesAutoUpdate() {
-        updateChatThread = new Thread(() -> {
+        updateChatThread = Thread.ofVirtual().name("update-chat-thread").start(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     List<Message> newMessages;
@@ -150,16 +145,15 @@ public class ChatController {
                     });
                     messageDao.markMessagesAsRead(userId, otherId);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
         });
-        updateChatThread.start();
     }
 
     /**
      * Selects the given preview in the left-side list and opens its conversation.
-     * Called by {@link ChatUserSearchResultController} when a search result is clicked.
      *
      * @param chatPreview the preview to open
      */
@@ -169,7 +163,7 @@ public class ChatController {
     }
 
     /**
-     * Shows or hides the right-side chat panel (message history + input field).
+     * Shows or hides the right-side chat panel.
      *
      * @param is {@code true} to show, {@code false} to hide
      */
@@ -179,8 +173,7 @@ public class ChatController {
     }
 
     /**
-     * Opens the conversation for the given preview: marks it as read, shows the
-     * right panel, sets the header name, updates {@link #otherId}, and loads messages.
+     * Opens the conversation for the given preview.
      *
      * @param preview the preview whose conversation should be opened
      */
@@ -194,10 +187,7 @@ public class ChatController {
     }
 
     /**
-     * Sets the label shown at the top of the right-side panel to the other user's full name.
-     *
-     * @param name    the other user's first name
-     * @param surname the other user's surname
+     * Sets the label shown at the top of the right-side panel.
      */
     public void setRightSideName(String name, String surname) {
         rightSideName.setText(name + " " + surname);
@@ -205,27 +195,20 @@ public class ChatController {
 
     /**
      * Sets the user ID of the conversation partner currently shown on the right side.
-     *
-     * @param id the other user's DB ID
      */
     public void setOtherId(Long id) {
         this.otherId = id;
     }
 
     /**
-     * Sets the ID of the currently logged-in user. Must be called by the parent
-     * before the controller is used.
-     *
-     * @param id the current user's DB ID
+     * Sets the ID of the currently logged-in user.
      */
     public void setUserId(Long id) {
         this.userId = id;
     }
 
     /**
-     * Loads the full message history between the current user and {@link #otherId},
-     * marks all messages as read, and starts the auto-update polling thread.
-     * Interrupts any previously running message-update thread first.
+     * Loads the full message history and starts the auto-update polling thread.
      */
     public void loadMessages() {
         if (updateChatThread != null) {
@@ -240,20 +223,15 @@ public class ChatController {
     }
 
     /**
-     * Adds a new preview entry to the observable list, causing the left-side list to update.
-     * Called when a chat is initiated with a user not yet in the list.
-     *
-     * @param chatPreview the preview to add
+     * Adds a new preview entry to the observable list.
      */
     public void addChatPreview(ChatPreview chatPreview) {
         chatPreviews.add(chatPreview);
     }
 
-
     /**
-     * JavaFX initialize callback — wires up cell factories for both list views,
-     * loads initial chat previews, disables mouse interaction on the messages list
-     * (read-only display), and starts the preview auto-update thread.
+     * JavaFX initialize callback — wires up cell factories, loads initial data,
+     * and starts the preview auto-update thread.
      */
     @FXML
     public void initialize() {
@@ -265,59 +243,69 @@ public class ChatController {
         chatMessages.setItems(sortedMessages);
         startPreviewsAutoUpdate();
         rightSideVisibility(false);
-        chatUsers.setCellFactory(listView -> new ListCell<>() {
+        setupChatUsersCellFactory();
+        setupChatMessagesCellFactory();
+    }
 
+    private void setupChatUsersCellFactory() {
+        chatUsers.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(ChatPreview preview, boolean empty) {
                 super.updateItem(preview, empty);
-
                 if (empty || preview == null) {
                     setGraphic(null);
-                } else {
-                    try {
-
-                        FXMLLoader loader = new FXMLLoader(
-                                getClass().getResource("/ui/chat-view/messages-person.fxml"));
-                        Parent root = loader.load();
-                        ChatPreviewController cpController = loader.getController();
-                        cpController.setChatController(ChatController.this);
-                        cpController.setChatPreview(preview);
-                        cpController.setTeacherName(preview.getName(), preview.getSurname());
-                        cpController.bindPreview(preview);
-
-                        setPadding(Insets.EMPTY);
-                        setGraphic(root);
-
-                    } catch (Exception e) {
-                    }
+                    return;
                 }
+                loadPreviewCell(this, preview);
             }
         });
+    }
+
+    private void loadPreviewCell(ListCell<ChatPreview> cell, ChatPreview preview) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ui/chat-view/messages-person.fxml"));
+            Parent root = loader.load();
+            ChatPreviewController cpController = loader.getController();
+            cpController.setChatController(ChatController.this);
+            cpController.setChatPreview(preview);
+            cpController.setTeacherName(preview.getName(), preview.getSurname());
+            cpController.bindPreview(preview);
+            cell.setPadding(Insets.EMPTY);
+            cell.setGraphic(root);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to load chat preview cell: {}", e.getMessage());
+        }
+    }
+
+    private void setupChatMessagesCellFactory() {
         chatMessages.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(Message message, boolean empty) {
                 super.updateItem(message, empty);
-
                 if (empty || message == null) {
                     setGraphic(null);
-                } else {
-                    try {
-                        FXMLLoader loader;
-                        if (message.getSenderUser().getId().equals(userId)) {
-                            loader = new FXMLLoader(getClass().getResource("/ui/chat-view/sent-message.fxml"));
-                        } else {
-                            loader = new FXMLLoader(getClass().getResource("/ui/chat-view/received-message.fxml"));
-                        }
-                        Parent root = loader.load();
-                        MessageController mController = loader.getController();
-                        mController.setText(message.getContent());
-                        mController.setTime(message.getSentAt());
-                        setGraphic(root);
-                    } catch (Exception e) {
-                    }
+                    return;
                 }
+                loadMessageCell(this, message);
             }
         });
+    }
+
+    private void loadMessageCell(ListCell<Message> cell, Message message) {
+        try {
+            String fxmlPath = message.getSenderUser().getId().equals(userId)
+                    ? "/ui/chat-view/sent-message.fxml"
+                    : "/ui/chat-view/received-message.fxml";
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            MessageController mController = loader.getController();
+            mController.setText(message.getContent());
+            mController.setTime(message.getSentAt());
+            cell.setGraphic(root);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to load message cell: {}", e.getMessage());
+        }
     }
 
     /**
@@ -336,7 +324,6 @@ public class ChatController {
 
     /**
      * FXML action handler for the send button.
-     * Persists the typed message and sends a new-message notification to the recipient.
      */
     @FXML
     private void sendMessage() {
@@ -350,9 +337,6 @@ public class ChatController {
 
     /**
      * FXML action handler for the user-search field.
-     * Splits the input on whitespace and looks up a user by first name + surname.
-     * Requires at least two words; does nothing for single-word input.
-     * On match, opens a search-results popup ({@code chat-searching-container.fxml}).
      */
     @FXML
     private void searchChatUsers() {
@@ -387,15 +371,8 @@ public class ChatController {
                 modalStage.initOwner(closeButton.getScene().getWindow());
                 modalStage.showAndWait();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.warn("Failed to open user search modal: {}", e.getMessage());
             }
         }
     }
-
-
-
-
-
-
-
 }

@@ -416,8 +416,9 @@ class LessonServiceTest {
     void shouldThrowExceptionWhenDeletingNonExistentLessonWithRecipients() {
         when(lessonDao.findById(999L)).thenReturn(null);
 
+        List<Long> recipients = List.of(1L);
         assertThrows(IllegalArgumentException.class,
-                () -> lessonService.deleteLesson(999L, List.of(1L)));
+                () -> lessonService.deleteLesson(999L, recipients));
     }
 
     @Test
@@ -474,8 +475,10 @@ class LessonServiceTest {
         LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
         LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
 
+        List<StudentGroup> emptyGroups = List.of();
+        List<User> emptyUsers = List.of();
         assertThrows(IllegalArgumentException.class,
-                () -> lessonService.saveLesson(start, end, null, "A101", List.of(), List.of()));
+                () -> lessonService.saveLesson(start, end, null, "A101", emptyGroups, emptyUsers));
     }
 
     @Test

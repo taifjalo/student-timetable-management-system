@@ -38,25 +38,18 @@ import org.entities.StudentGroup;
 import org.service.GroupService;
 import org.service.LocalizationService;
 import org.service.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Controller for the CalendarFX source-tray sidebar.
- * Replaces the default CalendarFX source-tray content with two custom sections:
- * <ul>
- *   <li><b>Courses</b> — one colored row per {@link com.calendarfx.model.Calendar},
- *       with an edit button visible only to teachers.</li>
- *   <li><b>Groups</b> — one row per {@link org.entities.StudentGroup} from the database,
- *       also teacher-editable. Backed by an {@link ObservableList} so the tray
- *       updates live when groups are added or deleted.</li>
- * </ul>
- * Both sections are loaded from {@code sourcetray-groups.fxml} using this controller
- * as their FXML controller, allowing the FXML action handler
- * ({@link #handleOpenSidebarModal(ActionEvent)}) to serve both add-buttons.
  */
 public class SourceTrayController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceTrayController.class);
     private static final String SECTION_TYPE_COURSE = "COURSE";
     private static final String SECTION_TYPE_GROUP = "GROUP";
+
     private CalendarSource calendarSource;
     private ObservableList<StudentGroup> groupsList;
     private Timeline skeletonPulse;
@@ -65,15 +58,8 @@ public class SourceTrayController {
     private final SourceTrayRowFactory sourceTrayRowFactory = new SourceTrayRowFactory();
     ResourceBundle selectedBundle = localizationService.getBundle();
 
-
     /**
-     * Injects shimmer skeleton placeholders into the source-tray scroll pane so the
-     * sidebar has content while the real lesson/group data loads in the background.
-     * The skeleton pulses between 45 % and 95 % opacity on a 1.4-second loop.
-     * It is automatically replaced (and the animation stopped) when
-     * {@link #addSourceSectionsToSourceTray} is called.
-     *
-     * @param calendarView the CalendarFX view whose source tray to populate
+     * Injects shimmer skeleton placeholders into the source-tray scroll pane.
      */
     public void showSkeleton(CalendarView calendarView) {
         ScrollPane sourceScrollPane = calendarView.lookupAll(".source-view-scroll-pane").stream()
@@ -87,21 +73,19 @@ public class SourceTrayController {
         VBox skeleton = new VBox(8);
         skeleton.setPadding(new Insets(12, 16, 12, 16));
 
-        // — Courses section —
-        skeleton.getChildren().add(bone(110, 13));  // section title
-        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
-        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
-        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
-        skeleton.getChildren().add(bone(60, 24));               // add button
+        skeleton.getChildren().add(bone(110, 13));
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30));
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30));
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30));
+        skeleton.getChildren().add(bone(60, 24));
 
         Separator sep = new Separator();
         VBox.setMargin(sep, new Insets(10, 0, 10, 0));
         skeleton.getChildren().add(sep);
 
-        // — Groups section —
-        skeleton.getChildren().add(bone(90, 13));               // section title
-        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
-        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30)); // row
+        skeleton.getChildren().add(bone(90, 13));
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30));
+        skeleton.getChildren().add(bone(Double.MAX_VALUE, 30));
 
         sourceScrollPane.setFitToWidth(true);
         sourceScrollPane.setContent(skeleton);
@@ -115,7 +99,6 @@ public class SourceTrayController {
         skeletonPulse.play();
     }
 
-    /** Returns a rounded grey placeholder rectangle used inside the skeleton loader. */
     private Region bone(double maxWidth, double height) {
         Region r = new Region();
         r.setMaxWidth(maxWidth);
@@ -125,14 +108,7 @@ public class SourceTrayController {
     }
 
     /**
-     * Replaces the CalendarFX source-tray scroll-pane content with the two custom
-     * sections (courses + groups). Fetches groups from the database using the current
-     * user's ID (students see only their own groups; teachers see all groups).
-     * Must be called after the {@link CalendarView} skin has been applied so the
-     * scroll-pane lookup succeeds.
-     *
-     * @param calendarView the CalendarFX view whose source tray to populate
-     * @param courseSource the {@link CalendarSource} backing the courses section
+     * Replaces the CalendarFX source-tray scroll-pane content with the two custom sections.
      */
     public void addSourceSectionsToSourceTray(CalendarView calendarView, CalendarSource courseSource) {
         if (skeletonPulse != null) {
@@ -142,16 +118,12 @@ public class SourceTrayController {
         this.calendarSource = courseSource;
         this.selectedBundle = localizationService.getBundle();
 
-        // Fetch groups
-        Long userId = SessionManager.getInstance().isTeacher() ? null
-                : (SessionManager.getInstance().getCurrentUser() != null
-                        ? SessionManager.getInstance().getCurrentUser().getId() : null);
+        Long userId = resolveCurrentUserId();
         List<StudentGroup> groups;
-
         try {
             groups = new GroupService(new GroupDao()).getGroupsForUser(userId);
         } catch (Exception e) {
-            System.out.println("[SourceTrayController] Failed to load groups: " + e.getMessage());
+            LOGGER.warn("[SourceTrayController] Failed to load groups: {}", e.getMessage());
             groups = Collections.emptyList();
         }
 
@@ -168,7 +140,7 @@ public class SourceTrayController {
         }
 
         Node coursesSection = createSourceSectionNode(courseSource);
-        Node groupsSection = createGroupsSectionNode("Groups", groupsList);
+        Node groupsSection = createGroupsSectionNode(groupsList);
         if (coursesSection == null || groupsSection == null) {
             return;
         }
@@ -181,13 +153,17 @@ public class SourceTrayController {
         sourceScrollPane.setContent(wrapper);
     }
 
+    private Long resolveCurrentUserId() {
+        if (SessionManager.getInstance().isTeacher()) {
+            return null;
+        }
+        return SessionManager.getInstance().getCurrentUser() != null
+                ? SessionManager.getInstance().getCurrentUser().getId()
+                : null;
+    }
+
     /**
-     * Builds the courses section node from {@code sourcetray-groups.fxml}.
-     * Wires up reactive listeners so the row list refreshes whenever a calendar
-     * is added to or removed from {@code source}.
-     *
-     * @param source the {@link CalendarSource} whose calendars to display
-     * @return the root {@link Node} for the section, or {@code null} on load failure
+     * Builds the courses section node.
      */
     private Node createSourceSectionNode(CalendarSource source) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/ui/sourcetray-groups.fxml"));
@@ -216,7 +192,7 @@ public class SourceTrayController {
 
         Runnable refreshRows = () -> {
             groupsListContainer.getChildren().clear();
-            for (Calendar calendar : source.getCalendars()) {
+            for (Calendar<?> calendar : source.getCalendars()) {
                 Node row = sourceTrayRowFactory.createCalendarRow(
                         calendar,
                         SessionManager.getInstance().isTeacher(),
@@ -227,25 +203,20 @@ public class SourceTrayController {
         };
 
         sectionTitleText.setText(source.getName());
-
         refreshRows.run();
 
         source.nameProperty().addListener((obs, oldName, newName) -> sectionTitleText.setText(newName));
-        source.getCalendars().addListener((ListChangeListener<Calendar>) change -> refreshRows.run());
+        @SuppressWarnings("rawtypes")
+        ListChangeListener calendarListener = change -> refreshRows.run();
+        source.getCalendars().addListener(calendarListener);
 
         return sourceSection;
     }
 
     /**
-     * Builds the groups section node from {@code sourcetray-groups.fxml}.
-     * Listens on {@code items} for additions (appended individually) and removals
-     * (full rebuild for safety).
-     *
-     * @param sectionTitle the section header label (currently overridden by the bundle key)
-     * @param items        the live observable list of groups to display
-     * @return the root {@link Node} for the section, or {@code null} on load failure
+     * Builds the groups section node.
      */
-    private Node createGroupsSectionNode(String sectionTitle, ObservableList<StudentGroup> items) {
+    private Node createGroupsSectionNode(ObservableList<StudentGroup> items) {
         FXMLLoader groupsLoader = new FXMLLoader(getClass().getResource("/ui/sourcetray-groups.fxml"));
         groupsLoader.setController(this);
         Node sourceSection;
@@ -272,8 +243,6 @@ public class SourceTrayController {
 
         sectionTitleText.setText(selectedBundle.getString("sourcetray.groups.section.title"));
 
-
-        // Render initial rows
         groupsListContainer.getChildren().clear();
         for (StudentGroup group : items) {
             Node row = sourceTrayRowFactory.createGroupRow(
@@ -284,44 +253,50 @@ public class SourceTrayController {
             groupsListContainer.getChildren().add(row);
         }
 
-        // Listen for new groups added/removed so the tray updates live
-        items.addListener((ListChangeListener<StudentGroup>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    for (StudentGroup added : change.getAddedSubList()) {
-                        Node row = sourceTrayRowFactory.createGroupRow(
-                                added,
-                                SessionManager.getInstance().isTeacher(),
-                                e -> openModal(added, SECTION_TYPE_GROUP, e)
-                        );
-                        groupsListContainer.getChildren().add(row);
-                    }
-                }
-                if (change.wasRemoved()) {
-                    // Rebuild on removal — simplest safe approach
-                    groupsListContainer.getChildren().clear();
-                    for (StudentGroup group : items) {
-                        Node row = sourceTrayRowFactory.createGroupRow(
-                                group,
-                                SessionManager.getInstance().isTeacher(),
-                                e -> openModal(group, SECTION_TYPE_GROUP, e)
-                        );
-                        groupsListContainer.getChildren().add(row);
-                    }
-                }
-            }
-        });
+        items.addListener(buildGroupChangeListener(groupsListContainer, items));
 
         return sourceSection;
     }
 
+    private ListChangeListener<StudentGroup> buildGroupChangeListener(VBox groupsListContainer,
+                                                                       ObservableList<StudentGroup> items) {
+        return change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    handleGroupsAdded(change.getAddedSubList(), groupsListContainer);
+                }
+                if (change.wasRemoved()) {
+                    rebuildGroupRows(items, groupsListContainer);
+                }
+            }
+        };
+    }
+
+    private void handleGroupsAdded(List<? extends StudentGroup> addedGroups, VBox container) {
+        for (StudentGroup added : addedGroups) {
+            Node row = sourceTrayRowFactory.createGroupRow(
+                    added,
+                    SessionManager.getInstance().isTeacher(),
+                    e -> openModal(added, SECTION_TYPE_GROUP, e)
+            );
+            container.getChildren().add(row);
+        }
+    }
+
+    private void rebuildGroupRows(ObservableList<StudentGroup> items, VBox container) {
+        container.getChildren().clear();
+        for (StudentGroup group : items) {
+            Node row = sourceTrayRowFactory.createGroupRow(
+                    group,
+                    SessionManager.getInstance().isTeacher(),
+                    e -> openModal(group, SECTION_TYPE_GROUP, e)
+            );
+            container.getChildren().add(row);
+        }
+    }
+
     /**
      * FXML action handler for both "+" add-buttons in the source tray.
-     * Reads the button's {@code userData} to decide whether to open the course modal
-     * ({@link #openModal(Calendar, String, ActionEvent)}) or the group modal
-     * ({@link #openModal(StudentGroup, String, ActionEvent)}).
-     *
-     * @param event the action event from the clicked add-button
      */
     public void handleOpenSidebarModal(ActionEvent event) {
         Button source = (Button) event.getSource();
@@ -333,13 +308,7 @@ public class SourceTrayController {
         }
     }
 
-    /**
-     * Opens the course create/edit modal ({@code course-modal.fxml}).
-     *
-     * @param calendar    the calendar to edit, or {@code null} to create a new course
-     * @param sectionType the section type constant ({@value #SECTION_TYPE_COURSE})
-     * @param event       the originating action event (used to resolve the owner window)
-     */
+    @SuppressWarnings("unchecked")
     private void openModal(Calendar<?> calendar, String sectionType, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -348,7 +317,7 @@ public class SourceTrayController {
             Parent root = loader.load();
             localizationService.swapSides(root);
             CreateCourseModalController modalController = loader.getController();
-            modalController.setCalendar(calendar);
+            modalController.setCalendar((Calendar<org.entities.Course>) calendar);
             modalController.setCalendarSource(calendarSource);
             modalController.applyProps();
             showModal(root, calendar != null ? calendar.getName() : null, sectionType, event);
@@ -358,18 +327,11 @@ public class SourceTrayController {
         }
     }
 
-    /**
-     * Opens the group create/edit modal ({@code group-modal.fxml}).
-     *
-     * @param group       the group to edit, or {@code null} to create a new group
-     * @param sectionType the section type constant ({@value #SECTION_TYPE_GROUP})
-     * @param event       the originating action event (used to resolve the owner window)
-     */
     private void openModal(StudentGroup group, String sectionType, ActionEvent event) {
         try {
             URL fxmlUrl = getClass().getResource("/ui/modals/source-tray-group-modal/group-modal.fxml");
             if (fxmlUrl == null) {
-                System.out.println("[SourceTrayController] group-modal.fxml not found on classpath");
+                LOGGER.warn("[SourceTrayController] group-modal.fxml not found on classpath");
                 return;
             }
             FXMLLoader loader = new FXMLLoader(fxmlUrl, localizationService.getBundle());
@@ -377,7 +339,7 @@ public class SourceTrayController {
             localizationService.swapSides(root);
             CreateGroupModalController modalController = loader.getController();
             if (modalController == null) {
-                System.out.println("[SourceTrayController] CreateGroupModalController is null after load");
+                LOGGER.warn("[SourceTrayController] CreateGroupModalController is null after load");
                 return;
             }
             if (group != null) {
@@ -387,20 +349,10 @@ public class SourceTrayController {
             modalController.applyProps();
             showModal(root, group != null ? group.getFieldOfStudies() : null, sectionType, event);
         } catch (Exception e) {
-            System.out.println("[SourceTrayController] Failed to open group modal: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.warn("[SourceTrayController] Failed to open group modal: {}", e.getMessage());
         }
     }
 
-    /**
-     * Displays a loaded FXML root as an application-modal, non-resizable dialog.
-     * Resolves the window title from the bundle using the section type and edit/create mode.
-     *
-     * @param root        the loaded FXML scene root
-     * @param entityName  the existing entity's name ({@code null} = create mode)
-     * @param sectionType the section type constant
-     * @param event       the originating action event (used to resolve the owner window)
-     */
     private void showModal(Parent root, String entityName, String sectionType, ActionEvent event) {
         Stage dialogStage = new Stage();
         boolean isEditMode = entityName != null;
@@ -413,13 +365,6 @@ public class SourceTrayController {
         dialogStage.showAndWait();
     }
 
-    /**
-     * Returns the bundle key for the modal window title based on section type and mode.
-     *
-     * @param sectionType the section type constant
-     * @param isEditMode  {@code true} for edit, {@code false} for create
-     * @return the i18n bundle key string
-     */
     private String resolveModalTitleKey(String sectionType, boolean isEditMode) {
         boolean isCourse = SECTION_TYPE_COURSE.equalsIgnoreCase(sectionType);
         if (isCourse) {
@@ -427,6 +372,4 @@ public class SourceTrayController {
         }
         return isEditMode ? "modal.edit.group.title" : "modal.create.group.title";
     }
-
 }
-

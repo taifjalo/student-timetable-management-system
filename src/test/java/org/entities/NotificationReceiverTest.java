@@ -63,8 +63,8 @@ class NotificationReceiverTest {
         assertEquals(id1.hashCode(), id2.hashCode());
         assertNotEquals(id1.hashCode(), id3.hashCode());
         assertEquals(id1, id1); // reflexive
-        assertNotEquals(id1, null);
-        assertNotEquals(id1, "not an id");
+        assertNotNull(id1);
+        assertNotEquals("not an id", id1);
     }
 
 }
