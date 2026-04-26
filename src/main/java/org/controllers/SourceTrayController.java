@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 public class SourceTrayController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceTrayController.class);
+    private static final String UNEXPECTED_ERROR = "Unexpected error";
     private static final String SECTION_TYPE_COURSE = "COURSE";
     private static final String SECTION_TYPE_GROUP = "GROUP";
 
@@ -172,7 +173,7 @@ public class SourceTrayController {
         try {
             sourceSection = groupsLoader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
             return null;
         }
 
@@ -223,7 +224,7 @@ public class SourceTrayController {
         try {
             sourceSection = groupsLoader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
             return null;
         }
 
@@ -322,7 +323,7 @@ public class SourceTrayController {
             modalController.applyProps();
             showModal(root, calendar != null ? calendar.getName() : null, sectionType, event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
             throw new IllegalStateException("Failed to open course modal", e);
         }
     }

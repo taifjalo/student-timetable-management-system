@@ -17,6 +17,9 @@ import org.service.LessonService;
 import org.service.LocalizationService;
 import org.service.NotificationService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -31,6 +34,8 @@ import java.util.ResourceBundle;
  * </ul>
  */
 public class CreateLessonModalController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateLessonModalController.class);
 
     @FXML private Text modalTitleLabel;
     @FXML private TextField classroomField;
@@ -149,7 +154,7 @@ public class CreateLessonModalController {
             }
             closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 
@@ -172,7 +177,7 @@ public class CreateLessonModalController {
             }
             closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 

@@ -124,7 +124,7 @@ public class MainAppController {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 

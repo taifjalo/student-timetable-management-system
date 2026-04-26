@@ -14,6 +14,9 @@ import org.dao.UserDao;
 import org.service.AuthService;
 import org.service.LocalizationService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,6 +30,8 @@ import java.util.ResourceBundle;
  * modal.
  */
 public class RegisterController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterController.class);
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -88,7 +93,7 @@ public class RegisterController {
         try {
             navigateToLogin(event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
             messageLabel.setText(selectedBundle.getString("register.failed.credentials.error"));
         }
     }

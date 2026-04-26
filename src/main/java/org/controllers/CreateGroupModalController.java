@@ -20,6 +20,9 @@ import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.UserService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,6 +33,9 @@ import java.util.ResourceBundle;
  * Supports both create and edit modes.
  */
 public class CreateGroupModalController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateGroupModalController.class);
+    private static final String UNEXPECTED_ERROR = "Unexpected error";
 
     @FXML private Text modalTitleLabel;
     @FXML private TextField groupNameField;
@@ -130,7 +136,7 @@ public class CreateGroupModalController {
                 List<User> all = userService.getAllStudents();
                 Platform.runLater(() -> studentListView.getItems().setAll(all));
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(UNEXPECTED_ERROR, e);
             }
         }, "load-students-thread").start();
     }
@@ -146,7 +152,7 @@ public class CreateGroupModalController {
                 List<User> results = userService.searchStudents(query);
                 Platform.runLater(() -> studentListView.getItems().setAll(results));
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(UNEXPECTED_ERROR, e);
             }
         }, "search-students-thread").start();
     }
@@ -168,7 +174,7 @@ public class CreateGroupModalController {
                         List<User> current = groupService.getStudentsInGroup(existingGroup.getGroupCode());
                         Platform.runLater(() -> groupStudentListView.getItems().setAll(current));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOGGER.error(UNEXPECTED_ERROR, e);
                     }
                 }, "load-group-students-thread").start();
             }
@@ -206,7 +212,7 @@ public class CreateGroupModalController {
                 }
                 Platform.runLater(this::closeModal);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(UNEXPECTED_ERROR, e);
             }
         }, "save-group-thread").start();
     }
@@ -230,7 +236,7 @@ public class CreateGroupModalController {
                 }
                 Platform.runLater(this::closeModal);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(UNEXPECTED_ERROR, e);
             }
         }, "delete-group-thread").start();
     }

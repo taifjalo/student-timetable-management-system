@@ -299,6 +299,10 @@
                     <failOnViolation>false</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <!-- EntryPopOverContentPane uses Java 21 record patterns which
+                         Checkstyle's ANTLR parser cannot parse; excluded to allow
+                         SonarQube S6878 compliance without breaking the build. -->
+                    <excludes>org/application/EntryPopOverContentPane.java</excludes>
                 </configuration>
             </plugin>
 

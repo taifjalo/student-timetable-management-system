@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -85,6 +86,33 @@ public class EntryPopOverContentPane extends PopOverContentPane {
     /** Holds the mutable state arrays shared between the constructor and listeners. */
     private record EntryState(boolean[] saved, boolean[] saving,
                                Interval[] snapInterval, Calendar<?>[] snapCalendar) {
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof EntryState(var s, var sav, var si, var sc))) return false;
+            return Arrays.equals(saved, s)
+                    && Arrays.equals(saving, sav)
+                    && Arrays.equals(snapInterval, si)
+                    && Arrays.equals(snapCalendar, sc);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Arrays.hashCode(saved);
+            result = 31 * result + Arrays.hashCode(saving);
+            result = 31 * result + Arrays.hashCode(snapInterval);
+            result = 31 * result + Arrays.hashCode(snapCalendar);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "EntryState{saved=" + Arrays.toString(saved)
+                    + ", saving=" + Arrays.toString(saving)
+                    + ", snapInterval=" + Arrays.toString(snapInterval)
+                    + ", snapCalendar=" + Arrays.toString(snapCalendar) + '}';
+        }
     }
 
     private final LocalizationService localizationService = new LocalizationService();
@@ -173,9 +201,9 @@ public class EntryPopOverContentPane extends PopOverContentPane {
     }
 
     private Lesson loadExistingLesson(Entry<?> entry) {
-        if (entry.getUserObject() instanceof SavedLesson sl) {
+        if (entry.getUserObject() instanceof SavedLesson(var lessonId)) {
             try {
-                return new LessonDao().findById(sl.lessonId());
+                return new LessonDao().findById(lessonId);
             } catch (Exception ex) {
                 LOGGER.warn("Could not load existing lesson: {}", ex.getMessage());
             }
@@ -415,10 +443,10 @@ public class EntryPopOverContentPane extends PopOverContentPane {
         deleteBtn.setStyle("-fx-background-color: #D03800; -fx-text-fill: white;"
                            + " -fx-cursor: hand; -fx-background-radius: 6;");
         deleteBtn.setOnAction(e -> {
-            if (entry.getUserObject() instanceof SavedLesson sl) {
+            if (entry.getUserObject() instanceof SavedLesson(var lessonId)) {
                 Thread.ofVirtual().name("delete-lesson-thread").start(() -> {
                     try {
-                        new LessonService(new LessonDao()).deleteLesson(sl.lessonId());
+                        new LessonService(new LessonDao()).deleteLesson(lessonId);
                     } catch (Exception ex) {
                         LOGGER.warn("Delete failed: {}", ex.getMessage());
                     }
@@ -478,8 +506,8 @@ public class EntryPopOverContentPane extends PopOverContentPane {
             try {
                 LessonService svc = new LessonService(new LessonDao());
                 Lesson saved;
-                if (entry.getUserObject() instanceof SavedLesson existing) {
-                    saved = svc.updateLesson(existing.lessonId(),
+                if (entry.getUserObject() instanceof SavedLesson(var existingId)) {
+                    saved = svc.updateLesson(existingId,
                             entry.getStartAsLocalDateTime(), entry.getEndAsLocalDateTime(),
                             course, classroom, groups, users);
                 } else {

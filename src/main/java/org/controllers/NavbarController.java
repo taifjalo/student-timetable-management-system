@@ -26,6 +26,9 @@ import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ResourceBundle;
 
 /**
@@ -34,6 +37,9 @@ import java.util.ResourceBundle;
  * and navigation actions (profile, chat, register, login).
  */
 public class NavbarController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NavbarController.class);
+    private static final String UNEXPECTED_ERROR = "Unexpected error";
 
     private org.controlsfx.control.PopOver notificationsPopOver;
     private final NotificationService notificationService = new NotificationService(new NotificationDao());
@@ -194,7 +200,7 @@ public class NavbarController {
             });
             notificationsPopOver.show((Node) event.getSource());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
         }
     }
 
@@ -225,7 +231,7 @@ public class NavbarController {
             controller.setStage(modalStage);
             modalStage.showAndWait();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
         }
     }
 
@@ -259,7 +265,7 @@ public class NavbarController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(UNEXPECTED_ERROR, e);
         }
     }
 }

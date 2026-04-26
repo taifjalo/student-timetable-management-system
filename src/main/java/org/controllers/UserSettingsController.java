@@ -18,6 +18,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.service.LocalizationService;
 import org.service.SessionManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -28,6 +31,8 @@ import java.util.ResourceBundle;
  * switch the application language, and log out.
  */
 public class UserSettingsController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingsController.class);
 
     @FXML private Text displayNameText;
     @FXML private Text roleText;
@@ -177,7 +182,7 @@ public class UserSettingsController {
             localizationService.reloadScene(mainStage, "/ui/main-app.fxml");
         } catch (IOException e) {
             messageLabel.setText(selectedBundle.getString("settings.modal.language.error"));
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 
@@ -276,7 +281,7 @@ public class UserSettingsController {
             mainStage.setMaximized(true);
             mainStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 

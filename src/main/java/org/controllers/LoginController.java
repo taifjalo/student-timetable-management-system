@@ -18,6 +18,9 @@ import org.service.LocalizationService;
 import org.service.SessionManager;
 import javafx.scene.control.MenuButton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
@@ -29,6 +32,8 @@ import java.util.ResourceBundle;
  * Handles user authentication and language selection.
  */
 public class LoginController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -178,7 +183,7 @@ public class LoginController {
             stage.setMaximized(true);
             stage.show();
         } catch (java.io.IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 }

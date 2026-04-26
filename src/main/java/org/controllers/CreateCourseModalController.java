@@ -17,6 +17,9 @@ import org.entities.Course;
 import org.service.CourseService;
 import org.service.LocalizationService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ResourceBundle;
 
 /**
@@ -26,6 +29,8 @@ import java.util.ResourceBundle;
  * {@link Style} for calendar rendering.
  */
 public class CreateCourseModalController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateCourseModalController.class);
 
     @FXML private Text modalTitleLabel;
     @FXML private TextField groupNameField;
@@ -238,7 +243,7 @@ public class CreateCourseModalController {
 
             closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 
@@ -257,7 +262,7 @@ public class CreateCourseModalController {
             }
             closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error", e);
         }
     }
 
