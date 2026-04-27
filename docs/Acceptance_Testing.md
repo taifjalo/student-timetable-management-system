@@ -77,9 +77,10 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 | RTL Layout (Arabic)     | Functional | TC-12        | Yes |
 | Logout                  | Functional | TC-13        | Yes |
 | Edit/Delete Lesson      | Functional | TC-14        | Yes |
-| Search User & Start Conversation | Functional | TC-15 | Yes |
+| Search User & Start Conversation | Functional | TC-15        | Yes |
 | Mark Notifications Read | Functional | TC-16        | Yes |
 | Update Profile Information | Functional | TC-17        | Yes |
+| View Timetable in Year View | Functional | TC-18        | Yes |
 | UI Readability          | Usability | TC-19        | Yes |
 | Language Switch Speed   | Performance | TC-20        | Yes |
 | Login Response Time     | Performance | TC-21        | Yes |
@@ -88,7 +89,7 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 
 ---
 
-## 4. Functional Test Cases
+## 4. User Acceptance tests
 
 ### TC-01 — User Registration
 | Field | Detail |
@@ -242,6 +243,24 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 | **Steps** | 1. Log in. 2. Open the calendar. 3. Switch to year view. 4. Review the displayed timetable. |
 | **Expected Result** | The timetable is displayed in year view with all assigned lessons visible in the annual overview |
 | **Pass Criteria** | CalendarFX displays year-view events matching the database records, with correct course colour and lesson details |
+
+### User acceptance tests results
+
+A subset of 10 test cases was executed by all developers, and the results are shown above.
+
+| Test Case                  | Miska Voutilainen | Taif Jalo | Nikita Rybakov | Elias Norta |
+|----------------------------|-------------------|-----------|----------------|-------------|
+| TC-01 User Registration    | Pass              | Pass      | Pass           | Pass        |
+| TC-02 Successful Login     | Pass              | Pass      | Pass           | Pass        |
+| TC-03 Failed Login         | Pass              | Pass      | Pass           | Pass        |
+| TC-04 View Timetable       | Pass              | Pass      | Pass           | Pass        |
+| TC-05 Create Lesson        | Pass              | Pass      | Pass           | Pass        |
+| TC-06 Create Course        | Pass              | Pass      | Pass           | Pass        |
+| TC-07 Create Group         | Pass              | Pass      | Pass           | Pass        |
+| TC-08 Send Message         | Pass              | Pass      | Pass           | Pass        |
+| TC-09 Receive Notification | Pass              | Pass      | Pass           | Pass        |
+| TC-10 Change Password      | Pass              | Pass      | Pass           | Pass        |
+
 
 ---
 
