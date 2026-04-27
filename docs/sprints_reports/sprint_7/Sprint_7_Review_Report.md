@@ -129,12 +129,12 @@ All selected functional tests passed successfully, and no test result required c
 
 ## Team Member Contributions
 
-| Team Member Name | Assigned Tasks                                                                                                             | Time Spent (hrs) | In-class Tasks |
-|---|----------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
-| Taif Jalo |                                                                                                                            |                  |                |
-| Miska Voutilainen |                                                                                                                            |                  |                |
-| Elias Norta |                                                                                                                            |                  |                |
-| Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance teesting |               20 | done           |
+| Team Member Name | Assigned Tasks                                                                                                            | Time Spent (hrs) | In-class Tasks |
+|---|---------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
+| Taif Jalo |                                                                                                                           |                  |                |
+| Miska Voutilainen |                                                                                                                           |                  |                |
+| Elias Norta |                                                                                                                           |                  |                |
+| Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance testing |               20 | done           |
 
 ## What Went Well
 
