@@ -132,7 +132,7 @@ All selected functional tests passed successfully, and no test result required c
 | Team Member Name | Assigned Tasks                                                                                                            | Time Spent (hrs) | In-class Tasks |
 |---|---------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
 | Taif Jalo |                                                                                                                           |                  |                |
-| Miska Voutilainen |                                                                                                                           |                  |                |
+| Miska Voutilainen | User acceptance testing, SonarQube issue fixes (reduce complexity, add loggers, virtual threads, record patterns, fix tests, remove commented code, add generics, static setter, constants, boolean expressions), resolve merge conflicts |               25 | done           |
 | Elias Norta |                                                                                                                           |                  |                |
 | Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance testing |               20 | done           |
 
