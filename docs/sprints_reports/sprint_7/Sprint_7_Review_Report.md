@@ -133,7 +133,7 @@ All selected functional tests passed successfully, and no test result required c
 |---|---------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
 | Taif Jalo |                                                                                                                           |                  |                |
 | Miska Voutilainen |                                                                                                                           |                  |                |
-| Elias Norta |                                                                                                                           |                  |                |
+| Elias Norta |     User acceptance testing, project heuristic evaluation                                                                                                                      |        5          |        done        |
 | Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance testing |               20 | done           |
 
 ## What Went Well
