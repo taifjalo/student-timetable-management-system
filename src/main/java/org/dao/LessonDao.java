@@ -79,6 +79,7 @@ public class LessonDao {
             }
 
             Lesson lesson = results.get(0);
+            lesson.setAssignedGroups(localizeGroups(lesson.getAssignedGroups()));
             // Initialize assigned users while the session is still open, but do it
             // separately to avoid Hibernate's multiple-bag fetch problem.
             if (!lesson.getAssignedUsers().isEmpty()) {
@@ -147,6 +148,10 @@ public class LessonDao {
                         Lesson.class)
                     .setParameter("ids", ids)
                     .getResultList();
+            }
+
+            for (Lesson lesson : lessons) {
+                lesson.setAssignedGroups(localizeGroups(lesson.getAssignedGroups()));
             }
 
             return lessons;
@@ -231,5 +236,23 @@ public class LessonDao {
             }
             em.getTransaction().commit();
         }
+    }
+
+    private List<StudentGroup> localizeGroups(List<StudentGroup> groups) {
+        if (groups == null || groups.isEmpty()) {
+            return groups == null ? new ArrayList<>() : new ArrayList<>(groups);
+        }
+
+        GroupDao groupDao = new GroupDao();
+        List<StudentGroup> localizedGroups = new ArrayList<>();
+        for (StudentGroup group : groups) {
+            StudentGroup localized = groupDao.findByCode(group.getGroupCode());
+            if (localized != null) {
+                localizedGroups.add(localized);
+            } else {
+                localizedGroups.add(group);
+            }
+        }
+        return localizedGroups;
     }
 }

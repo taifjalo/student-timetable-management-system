@@ -91,7 +91,7 @@ public class EventExtraDetailsController {
 
         if (existingLesson != null) {
             for (StudentGroup existingGroup : existingLesson.getAssignedGroups()) {
-                addGroupChip(existingGroup, addGroupBtn);
+                addGroupChip(existingGroup, addGroupBtn, row);
             }
         }
 
@@ -122,7 +122,7 @@ public class EventExtraDetailsController {
 
         if (existingLesson != null) {
             for (User existingUser : existingLesson.getAssignedUsers()) {
-                addUserChip(existingUser, userSearchField);
+                addUserChip(existingUser, userSearchField, row);
             }
         }
 
@@ -166,7 +166,7 @@ public class EventExtraDetailsController {
             String fullName = match.getFirstName() + " " + match.getSureName();
             MenuItem item = new MenuItem(fullName);
             item.setOnAction(e -> {
-                addUserChip(match, userSearchField);
+                addUserChip(match, userSearchField, studentsRow);
                 userSearchField.clear();
                 userSuggestions.hide();
             });
@@ -299,7 +299,7 @@ public class EventExtraDetailsController {
                 continue;
             }
             MenuItem item = new MenuItem(g.getDisplayFieldOfStudies() + " (" + g.getGroupCode() + ")");
-            item.setOnAction(e -> addGroupChip(g, addGroupBtn));
+            item.setOnAction(e -> addGroupChip(g, addGroupBtn, groupRow));
             menu.getItems().add(item);
         }
         if (menu.getItems().isEmpty()) {
@@ -313,7 +313,7 @@ public class EventExtraDetailsController {
     /**
      * Adds a removable group chip button to the group row.
      */
-    private void addGroupChip(StudentGroup group, Button addGroupBtn) {
+    private void addGroupChip(StudentGroup group, Button addGroupBtn, HBox row) {
         if (selectedGroups.stream().anyMatch(g -> g.getGroupCode().equals(group.getGroupCode()))) {
             return;
         }
@@ -325,16 +325,16 @@ public class EventExtraDetailsController {
                 + "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
         chip.setOnAction(e -> {
             selectedGroups.removeIf(g -> Objects.equals(g.getGroupCode(), group.getGroupCode()));
-            groupRow.getChildren().remove(chip);
+            row.getChildren().remove(chip);
         });
-        int idx = groupRow.getChildren().indexOf(addGroupBtn);
-        groupRow.getChildren().add(idx, chip);
+        int idx = row.getChildren().indexOf(addGroupBtn);
+        row.getChildren().add(idx, chip);
     }
 
     /**
      * Adds a removable user chip button to the students row.
      */
-    private void addUserChip(User user, TextField userSearchField) {
+    private void addUserChip(User user, TextField userSearchField, FlowPane row) {
         if (selectedUsers.stream().anyMatch(u -> Objects.equals(u.getId(), user.getId()))) {
             return;
         }
@@ -365,14 +365,14 @@ public class EventExtraDetailsController {
                 + "-fx-cursor: hand; -fx-padding: 2 8 2 8;");
         chip.setOnAction(e -> {
             selectedUsers.removeIf(u -> Objects.equals(u.getId(), user.getId()));
-            studentsRow.getChildren().remove(chip);
+            row.getChildren().remove(chip);
         });
 
-        int idx = studentsRow.getChildren().indexOf(userSearchField);
+        int idx = row.getChildren().indexOf(userSearchField);
         if (idx >= 0) {
-            studentsRow.getChildren().add(idx, chip);
+            row.getChildren().add(idx, chip);
         } else {
-            studentsRow.getChildren().add(chip);
+            row.getChildren().add(chip);
         }
     }
 }
