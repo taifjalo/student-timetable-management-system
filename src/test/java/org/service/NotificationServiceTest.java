@@ -222,12 +222,21 @@ class NotificationServiceTest {
     }
 
     @Test
-    @DisplayName("Get Unread Count: Should return count from DAO")
+    @DisplayName("Get Unread Count: Should return count of unread DTOs with content")
     void shouldReturnUnreadCountFromDao() {
-        when(notificationDao.countUnread(1L)).thenReturn(5L);
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        // 3 unread rows with content, 2 read rows with content — expect count 3
+        List<Object[]> rows = List.of(
+            new Object[]{1L, "msg1", now, Boolean.FALSE},
+            new Object[]{2L, "msg2", now, Boolean.FALSE},
+            new Object[]{3L, "msg3", now, Boolean.FALSE},
+            new Object[]{4L, "msg4", now, Boolean.TRUE},
+            new Object[]{5L, "msg5", now, Boolean.TRUE}
+        );
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(rows);
 
         long count = notificationService.getUnreadCount(1L);
 
-        assertEquals(5L, count);
+        assertEquals(3L, count);
     }
 }
