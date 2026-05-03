@@ -119,7 +119,7 @@ The first sprint established the project foundation including team formation, te
 - **Tech stack selected:** Java 21, JavaFX 21, Hibernate, MySQL, Jenkins, Docker
 - **Scrum roles assigned:** Scrum Master (Sprint 1: Taif Jalo), Product Owner: Lecturer
 
-📄 [Sprint 1 Review Report](docs/sprints_reports/sprint1_review.pdf)
+📄 [Sprint 1 Review Report](docs/sprints_reports/sprint_1/Sprint_1_Review_Report.md)
 
 ---
 
@@ -135,7 +135,7 @@ System requirements were gathered and translated into a database schema and use 
 - **Key tables:** `users`, `student_profiles`, `student_groups`, `courses`, `lessons`, `assigned_groups`, `assigned_users`, `messages`, `notifications`, `notification_receivers`, `localization_strings`
 - **Unit testing strategy:** JUnit 5 + Mockito for service/DAO layers
 
-📄 [Sprint 2 Review Report](docs/sprints_reports/sprint2_review.pdf)
+📄 [Sprint 2 Review Report](docs/sprints_reports/sprint_2/Sprint_2_Review_Report.md)
 
 ---
 
@@ -153,7 +153,7 @@ The JavaFX user interface was implemented and the Jenkins CI pipeline was config
   - `Publish Test Results` — JUnit XML reports
   - `Publish Coverage Report` — JaCoCo plugin
 
-📄 [Sprint 3 Review Report](docs/sprints_reports/sprint3_review.pdf)  
+📄 [Sprint 3 Review Report](docs/sprints_reports/sprint_3/Sprint_3_Review_Report.md)  
 🔗 [Jenkinsfile](Jenkinsfile)
 
 ---
@@ -169,7 +169,7 @@ The application was containerized for consistent deployment across environments.
 - **Docker Hub:** [`taifjalo1/student-timetable-management-system`](https://hub.docker.com/r/taifjalo1/student-timetable-management-system)
 - **Kubernetes:** Deployment YAML available in [`k8s/`](k8s/) directory
 
-📄 [Sprint 4 Review Report](docs/sprints_reports/sprint4_review.pdf)  
+📄 [Sprint 4 Review Report](docs/sprints_reports/sprint_4/Sprint_4_Review_Report.md)  
 🔗 [Dockerfile](Dockerfile)
 
 ---
@@ -187,7 +187,7 @@ Multi-language support was implemented at the UI level with RTL layout capabilit
   - Image: pulled from Docker Hub
   - DISPLAY forwarded via `host.minikube.internal:0.0`
 
-📄 [Sprint 5 Review Report](docs/sprints_reports/sprint5_review.pdf)
+📄 [Sprint 5 Review Report](docs/sprints_reports/sprint_5/Sprint_5_Review_Report.md)
 
 ---
 
@@ -203,7 +203,7 @@ Database-level localization was implemented and static code analysis integrated.
   - Hosted on SonarCloud: [`sonarcloud.io/project/overview?id=taifjalo_student-timetable-management-system`](https://sonarcloud.io/project/overview?id=taifjalo_student-timetable-management-system)
 - **Static analysis tools:** Checkstyle, SpotBugs, PMD — reports generated in `target/`
 
-📄 [Sprint 6 Review Report](docs/sprints_reports/sprint6_review.pdf)
+📄 [Sprint 6 Review Report](docs/sprints_reports/sprint_6/Sprint_6_Review_Report.md)
 
 ---
 
@@ -215,11 +215,11 @@ Comprehensive testing was conducted across functional and non-functional dimensi
 - **Integration tests:** Real Azure DB tests in DAO layer (CourseDaoTest, UserDaoTest, LessonDaoTest, etc.)
 - **Code coverage:** Overall 66% (target 80%) — controllers excluded (JavaFX UI toolkit dependency)
 - **SonarQube metrics:** Security: A, Maintainability: A, Reliability: A, Coverage: 82%
-- **UAT testing:** 10 test cases executed per team member using template — [`docs/Acceptance_Testing.md`](docs/Acceptance_Testing.md)
-- **Heuristic evaluation:** Nielsen's 10 heuristics applied individually — [`docs/Heuristic_evaluation.md`](docs/Heuristic_evaluation.md)
+- **UAT testing:** 10 test cases executed per team member using template — [`docs/testing/Acceptance_Testing.md`](docs/testing/Acceptance_Testing.md)
+- **Heuristic evaluation:** Nielsen's 10 heuristics applied individually — [`docs/testing/Heuristic_evaluation.md`](docs/testing/Heuristic_evaluation.md)
 - **Performance testing (optional):** JMeter JDBC test plan targeting Azure MySQL — [`jmeter/student-timetable-management-system.jmx`](jmeter/fuel_calculator_test.jmx)
 
-📄 [Sprint 7 Review Report](docs/sprints_reports/sprint7_review.pdf)
+📄 [Sprint 7 Review Report](docs/sprints_reports/sprint_7/Sprint_7_Review_Report.md)
 
 ---
 
@@ -233,7 +233,7 @@ Final sprint focused on documentation completeness and project presentation.
 - **Final presentation:** 25-minute team presentation covering all 8 sprints
 - **Peer review:** Self and peer evaluation submitted individually on OMA
 
-📄 [Sprint 8 Review Report](docs/sprints_reports/sprint8_review.pdf)
+📄 [Sprint 8 Review Report](docs/sprints_reports/sprint_8/Sprint_8_Review_Report.md)
 
 ---
 ## Detailed Documentation Links
@@ -384,7 +384,7 @@ student-timetable-management-system/
 │       └── java/org/             # JUnit 5 + Mockito test classes
 ├── docs/
 │   ├── diagrams/                 # UML, ER, architecture diagrams
-│   ├── sprints_reports/          # Sprint review reports (PDF)
+│   ├── sprints_reports/          # Sprint review reports (md)
 │   └── testing/                  # UAT, Heuristic evaluation reports
 ├── k8s/                          # Kubernetes deployment YAML
 ├── jmeter/                       # JMeter test plans (.jmx)
@@ -408,7 +408,7 @@ student-timetable-management-system/
 | **Miska** | Scrum Master (S3), Backend, Lesson system      | [@miska-voutilainen](https://github.com/miska-voutilainen) |
 
 **Course:** TX00EY27-3009 Ohjelmistotuotantoprojekti 1 & 2
-**Institution:** Metropolia University of Applied Sciences
+**Institution:** Metropolia University of Applied Sciences, Finland
 **Semester:** Spring 2026
 
 ---
