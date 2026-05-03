@@ -111,14 +111,20 @@ public class NavbarController {
      */
     public void refreshBadge() {
         if (SessionManager.getInstance().getCurrentUser() == null) {
+            badgeLabel.setVisible(false);
             return;
         }
-        long count = notificationService.getUnreadCount(
-                SessionManager.getInstance().getCurrentUser().getId());
-        if (count > 0) {
-            badgeLabel.setText(count > 99 ? "99+" : String.valueOf(count));
-            badgeLabel.setVisible(true);
-        } else {
+        try {
+            long count = notificationService.getUnreadCount(
+                    SessionManager.getInstance().getCurrentUser().getId());
+            if (count > 0) {
+                badgeLabel.setText(count > 99 ? "99+" : String.valueOf(count));
+                badgeLabel.setVisible(true);
+            } else {
+                badgeLabel.setVisible(false);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to refresh notification badge", e);
             badgeLabel.setVisible(false);
         }
     }

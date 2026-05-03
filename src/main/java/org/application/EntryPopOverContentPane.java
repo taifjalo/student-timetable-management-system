@@ -29,12 +29,14 @@ import javafx.scene.layout.Region;
 import org.controllers.EventExtraDetailsController;
 import org.controlsfx.control.PopOver;
 import org.dao.LessonDao;
+import org.dao.NotificationDao;
 import org.entities.Course;
 import org.entities.Lesson;
 import org.entities.StudentGroup;
 import org.entities.User;
 import org.service.LessonService;
 import org.service.LocalizationService;
+import org.service.NotificationService;
 import org.service.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -504,7 +506,7 @@ public class EntryPopOverContentPane extends PopOverContentPane {
 
         Thread.ofVirtual().name("save-lesson-thread").start(() -> {
             try {
-                LessonService svc = new LessonService(new LessonDao());
+                LessonService svc = new LessonService(new LessonDao(), new NotificationService(new NotificationDao()));
                 Lesson saved;
                 if (entry.getUserObject() instanceof SavedLesson(var existingId)) {
                     saved = svc.updateLesson(existingId,

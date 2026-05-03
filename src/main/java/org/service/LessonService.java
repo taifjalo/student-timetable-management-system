@@ -75,6 +75,10 @@ public class LessonService {
         lesson.setAssignedGroups(groups);
         lesson.setAssignedUsers(users);
         lessonDao.saveLesson(lesson);
+        if (notificationService != null && users != null && !users.isEmpty()) {
+            List<Long> recipientIds = users.stream().map(User::getId).toList();
+            notificationService.notifyLessonAdded(course.getDisplayName(), classroom, recipientIds);
+        }
         return lesson;
     }
 
@@ -105,13 +109,26 @@ public class LessonService {
         if (classroom == null) {
             classroom = "";
         }
+        List<Long> previousUserIds = lesson.getAssignedUsers().stream()
+                .map(User::getId).toList();
         lesson.setStartAt(startAt);
         lesson.setEndAt(endAt);
         lesson.setCourse(course);
         lesson.setClassroom(classroom);
         lesson.setAssignedGroups(groups);
         lesson.setAssignedUsers(users);
-        return lessonDao.updateLesson(lesson);
+        Lesson updated = lessonDao.updateLesson(lesson);
+        if (notificationService != null && users != null) {
+            String finalClassroom = classroom;
+            List<Long> newlyAdded = users.stream()
+                    .map(User::getId)
+                    .filter(id -> !previousUserIds.contains(id))
+                    .toList();
+            if (!newlyAdded.isEmpty()) {
+                notificationService.notifyLessonAdded(course.getDisplayName(), finalClassroom, newlyAdded);
+            }
+        }
+        return updated;
     }
 
     /**

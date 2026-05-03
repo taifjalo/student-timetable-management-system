@@ -140,11 +140,12 @@ public class NotificationService {
      */
     public List<NotificationDto> getNotificationDtosForUser(Long userId) {
         return notificationDao.findTranslatedForUser(userId).stream()
+                .filter(row -> row[1] != null && !((String) row[1]).isBlank())
                 .map(row -> new NotificationDto(
                         ((Number) row[0]).longValue(),
                         (String) row[1],
                         row[2] instanceof Timestamp ts ? ts.toLocalDateTime() : (LocalDateTime) row[2],
-                        ((Number) row[3]).intValue() != 0
+                        row[3] instanceof Boolean b ? b : ((Number) row[3]).intValue() != 0
                 ))
                 .toList();
     }
@@ -175,7 +176,9 @@ public class NotificationService {
      * @return unread notification count (0 if none)
      */
     public long getUnreadCount(Long userId) {
-        return notificationDao.countUnread(userId);
+        return getNotificationDtosForUser(userId).stream()
+                .filter(dto -> !dto.isRead())
+                .count();
     }
 
 }
