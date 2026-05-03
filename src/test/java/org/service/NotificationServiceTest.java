@@ -75,6 +75,22 @@ class NotificationServiceTest {
         );
     }
 
+    @Test
+    @DisplayName("Lesson Updated: Should NOT call DAO when recipient list is empty")
+    void shouldNotSaveLessonUpdatedWhenRecipientsEmpty() {
+        notificationService.notifyLessonUpdated("Physics", "B202", Collections.emptyList());
+
+        verifyNoInteractions(notificationDao);
+    }
+
+    @Test
+    @DisplayName("Lesson Updated: Should NOT call DAO when recipient list is null")
+    void shouldNotSaveLessonUpdatedWhenRecipientsNull() {
+        notificationService.notifyLessonUpdated("Physics", "B202", null);
+
+        verifyNoInteractions(notificationDao);
+    }
+
     // notifyLessonDeleted
 
     @Test
@@ -201,6 +217,74 @@ class NotificationServiceTest {
         List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(99L);
 
         assertTrue(dtos.isEmpty());
+    }
+
+    // getNotificationsForUser
+
+    @Test
+    @DisplayName("Get Notifications: Should delegate to DAO and return results")
+    void shouldDelegateGetNotificationsForUserToDao() {
+        when(notificationDao.findByUserId(1L)).thenReturn(Collections.emptyList());
+
+        notificationService.getNotificationsForUser(1L);
+
+        verify(notificationDao).findByUserId(1L);
+    }
+
+    // getNotificationDtosForUser — additional branches
+
+    @Test
+    @DisplayName("Get DTOs: Should filter out rows where content is null")
+    void shouldFilterOutNullContentRows() {
+        LocalDateTime sentAt = LocalDateTime.of(2026, 3, 8, 10, 30);
+        Object[] nullRow  = {1L, null,            Timestamp.valueOf(sentAt), Boolean.FALSE};
+        Object[] validRow = {2L, "Valid content", Timestamp.valueOf(sentAt), Boolean.FALSE};
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(List.of(nullRow, validRow));
+
+        List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(1L);
+
+        assertEquals(1, dtos.size());
+        assertEquals("Valid content", dtos.get(0).getContent());
+    }
+
+    @Test
+    @DisplayName("Get DTOs: Should filter out rows where content is blank")
+    void shouldFilterOutBlankContentRows() {
+        LocalDateTime sentAt = LocalDateTime.of(2026, 3, 8, 10, 30);
+        Object[] blankRow = {1L, "   ",          Timestamp.valueOf(sentAt), Boolean.FALSE};
+        Object[] validRow = {2L, "Real content", Timestamp.valueOf(sentAt), Boolean.FALSE};
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(List.of(blankRow, validRow));
+
+        List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(1L);
+
+        assertEquals(1, dtos.size());
+        assertEquals("Real content", dtos.get(0).getContent());
+    }
+
+    @Test
+    @DisplayName("Get DTOs: Should handle LocalDateTime sentAt directly (not Timestamp)")
+    void shouldHandleLocalDateTimeSentAt() {
+        LocalDateTime sentAt = LocalDateTime.of(2026, 3, 8, 10, 30);
+        Object[] row = {1L, "Content", sentAt, Boolean.FALSE};
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(Collections.singletonList(row));
+
+        List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(1L);
+
+        assertEquals(1, dtos.size());
+        assertEquals(sentAt, dtos.get(0).getSentAt());
+    }
+
+    @Test
+    @DisplayName("Get DTOs: Should handle numeric is_read value (Integer 1 = read)")
+    void shouldHandleNumericIsReadValue() {
+        LocalDateTime sentAt = LocalDateTime.of(2026, 3, 8, 10, 30);
+        Object[] row = {1L, "Content", Timestamp.valueOf(sentAt), 1};
+        when(notificationDao.findTranslatedForUser(1L)).thenReturn(Collections.singletonList(row));
+
+        List<NotificationDto> dtos = notificationService.getNotificationDtosForUser(1L);
+
+        assertEquals(1, dtos.size());
+        assertTrue(dtos.get(0).isRead());
     }
 
     // markAsRead / markAllAsRead / getUnreadCount

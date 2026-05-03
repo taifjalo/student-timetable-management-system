@@ -492,4 +492,129 @@ class LessonServiceTest {
 
         assertEquals("", result.getClassroom());
     }
+
+    @Test
+    @DisplayName("Save Lesson (full): Should notify assigned users when users list is non-empty")
+    void shouldNotifyUsersWhenSavingLessonWithUsers() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+        User user = new User();
+        user.setId(10L);
+
+        lessonService.saveLesson(start, end, course, "A101", List.of(), List.of(user));
+
+        verify(notificationService).notifyLessonAdded("Math", "A101", List.of(10L));
+    }
+
+    @Test
+    @DisplayName("Save Lesson (full): Should NOT notify when users list is empty")
+    void shouldNotNotifyWhenSavingLessonWithEmptyUsers() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        lessonService.saveLesson(start, end, course, "A101", List.of(), List.of());
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    @DisplayName("Save Lesson (full): Should NOT notify when users list is null")
+    void shouldNotNotifyWhenSavingLessonWithNullUsers() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        lessonService.saveLesson(start, end, course, "A101", List.of(), null);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    @DisplayName("Update Lesson (full): Should throw exception when lesson not found")
+    void shouldThrowWhenFullUpdateLessonNotFound() {
+        when(lessonDao.findById(999L)).thenReturn(null);
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+        Course course = createCourse(1L, "Math", "#FF0000");
+        List<StudentGroup> groups = List.of();
+        List<User> users = List.of();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                lessonService.updateLesson(999L, start, end, course, "A101", groups, users));
+    }
+
+    @Test
+    @DisplayName("Update Lesson (full): Should notify only newly added users")
+    void shouldNotifyNewlyAddedUsersOnFullUpdate() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        User existing = new User();
+        existing.setId(1L);
+        User added = new User();
+        added.setId(2L);
+
+        Lesson lesson = createLesson(1L, start, end, course, "A101");
+        lesson.setAssignedUsers(List.of(existing));
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+        when(lessonDao.updateLesson(any(Lesson.class))).thenReturn(lesson);
+
+        lessonService.updateLesson(1L, start, end, course, "A101", List.of(), List.of(existing, added));
+
+        verify(notificationService).notifyLessonAdded("Math", "A101", List.of(2L));
+    }
+
+    @Test
+    @DisplayName("Update Lesson (full): Should NOT notify when no new users are added")
+    void shouldNotNotifyWhenNoNewUsersOnFullUpdate() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        User user = new User();
+        user.setId(1L);
+        Lesson lesson = createLesson(1L, start, end, course, "A101");
+        lesson.setAssignedUsers(List.of(user));
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+        when(lessonDao.updateLesson(any(Lesson.class))).thenReturn(lesson);
+
+        lessonService.updateLesson(1L, start, end, course, "A101", List.of(), List.of(user));
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    @DisplayName("Update Lesson (full): Should NOT notify when users list is null")
+    void shouldNotNotifyWhenFullUpdateUsersNull() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        Lesson lesson = createLesson(1L, start, end, course, "A101");
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+        when(lessonDao.updateLesson(any(Lesson.class))).thenReturn(lesson);
+
+        lessonService.updateLesson(1L, start, end, course, "A101", List.of(), null);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    @DisplayName("Update Lesson (full): Should default classroom to empty string when null")
+    void shouldDefaultClassroomOnFullUpdate() {
+        Course course = createCourse(1L, "Math", "#FF0000");
+        LocalDateTime start = LocalDateTime.of(2026, 3, 10, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 3, 10, 10, 30);
+
+        Lesson lesson = createLesson(1L, start, end, course, "A101");
+        when(lessonDao.findById(1L)).thenReturn(lesson);
+        when(lessonDao.updateLesson(any(Lesson.class))).thenReturn(lesson);
+
+        lessonService.updateLesson(1L, start, end, course, null, List.of(), List.of());
+
+        assertEquals("", lesson.getClassroom());
+    }
 }
