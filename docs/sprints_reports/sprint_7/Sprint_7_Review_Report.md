@@ -129,12 +129,12 @@ All selected functional tests passed successfully, and no test result required c
 
 ## Team Member Contributions
 
-| Team Member Name | Assigned Tasks                                                                                                            | Time Spent (hrs) | In-class Tasks |
-|---|---------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
-| Taif Jalo |                                                                                                                           |                  |                |
-| Miska Voutilainen |                                                                                                                           |                  |                |
-| Elias Norta |                                                                                                                           |                  |                |
-| Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance testing |               20 | done           |
+| Team Member Name | Assigned Tasks                                                                                                                                                                                                                           | Time Spent (hrs) | In-class Tasks |
+|---|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------:|----------------|
+| Taif Jalo | User acceptance testing report, with Functional and non-Functional, Test Coverage Matrix, SonarQube Coverage Code 81%, Jenkins Setup with all stages                                                                                     |               20 | done             |
+| Miska Voutilainen | User acceptance testing, SonarQube issue fixes (reduce complexity, add loggers, virtual threads, record patterns, fix tests, remove commented code, add generics, static setter, constants, boolean expressions), resolve merge conflicts |               25 | done           |
+| Elias Norta | User acceptance tests, project heuristic evaluation                                                                                                                                                                                      |                5 | done           |
+| Nikita Rybakov | Sprint 7 scrum master, sprint review, sprint report, documentation, heuristic evaluation summary, user acсeptance testing                                                                                                                |               20 | done           |
 
 ## What Went Well
 
