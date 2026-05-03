@@ -348,7 +348,6 @@ public class SourceTrayController {
             }
             modalController.setGroupsList(groupsList);
             modalController.applyProps();
-            System.out.println(group.getDisplayFieldOfStudies());
             showModal(root, group != null ? group.getDisplayFieldOfStudies() : null, sectionType, event);
         } catch (Exception e) {
             LOGGER.warn("[SourceTrayController] Failed to open group modal: {}", e.getMessage());
