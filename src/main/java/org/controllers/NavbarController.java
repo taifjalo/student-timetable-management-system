@@ -182,10 +182,12 @@ public class NavbarController {
         try {
             // Bundle must be passed here — notifications-popup.fxml uses %key syntax for localized
             // strings. If loaded without a bundle, JavaFX throws MissingResourceException at runtime.
+            ResourceBundle bundle = new LocalizationService().getBundle();
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/ui/notifications-popup.fxml"),
-                    new LocalizationService().getBundle());
-            Node content = loader.load();
+                    bundle);
+            Parent content = loader.load();
+            localizationService.swapSides(content);
 
             notificationsPopOver = new org.controlsfx.control.PopOver(content);
             notificationsPopOver.setArrowLocation(org.controlsfx.control.PopOver.ArrowLocation.TOP_RIGHT);

@@ -13,6 +13,8 @@ import org.dao.NotificationDao;
 import org.service.LocalizationService;
 import org.service.NotificationService;
 import org.service.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +31,8 @@ import java.util.ResourceBundle;
  * save time and is read directly from the DTO without any further translation step.
  */
 public class NotificationsPopupController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationsPopupController.class);
 
     @FXML private VBox popupRoot;
     @FXML private VBox notificationList;
@@ -52,6 +56,7 @@ public class NotificationsPopupController {
         }
         userId = SessionManager.getInstance().getCurrentUser().getId();
         List<NotificationDto> notifications = notificationService.getNotificationDtosForUser(userId);
+        LOGGER.debug("Fetched {} notifications for user {}", notifications.size(), userId);
 
         if (notifications.isEmpty()) {
             Label empty = new Label(bundle.getString("notifications.popup.empty"));
@@ -64,6 +69,7 @@ public class NotificationsPopupController {
         }
 
         for (NotificationDto dto : notifications) {
+            LOGGER.debug("Creating row for notification: {}", dto.getContent());
             NotificationRow row = new NotificationRow(
                     dto.getContent(),
                     formatTime(dto.getSentAt()),
