@@ -246,7 +246,7 @@ This Acceptance Test Plan defines the acceptance criteria and test cases for the
 
 ### User acceptance tests results
 
-A subset of 10 test cases was executed by all developers, and the results are shown above.
+A subset of 10 test cases was executed by all developers, and the results are shown above. The tests were successfully completed by all developers, and no issues were found.
 
 | Test Case                  | Miska Voutilainen | Taif Jalo | Nikita Rybakov | Elias Norta |
 |----------------------------|-------------------|-----------|----------------|-------------|
